@@ -6,8 +6,8 @@ Laurens and Paweł
 
 ## Authors
 
-- Laurens Ledeganck ([laurens.ledeganck@brain-builder.app](mailto:laurens.ledeganck@brain-builder.app))
-- Paweł Rok ([pawel.rok@brain-builder.app](mailto:pawel.rok@brain-builder.app))
+- Laurens Ledeganck ([l.a.k.ledeganck@student.tudelft.nl](mailto:l.a.k.ledeganck@student.tudelft.nl))
+- Pawel Rok ([p.j.rok@student.tudelft.nl](mailto:p.j.rok@student.tudelft.nl))
 
 ## Contact us
 

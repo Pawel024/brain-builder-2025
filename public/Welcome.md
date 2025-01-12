@@ -6,8 +6,8 @@ Laurens and Paweł
 
 ## Authors
 
-- Laurens Ledeganck ([laurens.ledeganck@brain-builder.app](mailto:laurens.ledeganck@brain-builder.app))
-- Paweł Rok ([pawel.rok@brain-builder.app](mailto:pawel.rok@brain-builder.app))
+- Laurens Ledeganck ([l.a.k.ledeganck@student.tudelft.nl](mailto:l.a.k.ledeganck@student.tudelft.nl))
+- Pawel Rok ([p.j.rok@student.tudelft.nl](mailto:p.j.rok@student.tudelft.nl))
 
 ## Resources Used
 
@@ -19,4 +19,4 @@ This project was made using:
 
 ## Contact Us
 
-Do you have a question, suggestion or want to report a bug? Send us an email at [info@brain-builder.app](mailto:info@brain-builder.app) and we'll be happy to take a look!
+Do you have a question, suggestion or want to report a bug? Send either of us an email and we'll be happy to take a look!

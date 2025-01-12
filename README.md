@@ -11,7 +11,7 @@ Laurens and Paweł
 
 ## Contact us
 
-Do you have a question, suggestion or want to report a bug? Send us an email at [info@brain-builder.app](mailto:info@brain-builder.app) and we'll be happy to take a look!
+Do you have a question, suggestion or want to report a bug? Send either of us an email and we'll be happy to take a look!
 
 ## Resources Used
 

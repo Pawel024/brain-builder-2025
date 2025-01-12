@@ -312,7 +312,7 @@ class OtherTask extends Component {
                 {this.state.in1Name !== 'Angle' && (
                 <div>{this.state.in1Name}: {this.state.in1}</div>
                 )}
-                <div className="slider" style={{ marginTop:10, height:50 }}>
+                <div className="slider" style={{ marginTop:10, height:50, display: 'flex', justifyContent: 'center' }}>
                     {
                     (this.props.type === 'ManualLinReg' || this.props.type === 'ManualPCA') ? weightSlider
                     : this.props.type === 'Manual3DPCA' ? angleSlider
@@ -324,7 +324,7 @@ class OtherTask extends Component {
                 {this.state.in2Name !== null && (
                 <>
                 <div>{this.state.in2Name}: {this.state.in2}</div>
-                <div className="slider" style={{ marginTop:10   , height:50 }}>
+                <div className="slider" style={{ marginTop:10   , height:50, display: 'flex', justifyContent: 'center' }}>
                     {this.props.type === 'ManualLinReg' ? biasSlider
                     : this.props.type === 'ManualMatrix' ? nFeaturesSlider
                     : null}

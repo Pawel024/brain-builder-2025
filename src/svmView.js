@@ -217,8 +217,6 @@ class SvmView extends Model {
             <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
                 {this.shortDescription}
             </div>
-            {this.props.isTraining === 1 || this.props.isTraining === 2 ? 
-            <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>F1-score: {this.state.F1Score} </div> : <div/>}
         </Box>
     )}
 

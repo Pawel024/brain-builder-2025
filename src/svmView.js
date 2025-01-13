@@ -192,8 +192,8 @@ class SvmView extends Model {
                     src={this.props.img} 
                     alt={"Encountered an issue while rendering plots"} 
                     style={{ 
-                        maxWidth: '60%', 
-                        maxHeight: '60%', 
+                        maxWidth: '80%', 
+                        maxHeight: '80%', 
                         objectFit: 'contain' 
                     }} 
                 />
@@ -202,8 +202,8 @@ class SvmView extends Model {
                     src={this.props.initPlot} 
                     alt={"Encountered an issue while rendering initial plot"} 
                     style={{ 
-                        maxWidth: '60%', 
-                        maxHeight: '60%', 
+                        maxWidth: '80%', 
+                        maxHeight: '80%', 
                         objectFit: 'contain' 
                     }} 
                 />

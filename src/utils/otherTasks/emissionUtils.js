@@ -68,9 +68,10 @@ function renderEmissions( result, setResult, ins, updateTime, updateWords, writi
             size="2"
             onChange={(event) => updateTime(event.target.value, ins[1][1])}
         />,
-        <TextField.Root size="2">
-            <input type="number" onChange={(event) => updateTime(ins[1][0], event.target.value)} />
-        </TextField.Root>,
+        <TextField
+            type="number"
+            size="2"onChange={(event) => updateTime(ins[1][0], event.target.value)}
+        />,
     ]
     const texts = [
         "Writing an initial draft of ", "takes me about ", " minutes, and proofreading it takes me about ", " minutes. ",

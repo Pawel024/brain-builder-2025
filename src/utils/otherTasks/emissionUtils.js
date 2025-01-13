@@ -1,4 +1,4 @@
-import { PlayIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import { PlayIcon } from '@radix-ui/react-icons';
 import { Flex, IconButton, TextField } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 import '../../css/App.css';
@@ -64,13 +64,16 @@ function renderEmissions( result, setResult, ins, updateTime, updateWords, writi
               ))}
         </RadioGroup.Root>,
         <TextField
+            label="Minutes"
             type="number"
             size="2"
-            onChange={(event) => updateTime(event.target.value, ins[1][1])}
+            onValueChange={(newValue) => updateTime(newValue, ins[1][1])}
         />,
         <TextField
+            label="Minutes"
             type="number"
-            size="2"onChange={(event) => updateTime(ins[1][0], event.target.value)}
+            size="2"
+            onValueChange={(newValue) => updateTime(ins[1][0], newValue)}
         />,
     ]
     const texts = [

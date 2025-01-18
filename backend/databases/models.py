@@ -27,6 +27,7 @@ class Progress(models.Model):
 
 class TaskDescription(models.Model):
     visibility = models.BooleanField(default=True)
+    enabled = models.BooleanField(default=True)
     task_id = models.IntegerField(unique=True)
     short_name = models.CharField(max_length=20)
     name = models.CharField(max_length=200)

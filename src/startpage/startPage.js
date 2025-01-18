@@ -73,7 +73,7 @@ class StartPage extends React.Component {
                 }
                 // First item 'open', rest 'disabled' ---> not anymore, now everything is open
                 progressData[type][level] = byLevel[level].map((item, index) => 
-                    'open');  // other option is 'disabled'
+                    'disabled');  // other option is 'disabled'
             });
         });
     

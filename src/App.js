@@ -868,7 +868,7 @@ function App() {
     });
   };
 
-  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Classification", "Neural Networks Part 1", "Neural Networks Part 2", "Dimensionality Reduction", "Ethics & Green AI", "Clustering"]);
+  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   
   // ------- RETURN THE APP CONTENT -------
   return (

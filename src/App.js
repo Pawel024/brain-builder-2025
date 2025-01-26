@@ -405,7 +405,7 @@ function App() {
     const levelStr = level.toString();
     if (!entry.visibility) {
       console.log("Skipping task " + entry.task_id)
-      currentTaskProgressData[level-1].push("hidden")
+      currentTaskProgressData[levelStr].push("hidden")
     } else {
 
       if (!entry.enabled) {

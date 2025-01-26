@@ -13,6 +13,7 @@ bb_env/
 testing.js
 testing.py
 test.png
+notes.txt
 
 # production
 /build

@@ -30,6 +30,7 @@ class Model extends React.Component {
       // TODO: make sure you pass these props: isTraining, taskId, cancelRequestRef, index, name, startTraining, pendingTime, tabs, initPlot,sliderValues, sliderVisibilities, inputFieldVisibilities, dropdownVisibilities, checkboxVisibilities, setIsResponding, isResponding, apiData, setApiData, handleSubmit, featureNames, img & typ
 
       this.state = {
+        loading: true,
         currentSlide: 0,
         activeTab: 'training',
         showCode: false,
@@ -138,12 +139,17 @@ class Model extends React.Component {
           } else {
             this.createDescriptionList(response.data.description);
           }
-          this.continueComponentDidMount();
+          this.continueComponentDidMount().then(() => {
+            this.setState({ loading: false });
+          });
+
         })
         .catch(error => {
           console.error('Task description error:', error);
           this.setState({ description: ["Error while Loading Description", "There was an error loading the task description. You should be able to continue, but notify us if this issue persists."] });
-          this.continueComponentDidMount();
+          this.continueComponentDidMount().then(() => {
+            this.setState({ loading: false });
+          });
         });
       }
 
@@ -324,6 +330,8 @@ class Model extends React.Component {
 
     // TODO: remove the render function in your copy
     render() {
+        if (this.state.loading) {return <div>Loading...</div>}  // return empty page until everything is ready
+
         return(
             <div className='buildBody'>
               <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>

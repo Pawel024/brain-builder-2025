@@ -123,7 +123,7 @@ function LevelBox({ level, showContent, handleShowContent, children }) {
 
 function LevelHeading({ level, name }) {
   return (
-      <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:10 }}>&gt;_{level===-1 ? name : `Week ${level} - ${name}`}</Heading>
+      <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:10 }}>&gt;_{name}</Heading>
   );
 }
 

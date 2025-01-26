@@ -5,7 +5,7 @@ import { Flex } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 import Level from './level';
 import {ReadmeBox } from './levelComponents';
-import { splitProgressDataByLevel, groupByIds, groupByIndex } from '../utils/progressUtils';
+import { groupByIds, groupByIndex } from '../utils/byLevelUtils';
 
 class StartPage extends React.Component {
     constructor(props) {
@@ -24,7 +24,7 @@ class StartPage extends React.Component {
         const iconsByLevel = groupByIndex(this.props.taskIcons, this.props.taskIds, tasksByLevel);
         const quizzesByLevel = groupByIds(this.props.quizIds);
         const introsByLevel = groupByIds(this.props.introIds);
-        const progressData = splitProgressDataByLevel(this.props.progressData);
+        const progressData = this.props.progressData;
 
         this.setState({
             tasksByLevel,
@@ -42,7 +42,7 @@ class StartPage extends React.Component {
             const iconsByLevel = groupByIndex(this.props.taskIcons, this.props.taskIds, tasksByLevel);
             const quizzesByLevel = groupByIds(this.props.quizIds);
             const introsByLevel = groupByIds(this.props.introIds);
-            const progressData = splitProgressDataByLevel(this.props.progressData);
+            const progressData = this.props.progressData;
 
             this.setState({
                 tasksByLevel,

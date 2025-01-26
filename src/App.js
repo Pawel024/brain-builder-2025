@@ -229,6 +229,7 @@ function App() {
 
   // this is for all the tasks
   const defaultTaskIds = [11, 12, 13, 21, 22, 31, 41, 51, 61, 71];
+  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
   const [progressData, setProgressData] = useState({challenges: {}, quizzes: {}, intros: {}});
@@ -348,9 +349,16 @@ function App() {
   const currentOtherDescriptions = {};
   const currentConstructionTaskIds = [];
 
-  const currentTaskProgressData = [];
-  const currentQuizProgressData = [];
-  const currentIntroProgressData = [];
+  const nOfLevels = levelNames.length;
+  const currentTaskProgressData = {};
+  const currentQuizProgressData = {};
+  const currentIntroProgressData = {};
+
+  for (let i = 1; i <= nOfLevels; i++) {
+    currentTaskProgressData[i] = [];
+    currentQuizProgressData[i] = [];
+    currentIntroProgressData[i] = [];
+  }
 
   function convertToList(string, separator=';') {
     if (string) {
@@ -365,41 +373,45 @@ function App() {
 
   function readQuizOrIntroEntry(entry, isQuiz) {
     const currentId = isQuiz ? entry.quiz_id : entry.intro_id;
+    const level = Math.floor(currentId / 10);
+    const levelStr = level.toString();
     if (!entry.visibility) {
       console.log("Skipping task " + currentId)
       if (isQuiz) {
-        currentQuizProgressData.push("hidden")
+        currentQuizProgressData[levelStr].push("hidden")
       } else {
-        currentIntroProgressData.push("hidden")
+        currentIntroProgressData[levelStr].push("hidden")
       }
     } else {
 
       if (!entry.enabled) {
         if (isQuiz) {
-          currentQuizProgressData.push("disabled")
+          currentQuizProgressData[levelStr].push("disabled")
         } else {
-          currentIntroProgressData.push("disabled")
+          currentIntroProgressData[levelStr].push("disabled")
         }
       } else {
         if (isQuiz) {
-          currentQuizProgressData.push("open")
+          currentQuizProgressData[levelStr].push("open")
         } else {
-          currentIntroProgressData.push("open")
+          currentIntroProgressData[levelStr].push("open")
         }
       }
     }
   }
 
   function readTaskEntry(entry) {
+    const level = Math.floor(entry.task_id / 10);
+    const levelStr = level.toString();
     if (!entry.visibility) {
       console.log("Skipping task " + entry.task_id)
-      currentTaskProgressData.push("hidden")
+      currentTaskProgressData[level-1].push("hidden")
     } else {
 
       if (!entry.enabled) {
-        currentTaskProgressData.push("disabled")
+        currentTaskProgressData[levelStr].push("disabled")
       } else {
-        currentTaskProgressData.push("open")
+        currentTaskProgressData[levelStr].push("open")
       }
 
 
@@ -868,8 +880,6 @@ function App() {
     });
   };
 
-  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
-  
   // ------- RETURN THE APP CONTENT -------
   return (
     <body class='light-theme' >

@@ -673,11 +673,14 @@ function App() {
   
   useEffect(() => {
     if (whichPulled.challenges && whichPulled.quizzes && whichPulled.intros) {
-      setProgressData({
+      const currentProgressData = {
         challenges: progressData.challenges,
         quizzes: progressData.quizzes,
         intros: progressData.intros
-      });
+      }
+      setProgressData(currentProgressData);
+
+      console.log('Progress data initialized:', currentProgressData);
     }
   }, [whichPulled]);
 

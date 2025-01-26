@@ -25,14 +25,4 @@ function groupByIndex(vars, ids, groupedIds = null) {
     return groupedVars;
 }
 
-// the progressData is a dictionary so we wanna split each element (challenges, quizzes, intros) by level using the groupByIds function above
-function splitProgressDataByLevel(progressData) {
-    const splitData = {};
-    for (const type in progressData) {
-        splitData[type] = groupByIds(progressData[type]);
-    }
-    return splitData;
-}
-
-
-export { splitProgressDataByLevel, groupByIds, groupByIndex };
+export { groupByIds, groupByIndex };

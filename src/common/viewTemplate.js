@@ -139,17 +139,12 @@ class Model extends React.Component {
           } else {
             this.createDescriptionList(response.data.description);
           }
-          this.continueComponentDidMount().then(() => {
-            this.setState({ loading: false });
-          });
-
+          this.continueComponentDidMount();
         })
         .catch(error => {
           console.error('Task description error:', error);
           this.setState({ description: ["Error while Loading Description", "There was an error loading the task description. You should be able to continue, but notify us if this issue persists."] });
-          this.continueComponentDidMount().then(() => {
-            this.setState({ loading: false });
-          });
+          this.continueComponentDidMount();
         });
       }
 

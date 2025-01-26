@@ -10,12 +10,12 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
   const states_to_active = {
     'disabled': false,
     'open': true,
-    'completed': true,
+    'hidden': true,
   } 
   const states_to_completed = {
     'disabled': false,
     'open': false,
-    'completed': true,
+    'hidden': true,
   }
 
   function isActive(type, level, index) {

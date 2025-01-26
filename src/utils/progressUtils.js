@@ -12,7 +12,7 @@ function groupByIds(ids) {
 
 function groupByIndex(vars, ids, groupedIds = null) {
     if (!groupedIds) {
-        groupedIds = this.groupByIds(ids);
+        groupedIds = groupByIds(ids);
     }
     const groupedVars = {};
     for (const level in groupedIds) {

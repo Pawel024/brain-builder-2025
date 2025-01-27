@@ -15,6 +15,8 @@ import '@radix-ui/themes/styles.css';
 import axios from 'axios';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
+const loadingLottieFile = '/loading.lottie'
+
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -331,7 +333,7 @@ class Model extends React.Component {
         return <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
           <Box style={{ height: '20vh' }}>
             <DotLottieReact
-              src="https://lottie.host/4b1b6838-9ff5-4464-a69d-3692e13bac2b/k4h1vQZweK.lottie"
+              src={loadingLottieFile}
               loop
               autoplay
             />

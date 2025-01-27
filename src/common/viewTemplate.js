@@ -13,6 +13,7 @@ import * as Form from '@radix-ui/react-form';
 import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
 import axios from 'axios';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 
 // This is a template for creating a new view in the application, similar to buildView. 
@@ -327,7 +328,11 @@ class Model extends React.Component {
     render() {
       if (this.state.loading) {
         console.log("Loading...")
-        return <div>Loading...</div>
+        return <DotLottieReact
+          src="https://lottie.host/a508eac1-2f88-4c32-b4e9-cba5f98e1f43/8lz0SS442B.lottie"
+          loop
+          autoplay
+        />
       } else {
 
         return(

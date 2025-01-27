@@ -30,6 +30,7 @@ class Model extends React.Component {
       // TODO: make sure you pass these props: isTraining, taskId, cancelRequestRef, index, name, startTraining, pendingTime, tabs, initPlot,sliderValues, sliderVisibilities, inputFieldVisibilities, dropdownVisibilities, checkboxVisibilities, setIsResponding, isResponding, apiData, setApiData, handleSubmit, featureNames, img & typ
 
       this.state = {
+        loading: true,
         currentSlide: 0,
         activeTab: 'training',
         showCode: false,
@@ -324,75 +325,75 @@ class Model extends React.Component {
 
     // TODO: remove the render function in your copy
     render() {
-        return(
-            <div className='buildBody'>
-              <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
-        
-              <Header showHomeButton={true} />
-        
-              <Tabs.Root defaultValue="training" style={{ fontFamily:'monospace' }}>
-        
-                <Tabs.List size="2">
-                    {this.tabs.map(tab => (   // cycle through all possible tabs and include the ones specified in this.props.tab
-                    this.props.tabs.includes(tab.value) && (
-                    <Tabs.Trigger key={tab.value} value={tab.value} onValueChange={this.handleTabChange}>
-                    {tab.name}
-                    </Tabs.Trigger>
-                    )
-                    ))}
-                </Tabs.List>
-        
-                <Box px="4" pt="3" pb="0">
+      return(
+              <div className='buildBody'>
+                <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
+          
+                <Header showHomeButton={true} />
+          
+                <Tabs.Root defaultValue="training" style={{ fontFamily:'monospace' }}>
+          
+                  <Tabs.List size="2">
+                      {this.tabs.map(tab => (   // cycle through all possible tabs and include the ones specified in this.props.tab
+                      this.props.tabs.includes(tab.value) && (
+                      <Tabs.Trigger key={tab.value} value={tab.value} onValueChange={this.handleTabChange}>
+                      {tab.name}
+                      </Tabs.Trigger>
+                      )
+                      ))}
+                  </Tabs.List>
+          
+                  <Box px="4" pt="3" pb="0">
 
 
-                {/* THE DATA TAB - this tab contains background information in slides, also has space for a plot of the data */}
+                  {/* THE DATA TAB - this tab contains background information in slides, also has space for a plot of the data */}
 
-                <Tabs.Content value="data">
-                  {this.props.taskId !== 0 && (    // a taskId of 0 is used for tutorials
-                    <Flex direction="row" gap="2" style={{ overflow: 'auto', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
-                        
-                        {/* slides with descriptions loaded from the database */}
-                        <Box style={{ flexBasis: '50%' }}>   
-                        {this.state.description.length > 0 ? (           
-                        <Flex direction='column' gap='2' style={{ padding: '20px 10px', display: 'flex', justifyContent:"center", alignItems:"center" }}>
-                            <Flex style={{ flexbasis:'100%', marginBottom: 0, width:'100%' }}>
-                            <Slider key={this.state.currentSlide} classNames={horizontalCss} infinite={false} slideIndex={this.state.currentSlide}
-                              previousButton={
-                                <ChevronLeftIcon
-                                  style={{ color: 'var(--slate-9)', width:64, height:64 }}
-                                  onClick={() => {
-                                    const prevSlide = this.state.currentSlide - 1;
-                                    if (prevSlide >= 0) {
-                                      this.setState({ currentSlide: prevSlide });
-                                    }
-                                }}/>}
-                              nextButton={
-                                <ChevronRightIcon
-                                  style={{ color: 'var(--slate-9)', width:64, height:64 }}
-                                  onClick={() => {
-                                    const nextSlide = this.state.currentSlide + 1;
-                                    if (nextSlide < this.state.description.length) {
-                                      this.setState({ currentSlide: nextSlide });
-                                    }
-                                }}/>}
-                            >
-                              {this.state.description.map(([subtitle, ...paragraphs], index) => (
-                                <div key={index} className="slide-container">
-                                  <div className="slide-content">
-                                    <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
-                                    {paragraphs.map((paragraph, pIndex) => (
-                                      <p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
-                                    ))}
+                  <Tabs.Content value="data">
+                    {this.props.taskId !== 0 && (    // a taskId of 0 is used for tutorials
+                      <Flex direction="row" gap="2" style={{ overflow: 'auto', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
+                          
+                          {/* slides with descriptions loaded from the database */}
+                          <Box style={{ flexBasis: '50%' }}>   
+                          {this.state.description.length > 0 ? (           
+                          <Flex direction='column' gap='2' style={{ padding: '20px 10px', display: 'flex', justifyContent:"center", alignItems:"center" }}>
+                              <Flex style={{ flexbasis:'100%', marginBottom: 0, width:'100%' }}>
+                              <Slider key={this.state.currentSlide} classNames={horizontalCss} infinite={false} slideIndex={this.state.currentSlide}
+                                previousButton={
+                                  <ChevronLeftIcon
+                                    style={{ color: 'var(--slate-9)', width:64, height:64 }}
+                                    onClick={() => {
+                                      const prevSlide = this.state.currentSlide - 1;
+                                      if (prevSlide >= 0) {
+                                        this.setState({ currentSlide: prevSlide });
+                                      }
+                                  }}/>}
+                                nextButton={
+                                  <ChevronRightIcon
+                                    style={{ color: 'var(--slate-9)', width:64, height:64 }}
+                                    onClick={() => {
+                                      const nextSlide = this.state.currentSlide + 1;
+                                      if (nextSlide < this.state.description.length) {
+                                        this.setState({ currentSlide: nextSlide });
+                                      }
+                                  }}/>}
+                              >
+                                {this.state.description.map(([subtitle, ...paragraphs], index) => (
+                                  <div key={index} className="slide-container">
+                                    <div className="slide-content">
+                                      <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
+                                      {paragraphs.map((paragraph, pIndex) => (
+                                        <p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
+                                      ))}
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
-                            </Slider>
-                            </Flex>
-                        </Flex>
-                        ):(<div/>)}
-                        </Box>
+                                ))}
+                              </Slider>
+                              </Flex>
+                          </Flex>
+                          ):(<div/>)}
+                          </Box>
 
-                        <Separator orientation='vertical' style = {{ height: window.innerHeight-152, position: 'fixed', left: window.innerWidth * 0.5, bottom: (window.innerHeight-92) * 0.5, transform: `translateY(${(window.innerHeight - 152) / 2}px)` }}/>
+                          <Separator orientation='vertical' style = {{ height: window.innerHeight-152, position: 'fixed', left: window.innerWidth * 0.5, bottom: (window.innerHeight-92) * 0.5, transform: `translateY(${(window.innerHeight - 152) / 2}px)` }}/>
 
                         {/* plot of the data */}
                         <Box style={{ flexBasis: '50%', display: 'flex', justifyContent:"center", alignItems:"center", padding: "0px 30px" }}>
@@ -402,74 +403,74 @@ class Model extends React.Component {
                 </Tabs.Content>
             
 
-                {/* THE TRAINING TAB - this tab contains the training interface */} 
+                  {/* THE TRAINING TAB - this tab contains the training interface */} 
 
-                <Tabs.Content value="training">   
-                    
-                    {this.renderModel()}
-                    
-                    <Separator orientation='vertical' style = {{ position:"absolute", top: Math.round(0.03 * (window.innerHeight-140)), left: Math.round(0.67 * (window.innerWidth * 0.97)), height: 0.96 * (window.innerHeight-140) }}/>
+                  <Tabs.Content value="training">   
+                      
+                      {this.renderModel()}
+                      
+                      <Separator orientation='vertical' style = {{ position:"absolute", top: Math.round(0.03 * (window.innerHeight-140)), left: Math.round(0.67 * (window.innerWidth * 0.97)), height: 0.96 * (window.innerHeight-140) }}/>
 
-                    <Box style={{ flex: 1 }}>
-                        {Object.entries(this.sliders).map(([name, slider], index) => (
-                            this.props.sliderVisibilities[name] ?
-                            (<Box style={{ position:"absolute", top: this.sliderPosition(index), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
-                                <div style={{ position:"absolute", zIndex: 9999, top: -30, left: 0.095 * (window.innerWidth * 0.97), transform: 'translateX(-50%)', fontSize: '14px', color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
-                                    {this.inputNames[name]}: {this.state.sliderValues[name]}
-                                </div>
-                                <div className={name}>
-                                    {slider}
-                                </div>
-                            </Box>) : (<div></div>)
-                        ))}
+                      <Box style={{ flex: 1 }}>
+                          {Object.entries(this.sliders).map(([name, slider], index) => (
+                              this.props.sliderVisibilities[name] ?
+                              (<Box style={{ position:"absolute", top: this.sliderPosition(index), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
+                                  <div style={{ position:"absolute", zIndex: 9999, top: -30, left: 0.095 * (window.innerWidth * 0.97), transform: 'translateX(-50%)', fontSize: '14px', color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
+                                      {this.inputNames[name]}: {this.state.sliderValues[name]}
+                                  </div>
+                                  <div className={name}>
+                                      {slider}
+                                  </div>
+                              </Box>) : (<div></div>)
+                          ))}
 
-                        {Object.entries(this.inputFields).map(([name, inputField], index) => (
-                            this.props.inputFieldVisibilities[name] ?
-                            (<Box style={{ position:"absolute", top: this.inputFieldPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
-                                <div className={name}>
-                                {this.inputNames[name]}: {inputField}
-                                </div>
-                            </Box>) : (<div></div>)
-                        ))}
+                          {Object.entries(this.inputFields).map(([name, inputField], index) => (
+                              this.props.inputFieldVisibilities[name] ?
+                              (<Box style={{ position:"absolute", top: this.inputFieldPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
+                                  <div className={name}>
+                                  {this.inputNames[name]}: {inputField}
+                                  </div>
+                              </Box>) : (<div></div>)
+                          ))}
 
-                        {Object.entries(this.dropdowns).map(([name, dropdown], index) => (
-                            this.props.dropdownVisibilities[name] ?
-                            (<Box style={{ position:"absolute", top: this.dropdownPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
-                                <div className={name}>
-                                {this.inputNames[name]}: {dropdown}
-                                </div>
-                            </Box>) : (<div></div>)
-                        ))}
-                        
-                        {Object.entries(this.checkboxes).map(([name, checkbox], index) => (
-                            this.props.checkboxVisibilities[name] ?
-                            (<Text className={name} as = "label" size="2">
-                                <Flex style={{ position:"absolute", top: this.checkboxPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), width: Math.round(0.27 * (window.innerWidth * 0.97)), justifyContent:"flex-start", alignItems:"flex-start"}} gap="2">          
-                                {this.inputNames[name]}: {React.cloneElement(checkbox, {checked: this.state.checkboxValues[name]})}
-                                </Flex>
-                            </Text>) : (<div></div>)
-                        ))}
+                          {Object.entries(this.dropdowns).map(([name, dropdown], index) => (
+                              this.props.dropdownVisibilities[name] ?
+                              (<Box style={{ position:"absolute", top: this.dropdownPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
+                                  <div className={name}>
+                                  {this.inputNames[name]}: {dropdown}
+                                  </div>
+                              </Box>) : (<div></div>)
+                          ))}
+                          
+                          {Object.entries(this.checkboxes).map(([name, checkbox], index) => (
+                              this.props.checkboxVisibilities[name] ?
+                              (<Text className={name} as = "label" size="2">
+                                  <Flex style={{ position:"absolute", top: this.checkboxPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), width: Math.round(0.27 * (window.innerWidth * 0.97)), justifyContent:"flex-start", alignItems:"flex-start"}} gap="2">          
+                                  {this.inputNames[name]}: {React.cloneElement(checkbox, {checked: this.state.checkboxValues[name]})}
+                                  </Flex>
+                              </Text>) : (<div></div>)
+                          ))}
 
-                        {this.additionalComponents()}
+                          {this.additionalComponents()}
 
-                        <Flex direction="row" gap="3" style={{ position: 'absolute', transform: 'translateX(-50%)', top: this.buttonPosition, left: Math.round(0.835 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-                            <IconButton onClick={this.handleStartClick} variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }} 
-                            disabled = { this.props.isTraining < 0 || this.valuesUndefined() } >
-                                <Flex direction="horizontal" gap="2" style={{alignItems: "center", fontFamily:'monospace' }}>
-                                    {this.props.isTraining === -1 ? "Loading..." : (this.props.isTraining === 1 ? "Cancel" : (<><PlayIcon width="18" height="18" />Start training!</>))}
-                                </Flex>
-                            </IconButton>
-                            {this.useCodePreview && 
-                            <IconButton onClick={this.handleCodeClick} variant="outline" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }}
-                            disabled = { this.props.isTraining < 0 || this.valuesUndefined() } >
-                                <Flex direction="horizontal" gap="2" style={{alignItems: "center", fontFamily:'monospace' }}>
-                                    {<><CodeIcon width="18" height="18" />Preview in code</>}
-                                </Flex>
-                            </IconButton>}
-                        </Flex>
-                    </Box>
-                    {this.state.showCode && <CodePreview code={this.state.code} typ={this.props.typ} /> }
-                </Tabs.Content>
+                          <Flex direction="row" gap="3" style={{ position: 'absolute', transform: 'translateX(-50%)', top: this.buttonPosition, left: Math.round(0.835 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
+                              <IconButton onClick={this.handleStartClick} variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }} 
+                              disabled = { this.props.isTraining < 0 || this.valuesUndefined() } >
+                                  <Flex direction="horizontal" gap="2" style={{alignItems: "center", fontFamily:'monospace' }}>
+                                      {this.props.isTraining === -1 ? "Loading..." : (this.props.isTraining === 1 ? "Cancel" : (<><PlayIcon width="18" height="18" />Start training!</>))}
+                                  </Flex>
+                              </IconButton>
+                              {this.useCodePreview && 
+                              <IconButton onClick={this.handleCodeClick} variant="outline" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }}
+                              disabled = { this.props.isTraining < 0 || this.valuesUndefined() } >
+                                  <Flex direction="horizontal" gap="2" style={{alignItems: "center", fontFamily:'monospace' }}>
+                                      {<><CodeIcon width="18" height="18" />Preview in code</>}
+                                  </Flex>
+                              </IconButton>}
+                          </Flex>
+                      </Box>
+                      {this.state.showCode && <CodePreview code={this.state.code} typ={this.props.typ} /> }
+                  </Tabs.Content>
 
 
                 {/* THE TESTING TAB - this tab contains the testing interface */}
@@ -535,13 +536,13 @@ class Model extends React.Component {
                 </Tabs.Content>
 
 
-                {/* ADD MORE TABS IF NECESSARY */}
+                  {/* ADD MORE TABS IF NECESSARY */}
 
-            </Box>
-            </Tabs.Root>
-            </Theme>
-            </div>
-        )
+              </Box>
+              </Tabs.Root>
+              </Theme>
+              </div>
+      )
     }
 }
 

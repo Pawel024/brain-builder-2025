@@ -360,6 +360,10 @@ function App() {
     currentIntroProgressData[i] = [];
   }
 
+  console.log("currentTaskProgressData initialized: ", currentTaskProgressData);
+  console.log("currentQuizProgressData initialized: ", currentQuizProgressData);
+  console.log("currentIntroProgressData initialized: ", currentIntroProgressData);
+
   function convertToList(string, separator=';') {
     if (string) {
       if (string[0] === '[') {
@@ -580,6 +584,8 @@ function App() {
           updated.challenges = true;
           return updated
         });
+
+        console.log("currentTaskProgressData updated: ", currentTaskProgressData);
       })
       .catch(error => {
         setLoadedTasks(false);
@@ -625,6 +631,8 @@ function App() {
           updated.quizzes = true;
           return updated
         });
+
+        console.log("currentQuizProgressData updated: ", currentQuizProgressData);
       })
       .catch(error => {
         console.error('Error fetching quizzes:', error);
@@ -651,6 +659,8 @@ function App() {
           updated.intros = true;
           return updated
         });
+
+        console.log("currentIntroProgressData updated: ", currentIntroProgressData);
       })
       .catch(error => {
         console.error('Error fetching intros:', error);

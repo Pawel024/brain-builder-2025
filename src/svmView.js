@@ -17,7 +17,6 @@ class SvmView extends Model {
       super(props);
 
       this.state = {
-        loading: true,
         currentSlide: 0,
         activeTab: 'training',
         showCode: false,
@@ -61,7 +60,6 @@ class SvmView extends Model {
 
     continueComponentDidMount = () => {
         this.props.loadData(this.props.taskId, this.props.index)  // let the backend load the data  // TODO
-        //this.setState({ loading: false })
     }
 
     componentWillUnmount() {

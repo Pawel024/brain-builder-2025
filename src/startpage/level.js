@@ -55,7 +55,8 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
                         link={links?.[10*level+challenge] ?? `exercise${level}.${challenge}`}
                         label={taskNames[`${level}${challenge}`]}
                         Icon={challengeIcons[index] || RocketIcon}
-                        active={isActive("challenges", levelStr, index)}
+//                        active={isActive("challenges", levelStr, index)}
+                        active={true}
                         completed={isCompleted("challenges", levelStr, index)}
                     />
                 ))}

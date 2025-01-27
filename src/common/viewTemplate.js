@@ -131,6 +131,7 @@ class Model extends React.Component {
     };
 
     componentDidMount() {
+        console.log("this.state.loading (1): ", this.state.loading)  // TODO remove
         axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
           this.shortDescription = response.data.short_description;
@@ -325,6 +326,7 @@ class Model extends React.Component {
 
     // TODO: remove the render function in your copy
     render() {
+        console.log("this.state.loading (1): ", this.state.loading)  // TODO remove
         if (this.state.loading) {
           console.log("Loading...")
           return <div>Loading...</div>

@@ -17,6 +17,7 @@ class SvmView extends Model {
       super(props);
 
       this.state = {
+        loading: true,
         currentSlide: 0,
         activeTab: 'training',
         showCode: false,

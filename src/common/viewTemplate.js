@@ -328,11 +328,15 @@ class Model extends React.Component {
     render() {
       if (this.state.loading) {
         console.log("Loading...")
-        return <DotLottieReact
-          src="https://lottie.host/a508eac1-2f88-4c32-b4e9-cba5f98e1f43/8lz0SS442B.lottie"
-          loop
-          autoplay
-        />
+        return <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
+          <Box style={{ height: '20vh' }}>
+            <DotLottieReact
+              src="https://lottie.host/4b1b6838-9ff5-4464-a69d-3692e13bac2b/k4h1vQZweK.lottie"
+              loop
+              autoplay
+            />
+          </Box>
+        </Box>
       } else {
 
         return(

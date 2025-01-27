@@ -160,7 +160,7 @@ class Building extends Model {
           this.props.loadLastCytoLayers(this.props.setCytoLayers, this.props.apiData, this.props.setApiData, 'cytoLayers' + this.props.taskId, this.props.taskId, this.props.index, this.props.NNIndex, this.props.nOfInputs, this.props.nOfOutputs);
           this.props.updateCytoLayers(this.props.setCytoLayers, this.props.nOfInputs, this.props.nOfOutputs, this.props.NNIndex);
         }
-        this.setState({ loading: false })
+        //this.setState({ loading: false })
       }
 
     chartRef = React.createRef();

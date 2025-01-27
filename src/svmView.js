@@ -60,7 +60,7 @@ class SvmView extends Model {
 
     continueComponentDidMount = () => {
         this.props.loadData(this.props.taskId, this.props.index)  // let the backend load the data  // TODO
-        this.setState({ loading: false })
+        //this.setState({ loading: false })
     }
 
     componentWillUnmount() {

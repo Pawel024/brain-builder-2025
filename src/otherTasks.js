@@ -333,7 +333,7 @@ class OtherTask extends Component {
                 )}
                 
                 {
-                this.state.img ? <img src={this.state.img} alt="No plot available" style={{ height: window.innerHeight*0.55, marginBottom:10 }}/>
+                this.state.img ? <img src={this.state.img} alt="Plot" style={{ height: window.innerHeight*0.55, marginBottom:10 }}/>
                 : this.state.view ?
                 <Box style={{ height: window.innerHeight*0.55, marginBottom:10 }}>
                     {this.state.view}

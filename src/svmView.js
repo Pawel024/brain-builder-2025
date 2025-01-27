@@ -190,7 +190,7 @@ class SvmView extends Model {
             {this.props.img ? (
                 <img 
                     src={this.props.img} 
-                    alt={"Encountered an issue while rendering plots"} 
+                    alt={"Plot of the decision boundary"} 
                     style={{ 
                         maxWidth: '80%', 
                         maxHeight: '80%', 
@@ -200,7 +200,7 @@ class SvmView extends Model {
             ) : (
                 <img 
                     src={this.props.initPlot} 
-                    alt={"Encountered an issue while rendering initial plot"} 
+                    alt={"Plot of the data"} 
                     style={{ 
                         maxWidth: '80%', 
                         maxHeight: '80%', 
@@ -223,7 +223,6 @@ class SvmView extends Model {
 }
 
 
-// INCLUDE THIS AT THE END OF YOUR NEW FILE
 
 function SvmWrapper(props) {
     const navigate = useNavigate();

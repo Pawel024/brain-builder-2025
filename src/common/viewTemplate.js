@@ -396,7 +396,7 @@ class Model extends React.Component {
 
                         {/* plot of the data */}
                         <Box style={{ flexBasis: '50%', display: 'flex', justifyContent:"center", alignItems:"center", padding: "0px 30px" }}>
-                            <img src={this.props.initPlot} alt='No data available' width='auto' height='auto' style={{ maxWidth: '100%', maxHeight: '100%' }} onLoad={() => {}}/>
+                            <img src={this.props.initPlot} alt='Plot of the data' width='auto' height='auto' style={{ maxWidth: '100%', maxHeight: '100%' }} onLoad={() => {}}/>
                         </Box>
                     </Flex>)}
                 </Tabs.Content>
@@ -523,7 +523,7 @@ class Model extends React.Component {
                     {/* This will render the images, if they exist */}
                     <Flex direction="column" gap="2" style={{ justifyContent: 'center', alignItems: 'center', padding: '30px 30px' }}>
                         {this.props.img ? (
-                        <img src={this.props.img} alt={`No plots yet`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/}/>
+                        <img src={this.props.img} alt={`Plot of the data`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/}/>
                         ) : (
                         <div>No image available. Try reloading the page? If this problem persists, please contact us.</div>
                         )}

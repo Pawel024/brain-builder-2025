@@ -360,10 +360,6 @@ function App() {
     currentIntroProgressData[i] = [];
   }
 
-  console.log("currentTaskProgressData initialized: ", currentTaskProgressData);
-  console.log("currentQuizProgressData initialized: ", currentQuizProgressData);
-  console.log("currentIntroProgressData initialized: ", currentIntroProgressData);
-
   function convertToList(string, separator=';') {
     if (string) {
       if (string[0] === '[') {
@@ -584,8 +580,11 @@ function App() {
           updated.challenges = true;
           return updated
         });
-
-        console.log("currentTaskProgressData updated: ", currentTaskProgressData);
+        setProgressData(prev => {
+          const updated = {...prev};
+          updated.challenges = currentTaskProgressData;
+          return updated
+        });
       })
       .catch(error => {
         setLoadedTasks(false);
@@ -631,8 +630,11 @@ function App() {
           updated.quizzes = true;
           return updated
         });
-
-        console.log("currentQuizProgressData updated: ", currentQuizProgressData);
+        setProgressData(prev => {
+          const updated = {...prev};
+          updated.quizzes = currentQuizProgressData;
+          return updated
+        });
       })
       .catch(error => {
         console.error('Error fetching quizzes:', error);
@@ -659,8 +661,11 @@ function App() {
           updated.intros = true;
           return updated
         });
-
-        console.log("currentIntroProgressData updated: ", currentIntroProgressData);
+        setProgressData(prev => {
+          const updated = {...prev};
+          updated.intros = currentIntroProgressData;
+          return updated
+        });
       })
       .catch(error => {
         console.error('Error fetching intros:', error);
@@ -683,15 +688,8 @@ function App() {
   
   useEffect(() => {
     if (whichPulled.challenges && whichPulled.quizzes && whichPulled.intros) {
-      const currentProgressData = {
-        challenges: progressData.challenges,
-        quizzes: progressData.quizzes,
-        intros: progressData.intros
-      }
-      setProgressData(currentProgressData);
-
-      console.log('Progress data initialized:', currentProgressData);
-    }
+      console.log("Pulled challenges, quizzes, and intros");
+    };
   }, [whichPulled]);
 
   const linksDict = linkIds.reduce((acc, curr, index) => {
@@ -731,6 +729,11 @@ function App() {
       }
     });
   }, [cytoLayers, NNTaskIds, nInputs, nOutputs, taskIds]);
+
+
+  useEffect(() => {
+    console.log('progressData:', progressData);
+  }, [progressData]);
 
   
   const loadLastCytoLayers = (setCytoLayers, apiData, setApiData, propertyName, taskId, index, NNIndex, nInputs, nOutputs) => {

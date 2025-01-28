@@ -324,15 +324,13 @@ class Model extends React.Component {
 
     // TODO: remove the render function in your copy
     render() {
+      const preloader = document.getElementById("preloader");
+      
       if (this.state.loading) {
-        console.log("Loading...")
-        return <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
-        <Box style={{ height: '20vh' }}>
-          <LottieLoader />
-        </Box>
-      </Box>
+        if (preloader) { preloader.style.display = "flex"; };
       } else {
-
+        if (preloader) { preloader.style.display = "none"; };
+        
         return(
                 <div className='buildBody'>
                   <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>

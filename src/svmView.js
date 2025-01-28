@@ -197,8 +197,12 @@ class SvmView extends Model {
             <Box style={{ display: 'flex', height: window.innerHeight-116, width: '65vw' }}>
                 {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
                 <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
-                    {this.state.imageLoaded ? (
-                        <img 
+                    {!this.state.imageLoaded && (
+                        <Box style={{ width: '25%', height: '25%' }}>
+                            <LottieLoader />
+                        </Box>
+                    )}
+                    <img 
                             src={this.props.img || this.props.initPlot} 
                             alt={this.props.img ? "Plot of the decision boundary" : "Plot of the data"} 
                             style={{ 
@@ -209,11 +213,6 @@ class SvmView extends Model {
                             }} 
                             onLoad={handleImageLoad}
                         />
-                    ) : (
-                        <Box style={{ width: '25%', height: '25%' }}>
-                            <LottieLoader />
-                        </Box>
-                    )}
                 </Box>
             </Box>
         )

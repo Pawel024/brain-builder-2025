@@ -15,7 +15,7 @@ import '@radix-ui/themes/styles.css';
 import axios from 'axios';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-const loadingLottieFile = '/loading.lottie'
+const loadingLottieFile = '../images/loading.lottie';
 
 
 // This is a template for creating a new view in the application, similar to buildView. 

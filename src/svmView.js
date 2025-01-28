@@ -194,27 +194,29 @@ class SvmView extends Model {
         };
 
         return (
-        <Box style={{ display: 'flex', flex: 3, height: window.innerHeight-116 }}>
-            {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
-            {!this.state.imageLoaded && (
+            <Box style={{ display: 'flex', height: window.innerHeight-116, width: '65vw' }}>
+                {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
                 <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
-                    <Box style={{ width: '25%', height: '25%' }}>
-                        <LottieLoader />
-                    </Box>
+                    {this.state.imageLoaded ? (
+                        <img 
+                            src={this.props.img || this.props.initPlot} 
+                            alt={this.props.img ? "Plot of the decision boundary" : "Plot of the data"} 
+                            style={{ 
+                                display: this.state.imageLoaded ? 'block' : 'none',
+                                maxWidth: '80%', 
+                                maxHeight: '80%', 
+                                objectFit: 'contain' 
+                            }} 
+                            onLoad={handleImageLoad}
+                        />
+                    ) : (
+                        <Box style={{ width: '25%', height: '25%' }}>
+                            <LottieLoader />
+                        </Box>
+                    )}
                 </Box>
-            )}
-            <img 
-                src={this.props.img || this.props.initPlot} 
-                alt={this.props.img ? "Plot of the decision boundary" : "Plot of the data"} 
-                style={{ 
-                    display: this.state.imageLoaded ? 'block' : 'none',
-                    maxWidth: '80%', 
-                    maxHeight: '80%', 
-                    objectFit: 'contain' 
-                }} 
-                onLoad={handleImageLoad}
-            />
-        </Box>)
+            </Box>
+        )
     }
 
     additionalComponents = () => {

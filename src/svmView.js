@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import '@radix-ui/themes/styles.css';
 import { Model } from './common/viewTemplate';
 import LottieLoader from './common/lottieLoader';
+import { Viewport } from '@radix-ui/react-select';
 
 
 // This is a template for creating a new view in the application, similar to buildView. 
@@ -193,7 +194,7 @@ class SvmView extends Model {
         };
 
         return (
-        <Box style={{ display: 'flex', flex: 3, height: '100%' }}>
+        <Box style={{ display: 'flex', flex: 3, height: window.innerHeight-116 }}>
             {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
             {!this.state.imageLoaded && (
                 <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>

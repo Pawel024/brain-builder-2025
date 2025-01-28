@@ -358,7 +358,7 @@ class Model extends React.Component {
 
                     <Tabs.Content value="data">
                       {this.props.taskId !== 0 && (    // a taskId of 0 is used for tutorials
-                        <Flex direction="row" gap="2" style={{ overflow: 'auto', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
+                        <Flex direction="row" gap="2" style={{ overflow: 'hidden', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
                             
                             {/* slides with descriptions loaded from the database */}
                             <Box style={{ flexBasis: '50%' }}>   

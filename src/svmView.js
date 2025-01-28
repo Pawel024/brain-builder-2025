@@ -193,11 +193,13 @@ class SvmView extends Model {
         };
 
         return (
-        <Box style={{ display: 'flex', flex: 3, height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+        <Box style={{ display: 'flex', flex: 3, height: '100%' }}>
             {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
             {!this.state.imageLoaded && (
-                <Box style={{ width: '25%', height: '25%' }}>
-                    <LottieLoader />
+                <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+                    <Box style={{ width: '25%', height: '25%' }}>
+                        <LottieLoader />
+                    </Box>
                 </Box>
             )}
             <img 

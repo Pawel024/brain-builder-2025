@@ -244,15 +244,15 @@ class DataFromExcel(Dataset):
                             row = k // n_cols
                             col = k % n_cols
                             if n_plots == 1:
-                                scatter = ax.scatter(data[:, i], data[:, j], c=self.data.loc[:, 'Target'])
+                                scatter = ax.scatter(data[:, i], data[:, j], c=self.data.loc[:, 'Target'], cmap='Dark2')
                                 ax.set_xlabel(self.feature_names[i].replace('_', ' '))
                                 ax.set_ylabel(self.feature_names[j].replace('_', ' '))
                             elif n_rows == 1:
-                                scatter = ax[col].scatter(data[:, i], data[:, j], c=self.data.loc[:, 'Target'])
+                                scatter = ax[col].scatter(data[:, i], data[:, j], c=self.data.loc[:, 'Target'], cmap='Dark2')
                                 ax[col].set_xlabel(self.feature_names[i].replace('_', ' '))
                                 ax[col].set_ylabel(self.feature_names[j].replace('_', ' '))
                             else: 
-                                scatter = ax[row, col].scatter(data[:, i], data[:, j], c=self.data.loc[:, 'Target'])
+                                scatter = ax[row, col].scatter(data[:, i], data[:, j], c=self.data.loc[:, 'Target'], cmap='Dark2')
                                 ax[row, col].set_xlabel(self.feature_names[i].replace('_', ' '))
                                 ax[row, col].set_ylabel(self.feature_names[j].replace('_', ' '))
                             k += 1
@@ -331,8 +331,8 @@ class DataFromExcel(Dataset):
                     for i, f in enumerate(self.feature_names):
                         data[:, i] = self.data.loc[:, f] * (self.maxima.iloc[i] - self.minima.iloc[i]) + self.minima.iloc[i]
 
-                ax.contourf(mesh[0], mesh[1], Z, alpha=0.5)
-                ax.scatter(data[:, 0], data[:, 1], c=self.data.loc[:, 'Target'])
+                ax.contourf(mesh[0], mesh[1], Z, alpha=0.5, cmap='Set2')
+                ax.scatter(data[:, 0], data[:, 1], c=self.data.loc[:, 'Target'], cmap='Dark2')
 
                 ax.set_xlabel(self.feature_names[0].replace('_', ' '))
                 ax.set_ylabel(self.feature_names[1].replace('_', ' '))

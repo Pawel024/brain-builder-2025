@@ -531,7 +531,7 @@ class Model extends React.Component {
                           {this.props.img ? (
                           <img src={this.props.img} alt={`Plot of the data`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/}/>
                           ) : (
-                          <div>No image available. Try reloading the page? If this problem persists, please contact us.</div>
+                          <div>No plots available yet... have you already trained a model?</div>
                           )}
                       {/* TODO: Turn this into a pretty animation */}
                       </Flex>
@@ -539,9 +539,6 @@ class Model extends React.Component {
                   </Flex>
                   )}
                   </Tabs.Content>
-
-
-                    {/* ADD MORE TABS IF NECESSARY */}
 
                 </Box>
                 </Tabs.Root>

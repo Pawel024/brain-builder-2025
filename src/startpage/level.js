@@ -11,23 +11,11 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
     'disabled': false,
     'open': true,
     'hidden': true,
-  } 
-  const states_to_completed = {
-    'disabled': false,
-    'open': false,
-    'hidden': true,
   }
 
   function isActive(type, level, index) {
     if (progressData[type] && progressData[type]?.[level] && progressData[type]?.[level]?.[index] !== undefined) {
       return states_to_active[progressData[type][level][index]];
-    }
-    return false;
-  }
-
-  function isCompleted(type, level, index) {
-    if (progressData[type] && progressData[type]?.[level] && progressData[type]?.[level]?.[index] !== undefined) {
-      return states_to_completed[progressData[type][level][index]];
     }
     return false;
   }
@@ -39,13 +27,12 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
             <GridBox>
                 {introsByLevel[level] && introsByLevel[level].map((intro, index) => {
                     const entry = introData.find(entry => entry.intro_id === 10*level+intro);
-                    return entry && entry.visibility ? (
+                    return entry?.visibility ? (
                         <ChallengeButton key={`intro${level}${intro}_button`}
                             link={`introduction${level}${intro}`}
                             label="Introduction"
                             Icon={DrawingPinIcon}
                             active={isActive("intros", levelStr, index)}
-                            completed={isCompleted("intros", levelStr, index)}
                         />
                     ) : null;
                 })}
@@ -56,19 +43,17 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
                         label={taskNames[`${level}${challenge}`]}
                         Icon={challengeIcons[index] || RocketIcon}
                         active={isActive("challenges", levelStr, index)}
-                        completed={isCompleted("challenges", levelStr, index)}
                     />
                 ))}
 
                 {quizzesByLevel[level] && quizzesByLevel[level].map((quiz, index) => {
                     const entry = quizData.find(entry => entry.quiz_id === 10*level+quiz);
-                    return entry && entry.visibility ? (
+                    return entry?.visibility ? (
                         <ChallengeButton key={`quiz${level}${quiz}_button`}
                             link={`quiz${level}${quiz}`}
                             label="Quiz"
                             Icon={Pencil2Icon}
                             active={isActive("quizzes", levelStr, index)}
-                            completed={isCompleted("quizzes", levelStr, index)}
                         />
                     ) : null;
                 })}

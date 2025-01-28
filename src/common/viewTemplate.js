@@ -15,8 +15,7 @@ import '@radix-ui/themes/styles.css';
 import axios from 'axios';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-const loadingLottieFile = '/loading.lottie';
-
+const loadingLottieFile = process.env.PUBLIC_URL + '/loading.lottie';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).

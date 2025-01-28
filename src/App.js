@@ -496,6 +496,9 @@ function App() {
   
   const [loadedTasks, setLoadedTasks] = useState(false);
   useEffect(() => {
+    const preloader = document.getElementById("preloader");
+    if (preloader) { preloader.style.display = "none"; };
+
     axios.get('/api/all_tasks/')
       .then(response => {
         const currentTaskData = response.data;

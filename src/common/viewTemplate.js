@@ -12,7 +12,6 @@ import * as Form from '@radix-ui/react-form';
 import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
 import axios from 'axios';
-import LottieLoader from '../common/lottieLoader';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -330,7 +329,7 @@ class Model extends React.Component {
         if (preloader) { preloader.style.display = "flex"; };
       } else {
         if (preloader) { preloader.style.display = "none"; };
-        
+
         return(
                 <div className='buildBody'>
                   <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>

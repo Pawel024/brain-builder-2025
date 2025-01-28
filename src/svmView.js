@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import '@radix-ui/themes/styles.css';
 import { Model } from './common/viewTemplate';
 import LottieLoader from './common/lottieLoader';
-import { Viewport } from '@radix-ui/react-select';
 
 
 // This is a template for creating a new view in the application, similar to buildView. 
@@ -207,8 +206,8 @@ class SvmView extends Model {
                             alt={this.props.img ? "Plot of the decision boundary" : "Plot of the data"} 
                             style={{ 
                                 display: this.state.imageLoaded ? 'block' : 'none',
-                                maxWidth: '80%', 
-                                maxHeight: '80%', 
+                                maxWidth: '90%', 
+                                maxHeight: '90%', 
                                 objectFit: 'contain' 
                             }} 
                             onLoad={handleImageLoad}

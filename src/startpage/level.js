@@ -22,7 +22,7 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
     if (progressData[type] && progressData[type]?.[level] && progressData[type]?.[level]?.[index] !== undefined) {
       return states_to_active[progressData[type][level][index]];
     }
-    return false;
+    return true;
   }
 
   function isCompleted(type, level, index) {

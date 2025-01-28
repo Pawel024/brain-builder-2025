@@ -19,8 +19,6 @@ import asyncio
 import os
 import requests
 
-import mimetypes
-
 
 def index(request, path=''):
     user_id = request.GET.get('user_id')
@@ -50,6 +48,11 @@ def serve_readme(request):
 def serve_links(request):
     with open('public/Links.md', 'r') as file:
         return HttpResponse(file.read(), content_type='text/plain')
+    
+def serve_lottie_file(request, filename):
+    file_path = os.path.join('public', filename)
+    with open(file_path, 'rb') as file:
+        return HttpResponse(file.read(), content_type='application/octet-stream')
 
 @csrf_protect
 @api_view(['GET', 'POST'])

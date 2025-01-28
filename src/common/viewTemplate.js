@@ -5,7 +5,6 @@ import * as SliderSlider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
 import { PlayIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
 import CodePreview from '../code_preview/codePreview';
-import layersToCode from '../code_preview/codeExplainTools';
 import Header from '../common/header';
 import { useNavigate } from 'react-router-dom';
 import Slider from 'react-animated-slider';
@@ -13,7 +12,7 @@ import * as Form from '@radix-ui/react-form';
 import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
 import axios from 'axios';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import LottieLoader from '../common/lottieLoader';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -328,14 +327,10 @@ class Model extends React.Component {
       if (this.state.loading) {
         console.log("Loading...")
         return <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
-          <Box style={{ height: '20vh' }}>
-            <DotLottieReact
-              src='/loading.lottie'
-              loop
-              autoplay
-            />
-          </Box>
+        <Box style={{ height: '20vh' }}>
+          <LottieLoader />
         </Box>
+      </Box>
       } else {
 
         return(

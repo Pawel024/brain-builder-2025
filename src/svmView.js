@@ -1,10 +1,10 @@
 import React from 'react'
-import { Theme, Flex, Box, Checkbox } from '@radix-ui/themes';
+import { Box, Checkbox } from '@radix-ui/themes';
 import * as SliderSlider from '@radix-ui/react-slider';
 import { useNavigate } from 'react-router-dom';
-import Slider from 'react-animated-slider';
 import '@radix-ui/themes/styles.css';
 import { Model } from './common/viewTemplate';
+import LottieLoader from './common/lottieLoader';
 
 
 // This is a template for creating a new view in the application, similar to buildView. 
@@ -186,30 +186,32 @@ class SvmView extends Model {
     // FINALLY, THE RENDER
 
     renderModel = () => {
+
+        const [imageLoaded, setImageLoaded] = React.useState(false);
+
+        const handleImageLoad = () => {
+            setImageLoaded(true);
+        };
+
         return (
-        <Box style={{ display: 'flex', flex: 3, height: '100vh' }}>
+        <Box style={{ display: 'flex', flex: 3, height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
             {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
-            {this.props.img ? (
-                <img 
-                    src={this.props.img} 
-                    alt={"Plot of the decision boundary"} 
-                    style={{ 
-                        maxWidth: '80%', 
-                        maxHeight: '80%', 
-                        objectFit: 'contain' 
-                    }} 
-                />
-            ) : (
-                <img 
-                    src={this.props.initPlot} 
-                    alt={"Plot of the data"} 
-                    style={{ 
-                        maxWidth: '80%', 
-                        maxHeight: '80%', 
-                        objectFit: 'contain' 
-                    }} 
-                />
+            {!imageLoaded && (
+                <Box style={{ width: '25%', height: '25%' }}>
+                    <LottieLoader />
+                </Box>
             )}
+            <img 
+                src={this.props.img || this.props.initPlot} 
+                alt={this.props.img ? "Plot of the decision boundary" : "Plot of the data"} 
+                style={{ 
+                    display: imageLoaded ? 'block' : 'none',
+                    maxWidth: '80%', 
+                    maxHeight: '80%', 
+                    objectFit: 'contain' 
+                }} 
+                onLoad={handleImageLoad}
+            />
         </Box>)
     }
 

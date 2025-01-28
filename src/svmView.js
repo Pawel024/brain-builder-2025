@@ -18,6 +18,7 @@ class SvmView extends Model {
 
       this.state = {
         loading: true,
+        imageLoaded: false,
         currentSlide: 0,
         activeTab: 'training',
         showCode: false,
@@ -187,16 +188,14 @@ class SvmView extends Model {
 
     renderModel = () => {
 
-        const [imageLoaded, setImageLoaded] = React.useState(false);
-
         const handleImageLoad = () => {
-            setImageLoaded(true);
+            this.setState({ imageLoaded: true });
         };
 
         return (
         <Box style={{ display: 'flex', flex: 3, height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
             {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
-            {!imageLoaded && (
+            {!this.state.imageLoaded && (
                 <Box style={{ width: '25%', height: '25%' }}>
                     <LottieLoader />
                 </Box>
@@ -205,7 +204,7 @@ class SvmView extends Model {
                 src={this.props.img || this.props.initPlot} 
                 alt={this.props.img ? "Plot of the decision boundary" : "Plot of the data"} 
                 style={{ 
-                    display: imageLoaded ? 'block' : 'none',
+                    display: this.state.imageLoaded ? 'block' : 'none',
                     maxWidth: '80%', 
                     maxHeight: '80%', 
                     objectFit: 'contain' 

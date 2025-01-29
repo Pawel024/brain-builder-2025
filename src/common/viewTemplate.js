@@ -131,6 +131,11 @@ class Model extends React.Component {
     componentDidMount() {
         axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
+          const preloader = document.getElementById("preloader");
+          if (preloader) {
+            preloader.style.display = "none";
+          }
+          
           this.shortDescription = response.data.short_description;
           if (response.data.description[0] === '[') {
             this.setState({ description: JSON.parse(response.data.description) });

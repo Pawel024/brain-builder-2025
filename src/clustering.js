@@ -75,6 +75,11 @@ function ClusteringVisualization({clusteringId}) {
     const centergRef = useRef(null);
 
     useEffect(() => {
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+            preloader.style.display = "none";
+        }
+
         if (!svgRef.current) {
             // Initialize SVG and groups if not already initialized
             const svg = d3.select("#kmeans").append("svg")

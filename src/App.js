@@ -412,79 +412,79 @@ function App() {
         currentTaskProgressData[levelStr].push("disabled")
       } else {
         currentTaskProgressData[levelStr].push("open")
-      }
 
 
-      // set TaskDescription states
-      currentFileNames.push(entry.file_name);
-      currentFunctionNames.push(entry.function_name);
-      currentNInputs.push(entry.n_inputs);
-      currentNOutputs.push(entry.n_outputs);
-      currentTaskIds.push(entry.task_id);
-      currentWeights.push([]);
-      currentTaskNames[entry.task_id] = entry.short_name;
-      currentTyp.push(entry.type);
-      currentDataset.push(entry.dataset);
+        // set TaskDescription states
+        currentFileNames.push(entry.file_name);
+        currentFunctionNames.push(entry.function_name);
+        currentNInputs.push(entry.n_inputs);
+        currentNOutputs.push(entry.n_outputs);
+        currentTaskIds.push(entry.task_id);
+        currentWeights.push([]);
+        currentTaskNames[entry.task_id] = entry.short_name;
+        currentTyp.push(entry.type);
+        currentDataset.push(entry.dataset);
 
-      if (entry.other_task) {
-        currentOtherTasks[entry.task_id] = entry.other_task;
-        currentOtherDescriptions[entry.task_id] = JSON.parse(entry.description);
-        currentIcons.push(null);
-      } else {
-
-        // set NN states
-        let nnDescription = entry.neural_network_description;
-        if (nnDescription) {
-          if (nnDescription.sensitive_data) {currentSensitiveIds.push(entry.task_id)};
-          currentNNTaskIds.push(entry.task_id);
-          currentMaxEpochs.push(nnDescription.max_epochs);
-          currentMaxLayers.push(nnDescription.max_layers);
-          currentMaxNodes.push(nnDescription.max_nodes);
-          currentNormalizationVisibility.push(nnDescription.normalization_visibility);
-          currentAfVisibility.push(nnDescription.af_visibility);
-          currentAfOptions.push(convertToList(nnDescription.af_options));
-          currentOptimOptions.push(convertToList(nnDescription.optimizer_options));
-          currentIterationsSliderVisibility.push(nnDescription.iterations_slider_visibility);
-          currentLRSliderVisibility.push(nnDescription.lr_slider_visibility);
-          currentImageVisibility.push(nnDescription.decision_boundary_visibility);
+        if (entry.other_task) {
+          currentOtherTasks[entry.task_id] = entry.other_task;
+          currentOtherDescriptions[entry.task_id] = JSON.parse(entry.description);
           currentIcons.push(null);
         } else {
 
-          // set svm states
-          let svmDescription = entry.svm_description;
-          if (svmDescription) {
-            currentSVMTaskIds.push(entry.task_id);
-            currentCSliderVisibility.push(svmDescription.c_slider_visibility);
-            currentGammaSliderVisibility.push(svmDescription.gamma_slider_visibility);
-            currentRbfVisibility.push(svmDescription.rbf_visibility);
+          // set NN states
+          let nnDescription = entry.neural_network_description;
+          if (nnDescription) {
+            if (nnDescription.sensitive_data) {currentSensitiveIds.push(entry.task_id)};
+            currentNNTaskIds.push(entry.task_id);
+            currentMaxEpochs.push(nnDescription.max_epochs);
+            currentMaxLayers.push(nnDescription.max_layers);
+            currentMaxNodes.push(nnDescription.max_nodes);
+            currentNormalizationVisibility.push(nnDescription.normalization_visibility);
+            currentAfVisibility.push(nnDescription.af_visibility);
+            currentAfOptions.push(convertToList(nnDescription.af_options));
+            currentOptimOptions.push(convertToList(nnDescription.optimizer_options));
+            currentIterationsSliderVisibility.push(nnDescription.iterations_slider_visibility);
+            currentLRSliderVisibility.push(nnDescription.lr_slider_visibility);
+            currentImageVisibility.push(nnDescription.decision_boundary_visibility);
             currentIcons.push(null);
           } else {
 
-            // set basics states
-            let basicsDescription = entry.basics_description;
-            if (basicsDescription) {
-              currentBasicsTaskIds.push(entry.task_id);
-              // TODO
+            // set svm states
+            let svmDescription = entry.svm_description;
+            if (svmDescription) {
+              currentSVMTaskIds.push(entry.task_id);
+              currentCSliderVisibility.push(svmDescription.c_slider_visibility);
+              currentGammaSliderVisibility.push(svmDescription.gamma_slider_visibility);
+              currentRbfVisibility.push(svmDescription.rbf_visibility);
               currentIcons.push(null);
             } else {
 
-              // set clustering states
-              let clusteringDescription = entry.clustering_description;
-              if (clusteringDescription) {
-                currentClusteringTaskIds.push(entry.task_id);
+              // set basics states
+              let basicsDescription = entry.basics_description;
+              if (basicsDescription) {
+                currentBasicsTaskIds.push(entry.task_id);
                 // TODO
                 currentIcons.push(null);
               } else {
 
-                // set external link states
-                if (entry.external_link) {
-                currentLinkIds.push(entry.task_id)
-                currentLinks.push(entry.external_link.url)
-                currentIcons.push(Link2Icon);
-                } else {
-                  currentConstructionTaskIds.push(entry.task_id);
+                // set clustering states
+                let clusteringDescription = entry.clustering_description;
+                if (clusteringDescription) {
+                  currentClusteringTaskIds.push(entry.task_id);
+                  // TODO
                   currentIcons.push(null);
-                  console.log("Task " + entry.task_id + " is not implemented in the frontend.")
+                } else {
+
+                  // set external link states
+                  if (entry.external_link) {
+                  currentLinkIds.push(entry.task_id)
+                  currentLinks.push(entry.external_link.url)
+                  currentIcons.push(Link2Icon);
+                  } else {
+                    currentConstructionTaskIds.push(entry.task_id);
+                    currentIcons.push(null);
+                    console.log("Task " + entry.task_id + " is not implemented in the frontend.")
+                  }
                 }
               }
             }
@@ -911,7 +911,7 @@ function App() {
           
           {introIds.map((introId, index) => (
             <>
-            { introData[index].visibility &&
+            { introData[index].visibility && introData[index].enabled &&
               <Route path={`/introduction${introId}`} element={
                 <Introduction introId={introId}/>
               } />
@@ -1045,7 +1045,7 @@ function App() {
 
           {quizIds.map((quizId, index) => (
             <>
-            { quizData[index].visibility &&
+            { quizData[index].visibility && quizData[index].enabled &&
             <Route
             key={quizId}
             path={`/quiz${quizId}`}

@@ -121,7 +121,6 @@ class SvmView extends Model {
     }
 
     handleCheckboxChange = () => {
-        console.log('Checkbox clicked, changing to ', !this.state.checkboxValues['KernelCheckbox'])
         this.setState( prev => {
             const newCheckboxValues = {...prev.checkboxValues};
             newCheckboxValues['KernelCheckbox'] = !prev.checkboxValues['KernelCheckbox'];
@@ -194,7 +193,6 @@ class SvmView extends Model {
 
         return (
             <Box style={{ display: 'flex', height: window.innerHeight-116, width: '65vw' }}>
-                {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
                 <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
                     {!this.state.imageLoaded && (
                         <Box style={{ width: '25%', height: '25%' }}>

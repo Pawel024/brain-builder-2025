@@ -914,7 +914,7 @@ function App() {
             
             if (!introData[index].visibility || !introData[index].enabled) {
               console.log(`Intro ${introId} not routed`);
-              return null;
+              return (<NotFound />);
             } else {
               return (
                 <Route path={`/introduction${level}-${task}`} element={
@@ -932,7 +932,7 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return null;
+              return (<NotFound />);
             }
 
             return (
@@ -948,7 +948,7 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return null;
+              return (<NotFound />);
             }
 
             return (
@@ -970,7 +970,7 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return null;
+              return (<NotFound />);
             }
 
             return (
@@ -1018,7 +1018,7 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return null;
+              return (<NotFound />);
             }
 
             return (
@@ -1096,7 +1096,7 @@ function App() {
 
             if (!quizData[index].visibility || !quizData[index].enabled) {
               console.log(`Quiz ${quizId} not routed`);
-              return null;
+              return (<NotFound />);
             } else {
               
               return (

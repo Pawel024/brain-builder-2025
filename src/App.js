@@ -412,79 +412,78 @@ function App() {
         currentTaskProgressData[levelStr].push("disabled")
       } else {
         currentTaskProgressData[levelStr].push("open")
+      }
 
+      // set TaskDescription states
+      currentFileNames.push(entry.file_name);
+      currentFunctionNames.push(entry.function_name);
+      currentNInputs.push(entry.n_inputs);
+      currentNOutputs.push(entry.n_outputs);
+      currentTaskIds.push(entry.task_id);
+      currentWeights.push([]);
+      currentTaskNames[entry.task_id] = entry.short_name;
+      currentTyp.push(entry.type);
+      currentDataset.push(entry.dataset);
 
-        // set TaskDescription states
-        currentFileNames.push(entry.file_name);
-        currentFunctionNames.push(entry.function_name);
-        currentNInputs.push(entry.n_inputs);
-        currentNOutputs.push(entry.n_outputs);
-        currentTaskIds.push(entry.task_id);
-        currentWeights.push([]);
-        currentTaskNames[entry.task_id] = entry.short_name;
-        currentTyp.push(entry.type);
-        currentDataset.push(entry.dataset);
+      if (entry.other_task) {
+        currentOtherTasks[entry.task_id] = entry.other_task;
+        currentOtherDescriptions[entry.task_id] = JSON.parse(entry.description);
+        currentIcons.push(null);
+      } else {
 
-        if (entry.other_task) {
-          currentOtherTasks[entry.task_id] = entry.other_task;
-          currentOtherDescriptions[entry.task_id] = JSON.parse(entry.description);
+        // set NN states
+        let nnDescription = entry.neural_network_description;
+        if (nnDescription) {
+          if (nnDescription.sensitive_data) {currentSensitiveIds.push(entry.task_id)};
+          currentNNTaskIds.push(entry.task_id);
+          currentMaxEpochs.push(nnDescription.max_epochs);
+          currentMaxLayers.push(nnDescription.max_layers);
+          currentMaxNodes.push(nnDescription.max_nodes);
+          currentNormalizationVisibility.push(nnDescription.normalization_visibility);
+          currentAfVisibility.push(nnDescription.af_visibility);
+          currentAfOptions.push(convertToList(nnDescription.af_options));
+          currentOptimOptions.push(convertToList(nnDescription.optimizer_options));
+          currentIterationsSliderVisibility.push(nnDescription.iterations_slider_visibility);
+          currentLRSliderVisibility.push(nnDescription.lr_slider_visibility);
+          currentImageVisibility.push(nnDescription.decision_boundary_visibility);
           currentIcons.push(null);
         } else {
 
-          // set NN states
-          let nnDescription = entry.neural_network_description;
-          if (nnDescription) {
-            if (nnDescription.sensitive_data) {currentSensitiveIds.push(entry.task_id)};
-            currentNNTaskIds.push(entry.task_id);
-            currentMaxEpochs.push(nnDescription.max_epochs);
-            currentMaxLayers.push(nnDescription.max_layers);
-            currentMaxNodes.push(nnDescription.max_nodes);
-            currentNormalizationVisibility.push(nnDescription.normalization_visibility);
-            currentAfVisibility.push(nnDescription.af_visibility);
-            currentAfOptions.push(convertToList(nnDescription.af_options));
-            currentOptimOptions.push(convertToList(nnDescription.optimizer_options));
-            currentIterationsSliderVisibility.push(nnDescription.iterations_slider_visibility);
-            currentLRSliderVisibility.push(nnDescription.lr_slider_visibility);
-            currentImageVisibility.push(nnDescription.decision_boundary_visibility);
+          // set svm states
+          let svmDescription = entry.svm_description;
+          if (svmDescription) {
+            currentSVMTaskIds.push(entry.task_id);
+            currentCSliderVisibility.push(svmDescription.c_slider_visibility);
+            currentGammaSliderVisibility.push(svmDescription.gamma_slider_visibility);
+            currentRbfVisibility.push(svmDescription.rbf_visibility);
             currentIcons.push(null);
           } else {
 
-            // set svm states
-            let svmDescription = entry.svm_description;
-            if (svmDescription) {
-              currentSVMTaskIds.push(entry.task_id);
-              currentCSliderVisibility.push(svmDescription.c_slider_visibility);
-              currentGammaSliderVisibility.push(svmDescription.gamma_slider_visibility);
-              currentRbfVisibility.push(svmDescription.rbf_visibility);
+            // set basics states
+            let basicsDescription = entry.basics_description;
+            if (basicsDescription) {
+              currentBasicsTaskIds.push(entry.task_id);
+              // TODO
               currentIcons.push(null);
             } else {
 
-              // set basics states
-              let basicsDescription = entry.basics_description;
-              if (basicsDescription) {
-                currentBasicsTaskIds.push(entry.task_id);
+              // set clustering states
+              let clusteringDescription = entry.clustering_description;
+              if (clusteringDescription) {
+                currentClusteringTaskIds.push(entry.task_id);
                 // TODO
                 currentIcons.push(null);
               } else {
 
-                // set clustering states
-                let clusteringDescription = entry.clustering_description;
-                if (clusteringDescription) {
-                  currentClusteringTaskIds.push(entry.task_id);
-                  // TODO
-                  currentIcons.push(null);
+                // set external link states
+                if (entry.external_link) {
+                currentLinkIds.push(entry.task_id)
+                currentLinks.push(entry.external_link.url)
+                currentIcons.push(Link2Icon);
                 } else {
-
-                  // set external link states
-                  if (entry.external_link) {
-                  currentLinkIds.push(entry.task_id)
-                  currentLinks.push(entry.external_link.url)
-                  currentIcons.push(Link2Icon);
-                  } else {
-                    currentConstructionTaskIds.push(entry.task_id);
-                    currentIcons.push(null);
-                    console.log("Task " + entry.task_id + " is not implemented in the frontend.")
-                  }
+                  currentConstructionTaskIds.push(entry.task_id);
+                  currentIcons.push(null);
+                  console.log("Task " + entry.task_id + " is not implemented in the frontend.")
                 }
               }
             }
@@ -919,38 +918,61 @@ function App() {
             </>
           ))}
 
-          {clusteringTaskIds.map((clusteringId, index) => (
-            <Route path={`/exercise${clusteringId/10}`} element={<ClusteringTest clusteringId={clusteringId} />} />
-          ))}
+          {clusteringTaskIds.map((clusteringId, index) => {
+            const type = "challenges";
+            const level = Math.floor(clusteringId / 10);
+            const task = clusteringId % 10;
+            const isOpen = progressData[type]?.[level]?.[task] === "open";
+          
+            if (!isOpen) return null;
 
-          {Object.entries(otherTasks).map(([taskId, taskName], index) => (
-            <>
-            <Route key={taskId} path={`/exercise${taskId/10}`} element={<OtherTask
-              type = {taskName}
-              host = {window.location.host}
-              customId = {parseInt(taskId)}
-              userId = {getCookie('user_id')}
-              description = {otherDescriptions[taskId]}
-            />} />
-            </>
-          ))}
+            return (
+              <Route path={`/exercise${clusteringId/10}`} element={<ClusteringTest clusteringId={clusteringId} />} />
+            );
+          })}
 
-          {SVMTaskIds.map((taskId, SVMIndex) => (
-            <>
-            <Route
-              key={taskId}
-              path={`/exercise${taskId/10}`}
-              element={
-                <>
-                <SvmView 
-                isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
-                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
-                />
-                </>
-              }
-            />
-            </>
-          ))}
+          {Object.entries(otherTasks).map(([taskId, taskName], index) => {
+            const type = "challenges";
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
+            const isOpen = progressData[type]?.[level]?.[task] === "open";
+          
+            if (!isOpen) return null;
+
+            return (
+              <Route key={taskId} path={`/exercise${taskId/10}`} element={<OtherTask
+                type = {taskName}
+                host = {window.location.host}
+                customId = {parseInt(taskId)}
+                userId = {getCookie('user_id')}
+                description = {otherDescriptions[taskId]}
+              />} />
+            ); 
+          })}
+
+          {SVMTaskIds.map((taskId, SVMIndex) => {
+            const type = "challenges";
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
+            const isOpen = progressData[type]?.[level]?.[task] === "open";
+          
+            if (!isOpen) return null;
+
+            return (
+              <Route
+                key={taskId}
+                path={`/exercise${taskId/10}`}
+                element={
+                  <>
+                  <SvmView 
+                  isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
+                  fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
+                  />
+                  </>
+                }
+              />
+            );
+          })}
 
           {sensitiveIds.map((taskId, NNIndex) => (
             // TODO currently unused as this whole idea turned into a big stinky mess
@@ -973,75 +995,82 @@ function App() {
             />
             </>
           ))}
-          {NNTaskIds.map((taskId, NNIndex) => (
-            <>
-            <Route
-              key={taskId}
-              path={`/exercise${taskId/10}`}
-              element={
-                <>
-                <BuildView
-                  nOfInputs={nInputs[taskIds.indexOf(taskId)]}
-                  nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
-                  // nOfObjects={nObjects[taskIds.indexOf(taskId)]}
-                  maxLayers={maxLayers[NNIndex]}
-                  taskId={taskId}
-                  NNIndex={NNIndex}
-                  index={taskIds.indexOf(taskId)}
-                  cytoElements={cytoElements[NNIndex]}
-                  cytoStyle={cytoStyle[NNIndex]}
-                  cytoLayers={cytoLayers[NNIndex]}
-                  setCytoLayers={setCytoLayers}
-                  updateCytoLayers={updateCytoLayers}
-                  loadLastCytoLayers={loadLastCytoLayers}
-                  isTraining={isTraining[taskIds.indexOf(taskId)]}
-                  setIsTraining={setIsTraining}
-                  apiData={apiData[taskIds.indexOf(taskId)]}
-                  setApiData={setApiData}
-                  setAccuracy={setAccuracy}
-                  accuracyColor={accuracyColor}
-                  handleSubmit={handleSubmit}
-                  isResponding={isResponding[taskIds.indexOf(taskId)]}
-                  setIsResponding={setIsResponding}
-                  progress={NNProgress[NNIndex]}
-                  featureNames={featureNames[taskIds.indexOf(taskId)]}
-                  errorList={errorList[NNIndex]}
-                  weights={weights[NNIndex]}
-                  biases={biases[NNIndex]}
-                  img={imgs[taskIds.indexOf(taskId)]}
-                  initPlot={initPlots[taskIds.indexOf(taskId)]}
-                  loadData={loadData}
-                  imageVisibility={imageVisibility[NNIndex]}
-                  setProgress={setNNProgress}
-                  setErrorList={setErrorList}
-                  setWeights={setWeights}
-                  setBiases={setBiases}
-                  pendingTime={pendingTime}
-                  cancelRequestRef={cancelRequestRef}
-                  fileName={fileNames[taskIds.indexOf(taskId)]}
-                  functionName={functionNames[taskIds.indexOf(taskId)]}
-                  maxNodes={maxNodes[NNIndex]}
-                  maxEpochs={maxEpochs[NNIndex]}
-                  setImgs={setImgs}
-                  userId={getCookie('user_id')}
-                  intervalTimeout={intervalTimeout}
-                  typ={typ[taskIds.indexOf(taskId)]}
-                  dataset={dataset[taskIds.indexOf(taskId)]}
-                  name={taskNames[taskId]}
-                  startTraining={putRequest}
-                  tabs={['data', 'training', 'testing']}
-                  sliderVisibilities={{'EpochSlider': iterationsSliderVisibility[NNIndex], 'LRSlider': lrSliderVisibility[NNIndex]}}
-                  inputFieldVisibilities={{}}
-                  dropdownVisibilities={{'AFDropdown': !!afOptions[NNIndex].length, 'OptimizerDropdown': !!optimOptions[NNIndex].length}}
-                  dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
-                  checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
-                  gamesData={gamesData}
-                />
-                </>
-              }
-            />
-            </>
-          ))}
+          {NNTaskIds.map((taskId, NNIndex) => {
+            const type = "challenges";
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
+            const isOpen = progressData[type]?.[level]?.[task] === "open";
+          
+            if (!isOpen) return null;
+
+            return (
+              <Route
+                key={taskId}
+                path={`/exercise${taskId/10}`}
+                element={
+                  <>
+                  <BuildView
+                    nOfInputs={nInputs[taskIds.indexOf(taskId)]}
+                    nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
+                    // nOfObjects={nObjects[taskIds.indexOf(taskId)]}
+                    maxLayers={maxLayers[NNIndex]}
+                    taskId={taskId}
+                    NNIndex={NNIndex}
+                    index={taskIds.indexOf(taskId)}
+                    cytoElements={cytoElements[NNIndex]}
+                    cytoStyle={cytoStyle[NNIndex]}
+                    cytoLayers={cytoLayers[NNIndex]}
+                    setCytoLayers={setCytoLayers}
+                    updateCytoLayers={updateCytoLayers}
+                    loadLastCytoLayers={loadLastCytoLayers}
+                    isTraining={isTraining[taskIds.indexOf(taskId)]}
+                    setIsTraining={setIsTraining}
+                    apiData={apiData[taskIds.indexOf(taskId)]}
+                    setApiData={setApiData}
+                    setAccuracy={setAccuracy}
+                    accuracyColor={accuracyColor}
+                    handleSubmit={handleSubmit}
+                    isResponding={isResponding[taskIds.indexOf(taskId)]}
+                    setIsResponding={setIsResponding}
+                    progress={NNProgress[NNIndex]}
+                    featureNames={featureNames[taskIds.indexOf(taskId)]}
+                    errorList={errorList[NNIndex]}
+                    weights={weights[NNIndex]}
+                    biases={biases[NNIndex]}
+                    img={imgs[taskIds.indexOf(taskId)]}
+                    initPlot={initPlots[taskIds.indexOf(taskId)]}
+                    loadData={loadData}
+                    imageVisibility={imageVisibility[NNIndex]}
+                    setProgress={setNNProgress}
+                    setErrorList={setErrorList}
+                    setWeights={setWeights}
+                    setBiases={setBiases}
+                    pendingTime={pendingTime}
+                    cancelRequestRef={cancelRequestRef}
+                    fileName={fileNames[taskIds.indexOf(taskId)]}
+                    functionName={functionNames[taskIds.indexOf(taskId)]}
+                    maxNodes={maxNodes[NNIndex]}
+                    maxEpochs={maxEpochs[NNIndex]}
+                    setImgs={setImgs}
+                    userId={getCookie('user_id')}
+                    intervalTimeout={intervalTimeout}
+                    typ={typ[taskIds.indexOf(taskId)]}
+                    dataset={dataset[taskIds.indexOf(taskId)]}
+                    name={taskNames[taskId]}
+                    startTraining={putRequest}
+                    tabs={['data', 'training', 'testing']}
+                    sliderVisibilities={{'EpochSlider': iterationsSliderVisibility[NNIndex], 'LRSlider': lrSliderVisibility[NNIndex]}}
+                    inputFieldVisibilities={{}}
+                    dropdownVisibilities={{'AFDropdown': !!afOptions[NNIndex].length, 'OptimizerDropdown': !!optimOptions[NNIndex].length}}
+                    dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
+                    checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
+                    gamesData={gamesData}
+                  />
+                  </>
+                }
+              />
+            );
+          })}
 
           {quizIds.map((quizId, index) => (
             <>

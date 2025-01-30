@@ -928,10 +928,10 @@ function App() {
             const type = "challenges";
             const level = Math.floor(taskId / 10);
             const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task] === "open";
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return null;
             }
 
@@ -944,10 +944,10 @@ function App() {
             const type = "challenges";
             const level = Math.floor(taskId / 10);
             const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task] === "open";
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return null;
             }
 
@@ -966,10 +966,10 @@ function App() {
             const type = "challenges";
             const level = Math.floor(taskId / 10);
             const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task] === "open";
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return null;
             }
 
@@ -1014,10 +1014,10 @@ function App() {
             const type = "challenges";
             const level = Math.floor(taskId / 10);
             const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task] === "open";
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return null;
             }
 

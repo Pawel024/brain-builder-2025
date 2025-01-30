@@ -931,7 +931,7 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
               return null;
             }
 
@@ -947,7 +947,7 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
               return null;
             }
 
@@ -969,7 +969,7 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
               return null;
             }
 
@@ -1017,7 +1017,7 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed`);
+              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task]}`);
               return null;
             }
 

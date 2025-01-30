@@ -29,7 +29,7 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
                     const entry = introData.find(entry => entry.intro_id === 10*level+intro);
                     return entry?.visibility ? (
                         <ChallengeButton key={`intro${level}${intro}_button`}
-                            link={`introduction${level}${intro}`}
+                            link={`introduction${level}-${intro}`}
                             label="Introduction"
                             Icon={DrawingPinIcon}
                             active={isActive("intros", levelStr, index)}
@@ -39,7 +39,7 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
 
                 {challenges.map((challenge, index) => (
                     <ChallengeButton key={`challenge${level}${challenge}_button`}
-                        link={links?.[10*level+challenge] ?? `exercise${level}.${challenge}`}
+                        link={links?.[10*level+challenge] ?? `exercise${level}-${challenge}`}
                         label={taskNames[`${level}${challenge}`]}
                         Icon={challengeIcons[index] || RocketIcon}
                         active={isActive("challenges", levelStr, index)}
@@ -50,7 +50,7 @@ function Level({ level, levelNames, taskNames, introData, quizData, introsByLeve
                     const entry = quizData.find(entry => entry.quiz_id === 10*level+quiz);
                     return entry?.visibility ? (
                         <ChallengeButton key={`quiz${level}${quiz}_button`}
-                            link={`quiz${level}${quiz}`}
+                            link={`quiz${level}-${quiz}`}
                             label="Quiz"
                             Icon={Pencil2Icon}
                             active={isActive("quizzes", levelStr, index)}

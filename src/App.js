@@ -914,10 +914,15 @@ function App() {
             
             if (!introData[index].visibility || !introData[index].enabled) {
               console.log(`Intro ${introId} not routed`);
-              return (<NotFound />);
+              return (
+                <Route
+                key={`intro${introId}`}
+                path={`/introduction${level}-${task}`}
+                element={<NotFound />}/>
+              );
             } else {
               return (
-                <Route path={`/introduction${level}-${task}`} element={
+                <Route key={`intro${introId}`} path={`/introduction${level}-${task}`} element={
                   <Introduction introId={introId}/>
                 } />
               );
@@ -932,11 +937,16 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return (<NotFound />);
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
             }
 
             return (
-              <Route path={`/exercise${level}-${task}`} element={<ClusteringTest clusteringId={taskId} />} />
+              <Route key={taskId} path={`/exercise${level}-${task}`} element={<ClusteringTest clusteringId={taskId} />} />
             );
           })}
 
@@ -948,7 +958,12 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return (<NotFound />);
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
             }
 
             return (
@@ -970,7 +985,12 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return (<NotFound />);
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
             }
 
             return (
@@ -1018,7 +1038,12 @@ function App() {
           
             if (!isOpen) {
               console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
-              return (<NotFound />);
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
             }
 
             return (
@@ -1096,12 +1121,17 @@ function App() {
 
             if (!quizData[index].visibility || !quizData[index].enabled) {
               console.log(`Quiz ${quizId} not routed`);
-              return (<NotFound />);
+              return (
+                <Route
+                key={`quiz${quizId}`}
+                path={`/quiz${level}-${task}`}
+                element={<NotFound />}/>
+              );
             } else {
               
               return (
                 <Route
-                key={quizId}
+                key={`quiz${quizId}`}
                 path={`/quiz${level}-${task}`}
                 element={
                   <div className="App">

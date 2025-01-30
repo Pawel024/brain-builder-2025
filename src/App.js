@@ -908,26 +908,35 @@ function App() {
         <Routes>
           <Route path="/" element={<StartPage levelNames={levelNames} taskNames={taskNames} introData={introData} quizData={quizData} taskIds={taskIds} taskIcons={taskIcons} quizIds={quizIds} introIds={introIds} links={linksDict} progressData={progressData} />} />
           
-          {introIds.map((introId, index) => (
-            <>
-            { introData[index].visibility && introData[index].enabled &&
-              <Route path={`/introduction${introId}`} element={
-                <Introduction introId={introId}/>
-              } />
+          {introIds.map((introId, index) => {
+            const level = Math.floor(introId / 10);
+            const task = introId % 10;
+            
+            if (!introData[index].visibility || !introData[index].enabled) {
+              console.log(`Intro ${introId} not routed`);
+              return null;
+            } else {
+              return (
+                <Route path={`/introduction${level}-${task}`} element={
+                  <Introduction introId={introId}/>
+                } />
+              );
             }
-            </>
-          ))}
+          })}
 
-          {clusteringTaskIds.map((clusteringId, index) => {
+          {clusteringTaskIds.map((taskId, index) => {
             const type = "challenges";
-            const level = Math.floor(clusteringId / 10);
-            const task = clusteringId % 10;
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
-            if (!isOpen) return null;
+            if (!isOpen) {
+              console.log(`Task ${taskId} not routed`);
+              return null;
+            }
 
             return (
-              <Route path={`/exercise${clusteringId/10}`} element={<ClusteringTest clusteringId={clusteringId} />} />
+              <Route path={`/exercise${level}-${task}`} element={<ClusteringTest clusteringId={taskId} />} />
             );
           })}
 
@@ -937,10 +946,13 @@ function App() {
             const task = taskId % 10;
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
-            if (!isOpen) return null;
+            if (!isOpen) {
+              console.log(`Task ${taskId} not routed`);
+              return null;
+            }
 
             return (
-              <Route key={taskId} path={`/exercise${taskId/10}`} element={<OtherTask
+              <Route key={taskId} path={`/exercise${level}-${task}`} element={<OtherTask
                 type = {taskName}
                 host = {window.location.host}
                 customId = {parseInt(taskId)}
@@ -956,12 +968,15 @@ function App() {
             const task = taskId % 10;
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
-            if (!isOpen) return null;
+            if (!isOpen) {
+              console.log(`Task ${taskId} not routed`);
+              return null;
+            }
 
             return (
               <Route
                 key={taskId}
-                path={`/exercise${taskId/10}`}
+                path={`/exercise${level}-${task}`}
                 element={
                   <>
                   <SvmView 
@@ -1001,12 +1016,15 @@ function App() {
             const task = taskId % 10;
             const isOpen = progressData[type]?.[level]?.[task] === "open";
           
-            if (!isOpen) return null;
+            if (!isOpen) {
+              console.log(`Task ${taskId} not routed`);
+              return null;
+            }
 
             return (
               <Route
                 key={taskId}
-                path={`/exercise${taskId/10}`}
+                path={`/exercise${level}-${task}`}
                 element={
                   <>
                   <BuildView
@@ -1072,39 +1090,46 @@ function App() {
             );
           })}
 
-          {quizIds.map((quizId, index) => (
-            <>
-            { quizData[index].visibility && quizData[index].enabled &&
-            <Route
-            key={quizId}
-            path={`/quiz${quizId}`}
-            element={
-              <div className="App">
-                <Box py="2" style={{ backgroundColor: "var(--cyan-10)"}}>
-                <Grid columns='3' mt='1'>
-                  <Box ml='3' style={{display:"flex"}}>  
-                    <Link to="/">
-                      <IconButton aria-label="navigate to home" height='21' style={{ marginLeft: 'auto', color: 'inherit', textDecoration: 'none' }}>
-                        <HomeIcon color="white" height='18' style={{ marginTop: 2 }} />
-                      </IconButton>
-                    </Link>
-                  </Box>
-                  <Link to={window.location.origin} style={{ textDecoration: 'none' }}>
-                  <Heading as='h1' align='center' size='6' style={{ color: 'var(--gray-1)', marginTop: 2, marginBottom: 0, textDecoration: 'none', fontFamily:'monospace, Courier New, Courier' }}>brAIn builder</Heading>
-                  </Link>
-                  <Box align='end' mr='3' >
-                      <Link to="https://www.tudelft.nl/en/" target="_blank" style={{ textDecoration: 'none'}}>
-                      <img src={tu_delft_pic} alt='Tu Delft Logo' width='auto' height='30'/>
+          {quizIds.map((quizId, index) => {
+            const level = Math.floor(quizId / 10);
+            const task = quizId % 10;
+
+            if (!quizData[index].visibility || !quizData[index].enabled) {
+              console.log(`Quiz ${quizId} not routed`);
+              return null;
+            } else {
+              
+              return (
+                <Route
+                key={quizId}
+                path={`/quiz${level}-${task}`}
+                element={
+                  <div className="App">
+                    <Box py="2" style={{ backgroundColor: "var(--cyan-10)"}}>
+                    <Grid columns='3' mt='1'>
+                      <Box ml='3' style={{display:"flex"}}>  
+                        <Link to="/">
+                          <IconButton aria-label="navigate to home" height='21' style={{ marginLeft: 'auto', color: 'inherit', textDecoration: 'none' }}>
+                            <HomeIcon color="white" height='18' style={{ marginTop: 2 }} />
+                          </IconButton>
+                        </Link>
+                      </Box>
+                      <Link to={window.location.origin} style={{ textDecoration: 'none' }}>
+                      <Heading as='h1' align='center' size='6' style={{ color: 'var(--gray-1)', marginTop: 2, marginBottom: 0, textDecoration: 'none', fontFamily:'monospace, Courier New, Courier' }}>brAIn builder</Heading>
                       </Link>
-                  </Box>
-                </Grid>
-                </Box>
-                <QuizApp quizId={quizId} />
-              </div>
-            }/>
+                      <Box align='end' mr='3' >
+                          <Link to="https://www.tudelft.nl/en/" target="_blank" style={{ textDecoration: 'none'}}>
+                          <img src={tu_delft_pic} alt='Tu Delft Logo' width='auto' height='30'/>
+                          </Link>
+                      </Box>
+                    </Grid>
+                    </Box>
+                    <QuizApp quizId={quizId} />
+                  </div>
+                }/>
+              );
             }
-            </>
-          ))}
+          })}
 
           <Route path={`/feedback`} element={
             <div className="App">

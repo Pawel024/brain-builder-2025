@@ -131,6 +131,7 @@ class Model extends React.Component {
     componentDidMount() {
         axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
+          // hide the preloader when page loads
           const preloader = document.getElementById("preloader");
           if (preloader) {
             preloader.style.display = "none";

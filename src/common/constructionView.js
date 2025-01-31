@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {useParams, Navigate} from 'react-router-dom';
 import Header from "./header";
 import underConstructionImage from "../images/under_construction_by_freepik.jpg";
 import NotFound from "./notFound";
 
 function ConstructionView( params ) {
+    useEffect(() => {   // hide the preloader when page loaded
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+            preloader.style.display = "none";
+        }
+    }, []);
+
     let { ex } = useParams();
 
     if (!ex.startsWith("exercise")) {  // if the URL does not start with "exercise", redirect to the not found page

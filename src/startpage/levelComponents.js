@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Flex, Box, Heading, IconButton, TextField } from '@radix-ui/themes';
 import { Link } from 'react-router-dom';
-import { CheckCircledIcon } from '@radix-ui/react-icons';
-import { RocketIcon, Pencil2Icon, Link2Icon, CopyIcon, CodeIcon } from '@radix-ui/react-icons';
+import { CopyIcon } from '@radix-ui/react-icons';
 import Readme from '../readme';
 import * as Progress from '@radix-ui/react-progress';
 import '@radix-ui/themes/styles.css';

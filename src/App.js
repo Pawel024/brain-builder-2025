@@ -495,6 +495,7 @@ function App() {
   
   const [loadedTasks, setLoadedTasks] = useState(false);
   useEffect(() => {
+    // hide the preloader when page loads
     const preloader = document.getElementById("preloader");
     if (preloader && window.location.pathname === '/') {
       preloader.style.display = "none";
@@ -913,7 +914,6 @@ function App() {
             const task = introId % 10;
             
             if (!introData[index].visibility || !introData[index].enabled) {
-              console.log(`Intro ${introId} not routed`);
               return (
                 <Route
                 key={`intro${introId}`}
@@ -936,7 +936,6 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return (
                 <Route
                 key={taskId}
@@ -957,7 +956,6 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return (
                 <Route
                 key={taskId}
@@ -984,7 +982,6 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return (
                 <Route
                 key={taskId}
@@ -1037,7 +1034,6 @@ function App() {
             const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
-              console.log(`Task ${taskId} not routed, progressData: ${progressData[type]?.[level]?.[task-1]}`);
               return (
                 <Route
                 key={taskId}
@@ -1120,7 +1116,6 @@ function App() {
             const task = quizId % 10;
 
             if (!quizData[index].visibility || !quizData[index].enabled) {
-              console.log(`Quiz ${quizId} not routed`);
               return (
                 <Route
                 key={`quiz${quizId}`}

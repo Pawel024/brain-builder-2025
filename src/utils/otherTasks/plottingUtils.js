@@ -78,6 +78,8 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
         }]
     };
 
+    const maxY = Math.max(...y) * 1.2; // Add 20% padding
+
     const scatterOptions = {
         responsive: true,
         maintainAspectRatio: true,
@@ -88,7 +90,8 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
             },
             y: {
                 min: -10,
-                max: 10
+                max: maxY,
+                suggestedMax: maxY
             }
         },
         animation: {

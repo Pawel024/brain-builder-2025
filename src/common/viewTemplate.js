@@ -5,6 +5,7 @@ import * as SliderSlider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
 import { PlayIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
 import CodePreview from '../code_preview/codePreview';
+import SvmCodePreview from '../code_preview/svmCodePreview';
 import Header from '../common/header';
 import { useNavigate } from 'react-router-dom';
 import Slider from 'react-animated-slider';

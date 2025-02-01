@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import '@radix-ui/themes/styles.css';
 import { Model } from './common/viewTemplate';
 import LottieLoader from './common/lottieLoader';
-
+import svmToCode from './code_preview/svmExplainTools';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -31,7 +31,7 @@ class SvmView extends Model {
       };
 
 
-        this.useCodePreview = false
+        this.useCodePreview = true;
 
         this.tabs = [
             { name: 'Data', value: 'data' },
@@ -113,11 +113,14 @@ class SvmView extends Model {
 
     handleCodeClick = (event) => {
         this.setState({
-            // TODO: implement the relevant code function
-            code: "print('Hello World!')",
+            code: svmToCode(
+                this.state.sliderValues['CSlider'], 
+                this.state.sliderValues['GammaSlider'], 
+                this.state.checkboxValues['KernelCheckbox'] ? 'rbf' : 'linear'
+            ),
             showCode: true
         });
-        window.scrollTo(0, document.body.scrollHeight); // Scroll to the bottom of the page
+        window.scrollTo(0, document.body.scrollHeight);
     }
 
     handleCheckboxChange = () => {

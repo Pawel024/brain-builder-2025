@@ -95,7 +95,7 @@ class Building extends Model {
             }]
         };
 
-        this.useCodePreview = true
+        this.useCodePreview = true;
 
         this.tabs = [
             { name: 'Data', value: 'data' },

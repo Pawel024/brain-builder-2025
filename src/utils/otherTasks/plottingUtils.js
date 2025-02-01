@@ -27,22 +27,6 @@ function debounce(func, delay) {
     };
 }
 
-// General-purpose handleChange function, call like this:
-//      const processValue = () => {
-//          ...
-//      }
-//      const plotValue = () => {
-//          ...
-//      }
-//      const genericSlider = (
-//          <Slider.Root
-//             (...)
-//             onValueChange={(value) => handleChangeWrapper(value[0], processValue, plotValue, 'genericState', states, stateSetter)}  // COPY THIS LINE 
-//           >
-//              (...)
-//           </Slider.Root>
-//         );
-
 const handleChangeWrapper = (value, processingFunction, plottingFunction, state, all_states, stateSetter, delay=50) => {
     const handleChange = throttle((value, processingFunction, plottingFunction, state, all_states) => {  // TODO: switch to throttle while user is dragging the slider, but somehow take value the user lands on
         if (processingFunction) {value = processingFunction(value)}
@@ -124,6 +108,7 @@ function makeScatterChart(ctx, x, y) {
 }
 
 export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
+    // TODO: actually use the width and height or get rid of the parameters
 
     const chartRef = React.createRef();
 
@@ -145,7 +130,6 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
     }
 
     const plotData = (weight, bias) => {
-        // Do NOT recalculate maxY for the line; just use fixedMaxY each time
         const scatterChart = makeScatterChart(chartRef.current, states.x, states.y);
 
         if (weight !== null && bias !== null) {

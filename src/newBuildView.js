@@ -199,7 +199,7 @@ class Building extends Model {
                 data: this.props.errorList[0],
                 borderColor: 'rgba(7, 151, 185, 1)',
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
-                tension: 1,
+                tension: 0,
                 segment: {
                   animation: {
                     draw: (ctx) => {
@@ -380,7 +380,7 @@ class Building extends Model {
     handleLearningRateChange = (value) => {
         this.setState( prev => {
             const newSliderValues = {...prev.sliderValues};
-            newSliderValues['LRSlider'] = (10 ** ((value[0]/-20)-0.33)).toFixed(Math.round((value[0]+10) / 20));
+            newSliderValues['LRSlider'] = (10 ** (-value[0]/20)).toFixed(Math.round((-value[0]+10) / 20));
             return {sliderValues: newSliderValues};
         });
     };

@@ -208,7 +208,7 @@ class Building extends Model {
                   }
               },
               animation: {
-                duration: 0
+                duration: 200
               },
               responsive: false,
               maintainAspectRatio: false,

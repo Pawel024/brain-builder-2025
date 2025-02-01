@@ -3,7 +3,6 @@ import React, {  } from 'react';
 import * as Slider from '@radix-ui/react-slider';
 import { Flex, Box } from '@radix-ui/themes';
 import { Chart, registerables } from 'chart.js';
-import 'chartjs-plugin-colorschemes';
 //import { Chart, CategoryScale, LinearScale, LineController, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
 Chart.defaults.color = '#333';
@@ -94,9 +93,6 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
             duration: 0
         },
         plugins: {
-            colorschemes: {
-                scheme: 'brewer.Paired12' // One of many schemes, roughly Matplotlib-like
-            },
             legend: { display: false }
         },
         scales: {

@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import a11yDark from './a11y-dark';
 
 function SvmCodePreview({ code }) {
-    const steps = [  // Remove useState since these steps don't change
+    const steps = [
         {
             target: '#allparts',
             content: "This is an example of how you would train this SVM model using scikit-learn. We'll walk you through the most important parts of the code.",

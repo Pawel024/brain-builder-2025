@@ -70,10 +70,10 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
 Chart.register(...registerables);
 let chartInstance = null;
 
-// 1) Compute maxY from scatter data only, or choose a fixed number
-function getMaxY(x, y) {
+function getMaxY(y) {
   const dataMax = Math.max(...y);
-  return dataMax * 1.2; // 20% padding, no line-based calculation
+  const dataMin = Math.min(...y);
+  return Math.max(dataMax, Math.abs(dataMin)) * 1.2; // 20% padding
 }
 
 let fixedMaxY = null;
@@ -95,9 +95,8 @@ function makeScatterChart(ctx, x, y) {
         min: -10,
         max: 10
       },
-      // 2) Always use fixedMaxY here
       y: {
-        min: -10,
+        min: -fixedMaxY,
         max: fixedMaxY
       }
     },
@@ -130,17 +129,15 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
     // }
 
     if (!(states['x'] && states['y'])) {  // TODO: check if this works
-        const target_a = Math.tan((Math.random()/3)*Math.PI).toFixed(3)
-        const target_b = Math.floor(Math.random() * 12 - 5).toFixed(3)
+        const target_a = Math.tan((Math.random()/3)*Math.PI).toFixed(3);
+        const target_b = Math.floor(Math.random() * 12 - 5).toFixed(3);
         const x = Array.from({ length: 100 }, () => Math.floor(Math.random() * 20) - 10);
         const y = x.map(xi => target_a * xi + parseFloat(target_b) + (Math.random() * 2.82 - 1.41));  // approximate noise as a normal distribution
-        stateSetter('x', x)
-        states['x'] = x
-        stateSetter('y', y)
-        states['y'] = y
-
-        // 3) Compute fixedMaxY one time from the scatter data only
-        fixedMaxY = getMaxY(states.x, states.y);
+        stateSetter('x', x);
+        states['x'] = x;
+        stateSetter('y', y);
+        states['y'] = y;
+        fixedMaxY = getMaxY(states.y);
     }
 
     const plotData = (weight, bias) => {

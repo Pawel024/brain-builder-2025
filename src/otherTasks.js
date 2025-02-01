@@ -1,15 +1,58 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useRef } from 'react';
 import './css/App.css';
-import { Flex, Theme, Box, Heading, Separator } from '@radix-ui/themes';
+import { Flex, Theme, Box, Heading, Separator, Text, Checkbox } from '@radix-ui/themes';
 import Header from './common/header';
 import * as Slider from '@radix-ui/react-slider';
 
+import { renderLinReg } from './utils/otherTasks/plottingUtils'
+import renderDataMatrix from './utils/otherTasks/matrixUtils';
 import renderEmissions from './utils/otherTasks/emissionUtils';
 
-import renderMatrix from './utils/otherTasks/matrixUtils';
+import { _ } from 'ajv';
 
 
-class OtherTask extends Component {
+class OriginalTask extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    animation() {
+    }
+
+    render() {
+        return (
+        <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
+            <div className='App'>
+            <Flex direction='column' gap='0'>
+            <Header showHomeButton={true} />
+
+            <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontFamily: 'monospace', height: window.innerHeight-52, width:'100vw' }}>
+                <Flex direction='row' gap="0" style={{ height: window.innerHeight-52, width:'100vw', alignItems: 'center', justifyContent: 'center' }}>
+                    
+                    <Box style={{ flex:1, display: 'flex', flexDirection: 'column', textAlign:'justify', alignItems: 'flex-start', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
+                        {Array.isArray(this.props.description) && this.props.description.map(([subtitle, text], index) => (
+                            <div key={index}>
+                            <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
+                            <p>{text}</p>
+                            </div>
+                        ))}
+                    </Box>
+                    
+                    <Separator orientation='vertical' style = {{ height: window.innerHeight-110 }}/>
+                    
+                    <Box style={{ flex: 2}}>
+                        {this.props.type === 'ManualEmissions' ? renderEmissions( [this.state.out1, this.state.out2], this.setResult, [this.state.in1, this.state.in2], this.updateTime, this.updateWords ) : this.animation()}
+                    </Box>
+                </Flex>
+            </Box>
+            </Flex>
+            </div>
+        </Theme>
+        );
+    }
+}
+
+class BackendTask extends OriginalTask {
     /* This component can be used for simple tasks with a split screen with an explanation on the left and sliders and a visualisation on the right, separated by a vertical line. */
 
     constructor(props) {
@@ -33,9 +76,9 @@ class OtherTask extends Component {
             this.ws = new WebSocket(`wss://${this.props.host}/ws/${this.props.userId}/`);
         } else {
             this.ws = null;
-            if (this.props.type === 'ManualMatrix') {
-            this.setState({ view: renderMatrix(5, 3) });
-            }
+            // if (this.props.type === 'ManualMatrix') {
+            // this.setState({ view: renderMatrix(5, 3) });
+            // }
         }
     }
 
@@ -116,15 +159,15 @@ class OtherTask extends Component {
         };
       }
 
-    handleMatrixChange = (value, whichIn) => {
-        if (whichIn === 1) {
-            this.setState({ in1: value[0] });
-            this.setState({ view: renderMatrix(value[0], this.state.in2) })
-        } else {
-            this.setState({ in2: value[0] });
-            this.setState({ view: renderMatrix(this.state.in1, value[0]) })
-        }
-    }
+    // handleMatrixChange = (value, whichIn) => {
+    //     if (whichIn === 1) {
+    //         this.setState({ in1: value[0] });
+    //         this.setState({ view: renderMatrix(value[0], this.state.in2) })
+    //     } else {
+    //         this.setState({ in2: value[0] });
+    //         this.setState({ view: renderMatrix(this.state.in1, value[0]) })
+    //     }
+    // }
 
     handleAngleChange = this.throttle((value) => {
         this.setState({ in1: value[0] });
@@ -173,38 +216,6 @@ class OtherTask extends Component {
 
     updateTime = (value1, value2) => {
         this.setState({ in2: [value1, value2] });
-    }
-
-    render() {
-        return (
-        <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
-            <div className='App'>
-            <Flex direction='column' gap='0'>
-            <Header showHomeButton={true} />
-
-            <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontFamily: 'monospace', height: window.innerHeight-52, width:'100vw' }}>
-                <Flex direction='row' gap="0" style={{ height: window.innerHeight-52, width:'100vw', alignItems: 'center', justifyContent: 'center' }}>
-                    
-                    <Box style={{ flex:1, display: 'flex', flexDirection: 'column', textAlign:'justify', alignItems: 'flex-start', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
-                        {Array.isArray(this.props.description) && this.props.description.map(([subtitle, text], index) => (
-                            <div key={index}>
-                            <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
-                            <p>{text}</p>
-                            </div>
-                        ))}
-                    </Box>
-                    
-                    <Separator orientation='vertical' style = {{ height: window.innerHeight-110 }}/>
-                    
-                    <Box style={{ flex: 2}}>
-                        {this.props.type === 'ManualEmissions' ? renderEmissions( [this.state.out1, this.state.out2], this.setResult, [this.state.in1, this.state.in2], this.updateTime, this.updateWords ) : this.animation()}
-                    </Box>
-                </Flex>
-            </Box>
-            </Flex>
-            </div>
-        </Theme>
-        );
     }
 
     animation() {
@@ -277,39 +288,39 @@ class OtherTask extends Component {
             </Slider.Root>
         );
         
-        const nObjectsSlider = (
-            <Slider.Root
-                className="SliderRoot"
-                defaultValue={[5]}
-                onValueChange={(value) => this.handleMatrixChange(value, 1)}
-                min={2}
-                max={20}
-                step={1}
-                style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
-            >
-            <Slider.Track className="SliderTrack" style={{ height: 3 }}>
-                <Slider.Range className="SliderRange" />
-              </Slider.Track>
-              <Slider.Thumb className="SliderThumb" aria-label="nObjects" />
-            </Slider.Root>
-        );
+        // const nObjectsSlider = (
+        //     <Slider.Root
+        //         className="SliderRoot"
+        //         defaultValue={[5]}
+        //         onValueChange={(value) => this.handleMatrixChange(value, 1)}
+        //         min={2}
+        //         max={20}
+        //         step={1}
+        //         style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
+        //     >
+        //     <Slider.Track className="SliderTrack" style={{ height: 3 }}>
+        //         <Slider.Range className="SliderRange" />
+        //       </Slider.Track>
+        //       <Slider.Thumb className="SliderThumb" aria-label="nObjects" />
+        //     </Slider.Root>
+        // );
         
-        const nFeaturesSlider = (
-            <Slider.Root
-                className="SliderRoot"
-                defaultValue={[3]}
-                onValueChange={(value) => this.handleMatrixChange(value, 2)}
-                min={1}
-                max={10}
-                step={1}
-                style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
-            >
-            <Slider.Track className="SliderTrack" style={{ height: 3 }}>
-                <Slider.Range className="SliderRange" />
-              </Slider.Track>
-              <Slider.Thumb className="SliderThumb" aria-label="nFeatures" />
-            </Slider.Root>
-        );
+        // const nFeaturesSlider = (
+        //     <Slider.Root
+        //         className="SliderRoot"
+        //         defaultValue={[3]}
+        //         onValueChange={(value) => this.handleMatrixChange(value, 2)}
+        //         min={1}
+        //         max={10}
+        //         step={1}
+        //         style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
+        //     >
+        //     <Slider.Track className="SliderTrack" style={{ height: 3 }}>
+        //         <Slider.Range className="SliderRange" />
+        //       </Slider.Track>
+        //       <Slider.Thumb className="SliderThumb" aria-label="nFeatures" />
+        //     </Slider.Root>
+        // );
 
         return (
             <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px',  }}>
@@ -323,7 +334,7 @@ class OtherTask extends Component {
                     (this.props.type === 'ManualLinReg' || this.props.type === 'ManualPCA') ? weightSlider
                     : this.props.type === 'Manual3DPCA' ? angleSlider
                     : this.props.type === 'ManualPolyReg' ? orderSlider 
-                    : this.props.type === 'ManualMatrix' ? nObjectsSlider
+                    // : this.props.type === 'ManualMatrix' ? nObjectsSlider
                     : null}
                 </div>
 
@@ -332,7 +343,7 @@ class OtherTask extends Component {
                 <div>{this.state.in2Name}: {this.state.in2}</div>
                 <div className="slider" style={{ marginTop:10   , height:50, display: 'flex', justifyContent: 'center' }}>
                     {this.props.type === 'ManualLinReg' ? biasSlider
-                    : this.props.type === 'ManualMatrix' ? nFeaturesSlider
+                    // : this.props.type === 'ManualMatrix' ? nFeaturesSlider
                     : null}
                 </div>
                 </>
@@ -361,6 +372,81 @@ class OtherTask extends Component {
                 </>)}
                 </Flex>
             </Box>
+        );
+    }
+}
+
+class OtherTask extends Component {
+
+    constructor(props) {
+        super(props);
+
+        if (this.props.type === 'ManualLinReg') {
+            this.animation = renderLinReg
+        } else if (this.props.type === 'ManualMatrix') {
+            this.animation = renderDataMatrix
+        } else {
+            alert("Function not implemented yet")
+        }
+
+        this.animationWindowRef = React.createRef();
+        this.state = {
+            animationStates: {}, // changing one of these in the animation function causes a rerender
+            animationWindowWidth: 100, // TODO: update default value
+            animationWindowHeight: 100, // TODO: update default value
+        }
+    }
+
+    setAnimationState = (state, value) => {
+        this.setState( prev => {
+            const newAnimationStates = {...prev.animationStates};
+            newAnimationStates[state] = value;
+            return { animationStates: newAnimationStates }; 
+        });
+    }
+
+    componentDidMount() {
+        const { width, height } = document.querySelector('.animation-window').getBoundingClientRect();
+        this.setState({ animationWindowWidth: width, animationWindowHeight: height })
+    }
+
+    // componentWillUnmount() {
+    //     ...
+    // }
+
+    animation(props) {
+        console.log('Animation not implemented')
+    }
+
+    render() {
+        return (
+        <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
+            <div className='App'>
+            <Flex direction='column' gap='0'>
+            <Header showHomeButton={true} />
+
+            <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontFamily: 'monospace', height: window.innerHeight-52, width:'100vw' }}>
+                <Flex direction='row' gap="0" style={{ height: window.innerHeight-52, width:'100vw', alignItems: 'center', justifyContent: 'center' }}>
+                    
+                    <Box style={{ flex:1, display: 'flex', flexDirection: 'column', textAlign:'justify', alignItems: 'flex-start', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
+                        {Array.isArray(this.props.description) && this.props.description.map(([subtitle, text], index) => (
+                            <div key={index}>
+                            <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
+                            <p>{text}</p>
+                            </div>
+                        ))}
+                    </Box>
+                    
+                    <Separator orientation='vertical' style = {{ height: window.innerHeight-110 }}/>
+                    
+                    <Box className="animation-window" style={{ flex: 2, position: 'relative' }}>
+                        {this.animation(this.state.animationWindowWidth, this.state.animationWindowHeight, this.state.animationStates, this.setAnimationState)}
+                    </Box>
+                </Flex>
+            </Box>
+            </Flex>
+            </div>
+        </Theme>
         );
     }
 }

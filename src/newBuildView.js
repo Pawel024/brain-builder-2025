@@ -208,7 +208,7 @@ class Building extends Model {
                   }
               },
               animation: {
-                duration: 1000 // general animation time
+                duration: 100
               },
               responsive: false,
               maintainAspectRatio: false,
@@ -393,7 +393,7 @@ class Building extends Model {
 
     additionalComponents = () => {
         return (
-        <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
+        <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
             <div id="/api-data">
               {this.props.isTraining===2 ? (
                 <Flex direction='column' >
@@ -404,7 +404,7 @@ class Building extends Model {
                   {(this.props.taskId >= 20 &&
                   <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
                   )}
-                  <canvas ref={this.chartRef} id="myChart" style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.4 * (window.innerHeight-140)), marginTop:10 }}></canvas>
+                  <canvas ref={this.chartRef} id="myChart" style={{ maxWidth: Math.round(0.27 * (window.innerWidth * 0.97)), maxHeight: Math.round(0.35 * (window.innerHeight-140)), marginTop:10 }}></canvas>
                 </Flex>
               ) : (this.props.isTraining===1 ? (
                 <Flex direction= 'column'>

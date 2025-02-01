@@ -110,6 +110,12 @@ function makeScatterChart(ctx, x, y) {
     },
     plugins: {
       legend: { display: false }
+    },
+    animation: {
+      duration: 0
+    },
+    segment: {
+      animation: false
     }
   };
 
@@ -127,14 +133,6 @@ function makeScatterChart(ctx, x, y) {
 export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
 
     const chartRef = React.createRef();
-
-    // TODO: for whatever reason this broke everything
-    // if (!(states['weight'] && states['bias'])) {
-    //     stateSetter('weight', 45);
-    //     states['weight'] = 45;
-    //     stateSetter('bias', 0);
-    //     states['bias'] = 0
-    // }
 
     if (!(states['x'] && states['y'])) {  // TODO: check if this works
         const target_a = Math.tan((Math.random()/3)*Math.PI).toFixed(3);

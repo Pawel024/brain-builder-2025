@@ -85,6 +85,9 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
                 min: -10,
                 max: 10
             }
+        },
+        animation: {
+            duration: 0
         }
     };
 
@@ -102,7 +105,7 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
 }
 
 export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
-    // const ws = new WebSocket(`wss://${this.props.host}/ws/${this.props.userId}/`);
+
     const chartRef = React.createRef();  // plotting is weird
 
     // TODO: for whatever reason this broke everything
@@ -137,7 +140,9 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
                     }),
                     borderColor: 'rgba(185, 38, 4, 1)',
                     fill: false,
-                    type: 'line'
+                    type: 'line',
+                    showPoint: false,
+                    pointRadius: 0
                 }]
             };
 
@@ -145,10 +150,9 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
             scatterChart.update();
 
             stateSetter('error', meanSquaredError(weight, states['x'], bias, states['y']).toFixed(3))
-            console.log(weight, bias)  // TODO remove
         }
     }
-    
+
     const processWeight = (value) => {
         value = value * Math.PI / 180;
         value = Math.tan(value);

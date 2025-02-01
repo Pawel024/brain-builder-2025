@@ -70,61 +70,51 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
 Chart.register(...registerables);
 let chartInstance = null;
 
-// Calculate max Y range once
-const getMaxY = (x, y, weight, bias) => {
-    const dataMax = Math.max(...y);
-    const lineMax = Math.max(
-        weight * 10 + bias,
-        weight * -10 + bias
-    );
-    return Math.max(dataMax, lineMax) * 1.2; // 20% padding
-};
+// 1) Compute maxY from scatter data only, or choose a fixed number
+function getMaxY(x, y) {
+  const dataMax = Math.max(...y);
+  return dataMax * 1.2; // 20% padding, no line-based calculation
+}
 
-function makeScatterChart(ctx, x, y, fixedMaxY) {
-    const scatterData = {
-        datasets: [{
-            label: 'Scatter Dataset',
-            data: x.map((xi, index) => ({ x: xi, y: y[index] })),
-            backgroundColor: 'rgba(4, 151, 185, 1)'
-        }]
-    };
+let fixedMaxY = null;
 
-    const scatterOptions = {
-        responsive: true,
-        maintainAspectRatio: true,
-        scales: {
-            x: {
-                min: -10,
-                max: 10,
-                grid: { color: '#d0d0d0', drawBorder: true },
-                ticks: { color: '#333' }
-            },
-            y: {
-                min: -10,
-                max: fixedMaxY,
-                grid: { color: '#d0d0d0', drawBorder: true },
-                ticks: { color: '#333' }
-            }
-        },
-        animation: {
-            duration: 0
-        },
-        plugins: {
-            legend: { display: false }
-        }
-    };
+function makeScatterChart(ctx, x, y) {
+  const scatterData = {
+    datasets: [{
+      label: 'Scatter Dataset',
+      data: x.map((xi, index) => ({ x: xi, y: y[index] })),
+      backgroundColor: 'rgba(4, 151, 185, 1)'
+    }]
+  };
 
-    if (chartInstance) {
-        chartInstance.destroy()
+  const scatterOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    scales: {
+      x: {
+        min: -10,
+        max: 10
+      },
+      // 2) Always use fixedMaxY here
+      y: {
+        min: -10,
+        max: fixedMaxY
+      }
+    },
+    plugins: {
+      legend: { display: false }
     }
+  };
 
-    chartInstance = new Chart(ctx, {
-        type: 'scatter',
-        data: scatterData,
-        options: scatterOptions
-    });
+  if (chartInstance) chartInstance.destroy();
 
-    return chartInstance;
+  chartInstance = new Chart(ctx, {
+    type: 'scatter',
+    data: scatterData,
+    options: scatterOptions
+  });
+
+  return chartInstance;
 }
 
 export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
@@ -148,11 +138,14 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
         states['x'] = x
         stateSetter('y', y)
         states['y'] = y
+
+        // 3) Compute fixedMaxY one time from the scatter data only
+        fixedMaxY = getMaxY(states.x, states.y);
     }
 
     const plotData = (weight, bias) => {
-        const fixedMaxY = getMaxY(states['x'], states['y'], weight || 0, bias || 0);
-        const scatterChart = makeScatterChart(chartRef.current, states['x'], states['y'], fixedMaxY);
+        // Do NOT recalculate maxY for the line; just use fixedMaxY each time
+        const scatterChart = makeScatterChart(chartRef.current, states.x, states.y);
 
         if (weight !== null && bias !== null) {
             const lineData = {

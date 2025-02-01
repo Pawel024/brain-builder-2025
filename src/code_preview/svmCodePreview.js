@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Joyride from 'react-joyride';
 import { Box } from '@radix-ui/themes';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import a11yDark from './a11y-dark';
 
 function SvmCodePreview({ code }) {
-    const steps = [
+    const steps = [  // Remove useState since these steps don't change
         {
             target: '#allparts',
             content: "This is an example of how you would train this SVM model using scikit-learn. We'll walk you through the most important parts of the code.",

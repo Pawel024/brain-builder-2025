@@ -15,7 +15,6 @@ import a11yDark from './a11y-dark';
  */
 
 function CodePreview({ code, typ }) {
-    const [run, setRun] = useState(false);
     const [steps, setSteps] = useState([
         {
             target: '#allparts',

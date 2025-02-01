@@ -5,7 +5,6 @@ import * as SliderSlider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
 import { PlayIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
 import CodePreview from '../code_preview/codePreview';
-import layersToCode from '../code_preview/codeExplainTools';
 import Header from '../common/header';
 import { useNavigate } from 'react-router-dom';
 import Slider from 'react-animated-slider';
@@ -13,7 +12,6 @@ import * as Form from '@radix-ui/react-form';
 import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
 import axios from 'axios';
-
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -133,6 +131,12 @@ class Model extends React.Component {
     componentDidMount() {
         axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
+          // hide the preloader when page loads
+          const preloader = document.getElementById("preloader");
+          if (preloader) {
+            preloader.style.display = "none";
+          }
+          
           this.shortDescription = response.data.short_description;
           if (response.data.description[0] === '[') {
             this.setState({ description: JSON.parse(response.data.description) });
@@ -325,10 +329,12 @@ class Model extends React.Component {
 
     // TODO: remove the render function in your copy
     render() {
+      const preloader = document.getElementById("preloader");
+      
       if (this.state.loading) {
-        console.log("Loading...")
-        return <div>Loading...</div>
+        if (preloader) { preloader.style.display = "flex"; };
       } else {
+        if (preloader) { preloader.style.display = "none"; };
 
         return(
                 <div className='buildBody'>
@@ -355,7 +361,7 @@ class Model extends React.Component {
 
                     <Tabs.Content value="data">
                       {this.props.taskId !== 0 && (    // a taskId of 0 is used for tutorials
-                        <Flex direction="row" gap="2" style={{ overflow: 'auto', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
+                        <Flex direction="row" gap="2" style={{ overflow: 'hidden', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
                             
                             {/* slides with descriptions loaded from the database */}
                             <Box style={{ flexBasis: '50%' }}>   
@@ -531,7 +537,7 @@ class Model extends React.Component {
                           {this.props.img ? (
                           <img src={this.props.img} alt={`Plot of the data`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/}/>
                           ) : (
-                          <div>No image available. Try reloading the page? If this problem persists, please contact us.</div>
+                          <div>No plots available yet... have you already trained a model?</div>
                           )}
                       {/* TODO: Turn this into a pretty animation */}
                       </Flex>
@@ -539,9 +545,6 @@ class Model extends React.Component {
                   </Flex>
                   )}
                   </Tabs.Content>
-
-
-                    {/* ADD MORE TABS IF NECESSARY */}
 
                 </Box>
                 </Tabs.Root>

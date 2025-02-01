@@ -83,6 +83,12 @@ class BackendTask extends OriginalTask {
     }
 
     componentDidMount() {
+        // hide the preloader when page loads
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+            preloader.style.display = "none";
+        }
+
         if (this.ws !== null) {
 
         this.ws.onclose = () => {

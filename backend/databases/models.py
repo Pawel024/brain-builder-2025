@@ -115,6 +115,8 @@ class ClusteringDescription(models.Model):
 class Intro(models.Model):
     intro_id = models.IntegerField(unique=True)
     visibility = models.BooleanField(default=False)
+    enabled = models.BooleanField(default=True)
+    
     name = models.CharField(max_length=200)
     content = models.TextField()
 
@@ -125,6 +127,7 @@ class Intro(models.Model):
 class Quiz(models.Model):
     quiz_id = models.IntegerField(unique=True)
     visibility = models.BooleanField(default=False)
+    enabled = models.BooleanField(default=True)
     
     question_1 = models.TextField(null=True, blank=True)
     code_1 = models.TextField(null=True, blank=True)

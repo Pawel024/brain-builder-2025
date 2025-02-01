@@ -723,15 +723,15 @@ class DataFromSklearn2(Dataset):  # this one is for make_moons(n_samples, noise)
                             row = k // n_cols
                             col = k % n_cols
                             if n_plots == 1:
-                                ax.scatter(data[:, i], data[:, j], c=self.targets)
+                                ax.scatter(data[:, i], data[:, j], c=self.targets, cmap='Dark2')
                                 ax.set_xlabel(self.feature_names[i].replace('_', ' '))
                                 ax.set_ylabel(self.feature_names[j].replace('_', ' '))
                             elif n_rows == 1:
-                                ax[col].scatter(data[:, i], data[:, j], c=self.targets)
+                                ax[col].scatter(data[:, i], data[:, j], c=self.targets, cmap='Dark2')
                                 ax[col].set_xlabel(self.feature_names[i].replace('_', ' '))
                                 ax[col].set_ylabel(self.feature_names[j].replace('_', ' '))
                             else:
-                                ax[row, col].scatter(data[:, i], data[:, j], c=self.targets)
+                                ax[row, col].scatter(data[:, i], data[:, j], c=self.targets, cmap='Dark2')
                                 ax[row, col].xlabel(self.feature_names[i].replace('_', ' '))
                                 ax[row, col].ylabel(self.feature_names[j].replace('_', ' '))
                             k += 1
@@ -809,8 +809,8 @@ class DataFromSklearn2(Dataset):  # this one is for make_moons(n_samples, noise)
                         mesh[i] = mesh[i] * (self.maxima[i] - self.minima[i]) + self.minima[i]
                         data[:, i] = self.data[:, i] * (self.maxima[i] - self.minima[i]) + self.minima[i]
 
-                ax.contourf(mesh[0], mesh[1], Z, alpha=0.5)
-                ax.scatter(data[:, 0], data[:, 1], c=self.targets)
+                ax.contourf(mesh[0], mesh[1], Z, alpha=0.5, cmap='Set2')
+                ax.scatter(data[:, 0], data[:, 1], c=self.targets, cmap='Dark2')
 
                 ax.set_xlabel("Feature 1")
                 ax.set_ylabel("Feature 2")

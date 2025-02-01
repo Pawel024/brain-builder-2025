@@ -1,10 +1,10 @@
 import React from 'react'
-import { Theme, Flex, Box, Checkbox } from '@radix-ui/themes';
+import { Box, Checkbox } from '@radix-ui/themes';
 import * as SliderSlider from '@radix-ui/react-slider';
 import { useNavigate } from 'react-router-dom';
-import Slider from 'react-animated-slider';
 import '@radix-ui/themes/styles.css';
 import { Model } from './common/viewTemplate';
+import LottieLoader from './common/lottieLoader';
 
 
 // This is a template for creating a new view in the application, similar to buildView. 
@@ -18,6 +18,7 @@ class SvmView extends Model {
 
       this.state = {
         loading: true,
+        imageLoaded: false,
         currentSlide: 0,
         activeTab: 'training',
         showCode: false,
@@ -120,7 +121,6 @@ class SvmView extends Model {
     }
 
     handleCheckboxChange = () => {
-        console.log('Checkbox clicked, changing to ', !this.state.checkboxValues['KernelCheckbox'])
         this.setState( prev => {
             const newCheckboxValues = {...prev.checkboxValues};
             newCheckboxValues['KernelCheckbox'] = !prev.checkboxValues['KernelCheckbox'];
@@ -186,36 +186,38 @@ class SvmView extends Model {
     // FINALLY, THE RENDER
 
     renderModel = () => {
+
+        const handleImageLoad = () => {
+            this.setState({ imageLoaded: true });
+        };
+
         return (
-        <Box style={{ display: 'flex', flex: 3, height: '100vh' }}>
-            {console.log('SVM img & initPlot', this.props.img, this.props.initPlot)}
-            {this.props.img ? (
-                <img 
-                    src={this.props.img} 
-                    alt={"Plot of the decision boundary"} 
-                    style={{ 
-                        maxWidth: '80%', 
-                        maxHeight: '80%', 
-                        objectFit: 'contain' 
-                    }} 
-                />
-            ) : (
-                <img 
-                    src={this.props.initPlot} 
-                    alt={"Plot of the data"} 
-                    style={{ 
-                        maxWidth: '80%', 
-                        maxHeight: '80%', 
-                        objectFit: 'contain' 
-                    }} 
-                />
-            )}
-        </Box>)
+            <Box style={{ display: 'flex', height: window.innerHeight-116, width: '65vw' }}>
+                <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+                    {!this.state.imageLoaded && (
+                        <Box style={{ width: '25%', height: '25%' }}>
+                            <LottieLoader />
+                        </Box>
+                    )}
+                    <img 
+                            src={this.props.img || this.props.initPlot} 
+                            alt={this.props.img ? "Plot of the decision boundary" : "Plot of the data"} 
+                            style={{ 
+                                display: this.state.imageLoaded ? 'block' : 'none',
+                                maxWidth: '90%', 
+                                maxHeight: '90%', 
+                                objectFit: 'contain' 
+                            }} 
+                            onLoad={handleImageLoad}
+                        />
+                </Box>
+            </Box>
+        )
     }
 
     additionalComponents = () => {
         return (
-        <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
+        <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
             <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
                 {this.shortDescription}
             </div>

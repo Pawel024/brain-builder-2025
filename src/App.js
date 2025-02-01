@@ -414,7 +414,6 @@ function App() {
         currentTaskProgressData[levelStr].push("open")
       }
 
-
       // set TaskDescription states
       currentFileNames.push(entry.file_name);
       currentFunctionNames.push(entry.function_name);
@@ -496,6 +495,12 @@ function App() {
   
   const [loadedTasks, setLoadedTasks] = useState(false);
   useEffect(() => {
+    // hide the preloader when page loads
+    const preloader = document.getElementById("preloader");
+    if (preloader && window.location.pathname === '/') {
+      preloader.style.display = "none";
+    }
+
     axios.get('/api/all_tasks/')
       .then(response => {
         const currentTaskData = response.data;
@@ -904,48 +909,102 @@ function App() {
         <Routes>
           <Route path="/" element={<StartPage levelNames={levelNames} taskNames={taskNames} introData={introData} quizData={quizData} taskIds={taskIds} taskIcons={taskIcons} quizIds={quizIds} introIds={introIds} links={linksDict} progressData={progressData} />} />
           
-          {introIds.map((introId, index) => (
-            <>
-            { introData[index].visibility &&
-              <Route path={`/introduction${introId}`} element={
-                <Introduction introId={introId}/>
-              } />
+          {introIds.map((introId, index) => {
+            const level = Math.floor(introId / 10);
+            const task = introId % 10;
+            
+            if (!introData[index].visibility || !introData[index].enabled) {
+              return (
+                <Route
+                key={`intro${introId}`}
+                path={`/introduction${level}-${task}`}
+                element={<NotFound />}/>
+              );
+            } else {
+              return (
+                <Route key={`intro${introId}`} path={`/introduction${level}-${task}`} element={
+                  <Introduction introId={introId}/>
+                } />
+              );
             }
-            </>
-          ))}
+          })}
 
-          {clusteringTaskIds.map((clusteringId, index) => (
-            <Route path={`/exercise${clusteringId/10}`} element={<ClusteringTest clusteringId={clusteringId} />} />
-          ))}
+          {clusteringTaskIds.map((taskId, index) => {
+            const type = "challenges";
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+          
+            if (!isOpen) {
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
+            }
 
-          {Object.entries(otherTasks).map(([taskId, taskName], index) => (
-            <>
-            <Route key={taskId} path={`/exercise${taskId/10}`} element={<OtherTask
-              type = {taskName}
-              host = {window.location.host}
-              customId = {parseInt(taskId)}
-              userId = {getCookie('user_id')}
-              description = {otherDescriptions[taskId]}
-            />} />
-            </>
-          ))}
+            return (
+              <Route key={taskId} path={`/exercise${level}-${task}`} element={<ClusteringTest clusteringId={taskId} />} />
+            );
+          })}
 
-          {SVMTaskIds.map((taskId, SVMIndex) => (
-            <>
-            <Route
-              key={taskId}
-              path={`/exercise${taskId/10}`}
-              element={
-                <>
-                <SvmView 
-                isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
-                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
-                />
-                </>
-              }
-            />
-            </>
-          ))}
+          {Object.entries(otherTasks).map(([taskId, taskName], index) => {
+            const type = "challenges";
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+          
+            if (!isOpen) {
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
+            }
+
+            return (
+              <Route key={taskId} path={`/exercise${level}-${task}`} element={<OtherTask
+                type = {taskName}
+                host = {window.location.host}
+                customId = {parseInt(taskId)}
+                userId = {getCookie('user_id')}
+                description = {otherDescriptions[taskId]}
+              />} />
+            ); 
+          })}
+
+          {SVMTaskIds.map((taskId, SVMIndex) => {
+            const type = "challenges";
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+          
+            if (!isOpen) {
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
+            }
+
+            return (
+              <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={
+                  <>
+                  <SvmView 
+                  isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
+                  fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
+                  />
+                  </>
+                }
+              />
+            );
+          })}
 
           {sensitiveIds.map((taskId, NNIndex) => (
             // TODO currently unused as this whole idea turned into a big stinky mess
@@ -968,109 +1027,134 @@ function App() {
             />
             </>
           ))}
-          {NNTaskIds.map((taskId, NNIndex) => (
-            <>
-            <Route
-              key={taskId}
-              path={`/exercise${taskId/10}`}
-              element={
-                <>
-                <BuildView
-                  nOfInputs={nInputs[taskIds.indexOf(taskId)]}
-                  nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
-                  // nOfObjects={nObjects[taskIds.indexOf(taskId)]}
-                  maxLayers={maxLayers[NNIndex]}
-                  taskId={taskId}
-                  NNIndex={NNIndex}
-                  index={taskIds.indexOf(taskId)}
-                  cytoElements={cytoElements[NNIndex]}
-                  cytoStyle={cytoStyle[NNIndex]}
-                  cytoLayers={cytoLayers[NNIndex]}
-                  setCytoLayers={setCytoLayers}
-                  updateCytoLayers={updateCytoLayers}
-                  loadLastCytoLayers={loadLastCytoLayers}
-                  isTraining={isTraining[taskIds.indexOf(taskId)]}
-                  setIsTraining={setIsTraining}
-                  apiData={apiData[taskIds.indexOf(taskId)]}
-                  setApiData={setApiData}
-                  setAccuracy={setAccuracy}
-                  accuracyColor={accuracyColor}
-                  handleSubmit={handleSubmit}
-                  isResponding={isResponding[taskIds.indexOf(taskId)]}
-                  setIsResponding={setIsResponding}
-                  progress={NNProgress[NNIndex]}
-                  featureNames={featureNames[taskIds.indexOf(taskId)]}
-                  errorList={errorList[NNIndex]}
-                  weights={weights[NNIndex]}
-                  biases={biases[NNIndex]}
-                  img={imgs[taskIds.indexOf(taskId)]}
-                  initPlot={initPlots[taskIds.indexOf(taskId)]}
-                  loadData={loadData}
-                  imageVisibility={imageVisibility[NNIndex]}
-                  setProgress={setNNProgress}
-                  setErrorList={setErrorList}
-                  setWeights={setWeights}
-                  setBiases={setBiases}
-                  pendingTime={pendingTime}
-                  cancelRequestRef={cancelRequestRef}
-                  fileName={fileNames[taskIds.indexOf(taskId)]}
-                  functionName={functionNames[taskIds.indexOf(taskId)]}
-                  maxNodes={maxNodes[NNIndex]}
-                  maxEpochs={maxEpochs[NNIndex]}
-                  setImgs={setImgs}
-                  userId={getCookie('user_id')}
-                  intervalTimeout={intervalTimeout}
-                  typ={typ[taskIds.indexOf(taskId)]}
-                  dataset={dataset[taskIds.indexOf(taskId)]}
-                  name={taskNames[taskId]}
-                  startTraining={putRequest}
-                  tabs={['data', 'training', 'testing']}
-                  sliderVisibilities={{'EpochSlider': iterationsSliderVisibility[NNIndex], 'LRSlider': lrSliderVisibility[NNIndex]}}
-                  inputFieldVisibilities={{}}
-                  dropdownVisibilities={{'AFDropdown': !!afOptions[NNIndex].length, 'OptimizerDropdown': !!optimOptions[NNIndex].length}}
-                  dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
-                  checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
-                  gamesData={gamesData}
-                />
-                </>
-              }
-            />
-            </>
-          ))}
-
-          {quizIds.map((quizId, index) => (
-            <>
-            { quizData[index].visibility &&
-            <Route
-            key={quizId}
-            path={`/quiz${quizId}`}
-            element={
-              <div className="App">
-                <Box py="2" style={{ backgroundColor: "var(--cyan-10)"}}>
-                <Grid columns='3' mt='1'>
-                  <Box ml='3' style={{display:"flex"}}>  
-                    <Link to="/">
-                      <IconButton aria-label="navigate to home" height='21' style={{ marginLeft: 'auto', color: 'inherit', textDecoration: 'none' }}>
-                        <HomeIcon color="white" height='18' style={{ marginTop: 2 }} />
-                      </IconButton>
-                    </Link>
-                  </Box>
-                  <Link to={window.location.origin} style={{ textDecoration: 'none' }}>
-                  <Heading as='h1' align='center' size='6' style={{ color: 'var(--gray-1)', marginTop: 2, marginBottom: 0, textDecoration: 'none', fontFamily:'monospace, Courier New, Courier' }}>brAIn builder</Heading>
-                  </Link>
-                  <Box align='end' mr='3' >
-                      <Link to="https://www.tudelft.nl/en/" target="_blank" style={{ textDecoration: 'none'}}>
-                      <img src={tu_delft_pic} alt='Tu Delft Logo' width='auto' height='30'/>
-                      </Link>
-                  </Box>
-                </Grid>
-                </Box>
-                <QuizApp quizId={quizId} />
-              </div>
-            }/>
+          {NNTaskIds.map((taskId, NNIndex) => {
+            const type = "challenges";
+            const level = Math.floor(taskId / 10);
+            const task = taskId % 10;
+            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+          
+            if (!isOpen) {
+              return (
+                <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={<NotFound />}/>
+              );
             }
-            </>
-          ))}
+
+            return (
+              <Route
+                key={taskId}
+                path={`/exercise${level}-${task}`}
+                element={
+                  <>
+                  <BuildView
+                    nOfInputs={nInputs[taskIds.indexOf(taskId)]}
+                    nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
+                    // nOfObjects={nObjects[taskIds.indexOf(taskId)]}
+                    maxLayers={maxLayers[NNIndex]}
+                    taskId={taskId}
+                    NNIndex={NNIndex}
+                    index={taskIds.indexOf(taskId)}
+                    cytoElements={cytoElements[NNIndex]}
+                    cytoStyle={cytoStyle[NNIndex]}
+                    cytoLayers={cytoLayers[NNIndex]}
+                    setCytoLayers={setCytoLayers}
+                    updateCytoLayers={updateCytoLayers}
+                    loadLastCytoLayers={loadLastCytoLayers}
+                    isTraining={isTraining[taskIds.indexOf(taskId)]}
+                    setIsTraining={setIsTraining}
+                    apiData={apiData[taskIds.indexOf(taskId)]}
+                    setApiData={setApiData}
+                    setAccuracy={setAccuracy}
+                    accuracyColor={accuracyColor}
+                    handleSubmit={handleSubmit}
+                    isResponding={isResponding[taskIds.indexOf(taskId)]}
+                    setIsResponding={setIsResponding}
+                    progress={NNProgress[NNIndex]}
+                    featureNames={featureNames[taskIds.indexOf(taskId)]}
+                    errorList={errorList[NNIndex]}
+                    weights={weights[NNIndex]}
+                    biases={biases[NNIndex]}
+                    img={imgs[taskIds.indexOf(taskId)]}
+                    initPlot={initPlots[taskIds.indexOf(taskId)]}
+                    loadData={loadData}
+                    imageVisibility={imageVisibility[NNIndex]}
+                    setProgress={setNNProgress}
+                    setErrorList={setErrorList}
+                    setWeights={setWeights}
+                    setBiases={setBiases}
+                    pendingTime={pendingTime}
+                    cancelRequestRef={cancelRequestRef}
+                    fileName={fileNames[taskIds.indexOf(taskId)]}
+                    functionName={functionNames[taskIds.indexOf(taskId)]}
+                    maxNodes={maxNodes[NNIndex]}
+                    maxEpochs={maxEpochs[NNIndex]}
+                    setImgs={setImgs}
+                    userId={getCookie('user_id')}
+                    intervalTimeout={intervalTimeout}
+                    typ={typ[taskIds.indexOf(taskId)]}
+                    dataset={dataset[taskIds.indexOf(taskId)]}
+                    name={taskNames[taskId]}
+                    startTraining={putRequest}
+                    tabs={['data', 'training', 'testing']}
+                    sliderVisibilities={{'EpochSlider': iterationsSliderVisibility[NNIndex], 'LRSlider': lrSliderVisibility[NNIndex]}}
+                    inputFieldVisibilities={{}}
+                    dropdownVisibilities={{'AFDropdown': !!afOptions[NNIndex].length, 'OptimizerDropdown': !!optimOptions[NNIndex].length}}
+                    dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
+                    checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
+                    gamesData={gamesData}
+                  />
+                  </>
+                }
+              />
+            );
+          })}
+
+          {quizIds.map((quizId, index) => {
+            const level = Math.floor(quizId / 10);
+            const task = quizId % 10;
+
+            if (!quizData[index].visibility || !quizData[index].enabled) {
+              return (
+                <Route
+                key={`quiz${quizId}`}
+                path={`/quiz${level}-${task}`}
+                element={<NotFound />}/>
+              );
+            } else {
+              
+              return (
+                <Route
+                key={`quiz${quizId}`}
+                path={`/quiz${level}-${task}`}
+                element={
+                  <div className="App">
+                    <Box py="2" style={{ backgroundColor: "var(--cyan-10)"}}>
+                    <Grid columns='3' mt='1'>
+                      <Box ml='3' style={{display:"flex"}}>  
+                        <Link to="/">
+                          <IconButton aria-label="navigate to home" height='21' style={{ marginLeft: 'auto', color: 'inherit', textDecoration: 'none' }}>
+                            <HomeIcon color="white" height='18' style={{ marginTop: 2 }} />
+                          </IconButton>
+                        </Link>
+                      </Box>
+                      <Link to={window.location.origin} style={{ textDecoration: 'none' }}>
+                      <Heading as='h1' align='center' size='6' style={{ color: 'var(--gray-1)', marginTop: 2, marginBottom: 0, textDecoration: 'none', fontFamily:'monospace, Courier New, Courier' }}>brAIn builder</Heading>
+                      </Link>
+                      <Box align='end' mr='3' >
+                          <Link to="https://www.tudelft.nl/en/" target="_blank" style={{ textDecoration: 'none'}}>
+                          <img src={tu_delft_pic} alt='Tu Delft Logo' width='auto' height='30'/>
+                          </Link>
+                      </Box>
+                    </Grid>
+                    </Box>
+                    <QuizApp quizId={quizId} />
+                  </div>
+                }/>
+              );
+            }
+          })}
 
           <Route path={`/feedback`} element={
             <div className="App">

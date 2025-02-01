@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Heading } from '@radix-ui/themes';
 import backgroundImage from '../images/MontyPython404.jpg';
 
@@ -9,6 +9,13 @@ import backgroundImage from '../images/MontyPython404.jpg';
  * @returns {JSX.Element} The JSX element representing the 404 page.
  */
 function NotFound() {
+
+    useEffect(() => {   // hide the preloader when page loads
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+            preloader.style.display = "none";
+        }
+    }, []);
 
     return (
         <main aria-label="Page not found" style={{ 

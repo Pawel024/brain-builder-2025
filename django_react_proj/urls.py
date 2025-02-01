@@ -14,9 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
+from django.urls import path, re_path
 from backend.databases import views
-from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,7 +23,6 @@ urlpatterns = [
     path('readme', views.serve_readme),
     path('links', views.serve_links),
     re_path('api/notebooks/(?P<notebook_path>.+)/?$', views.get_notebook),
-#    path('events/', include('django_eventstream.urls')),
     re_path(r'^api/backend$', views.query_list),
     re_path(r'^api/backend/$', views.query_list),
     re_path(r'^api/backend/(?P<pk>[0-9]+)$', views.query_detail),
@@ -41,6 +39,9 @@ urlpatterns = [
     re_path(r'^api/intros$', views.intro_description_detail),
     re_path(r'^api/intros/$', views.intro_description_detail),
     re_path(r'^api/feedback$', views.feedback),
+
+    # serve .lottie files directly
+    re_path(r'^(?P<filename>.+\.lottie)$', views.serve_lottie_file),
 
     # catch-all pattern
     re_path(r'^.*$', views.index),

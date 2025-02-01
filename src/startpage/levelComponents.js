@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Flex, Box, Heading, IconButton, TextField } from '@radix-ui/themes';
 import { Link } from 'react-router-dom';
-import { CheckCircledIcon } from '@radix-ui/react-icons';
-import { RocketIcon, Pencil2Icon, Link2Icon, CopyIcon, CodeIcon } from '@radix-ui/react-icons';
+import { CopyIcon } from '@radix-ui/react-icons';
 import Readme from '../readme';
 import * as Progress from '@radix-ui/react-progress';
 import '@radix-ui/themes/styles.css';
@@ -10,7 +9,7 @@ import '../css/App.css';
 import getCookie from '../utils/cookieUtils';
 import isValidUUID from '../utils/userIdUtils';
 
-function ChallengeButton({ link, label, Icon, active, completed }) {
+function ChallengeButton({ link, label, Icon, active }) {
   const buttonStyle = {
     width: 136,
     height: 84,
@@ -18,10 +17,6 @@ function ChallengeButton({ link, label, Icon, active, completed }) {
     fontWeight: '500',
     boxShadow: '0 1px 3px var(--slate-a11)',
   };
-
-  if (completed) {
-    buttonStyle.outline = '2px solid var(--cyan-8)';
-  }
 
   // Function to check if a link is external
   const isExternalLink = (link) => /^https?:\/\//.test(link);
@@ -42,9 +37,6 @@ function ChallengeButton({ link, label, Icon, active, completed }) {
             </Flex>
 
           </Button>
-
-          {/* Checkmark icon in bottom right corner of the button */}
-          {completed && <CheckCircledIcon color='var(--cyan-10)' width={18} height={18} style={{ position: 'absolute', bottom: 3, right: 3 }} />}
       </div>
   </a>
   ) : (
@@ -63,9 +55,6 @@ function ChallengeButton({ link, label, Icon, active, completed }) {
             </Flex>
 
           </Button>
-
-          {/* Checkmark icon in bottom right corner of the button */}
-          {completed && <CheckCircledIcon color='var(--cyan-10)' width={18} height={18} style={{ position: 'absolute', bottom: 3, right: 3 }} />}
       </div>
     </Link>
   );

@@ -228,9 +228,7 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
                 </div>
                 
                 {chartRef ? 
-                <Box style={{ height: window.innerHeight*0.55, width: window.innerWidth*0.2, marginBottom:10 }}>
-                    <canvas ref={chartRef} id="myChart" style={{ width: '100%', height: '100%' }}></canvas>
-                </Box>
+                <canvas ref={chartRef} id="myChart" style={{ height: window.innerHeight*0.55, width: window.innerWidth*0.4, marginBottom:10 }}/>
                 : null}
                 
                 <div>

@@ -187,32 +187,64 @@ class Building extends Model {
             }
           } 
         }
+
         // Create a new chart if there is no chart
         if (this.chartInstance === null) {
-          // create a new chart
+          // Animation configuration
+          const totalDuration = 2000;
+          const delayBetweenPoints = totalDuration / this.props.errorList[0].length;
+          const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(0) : 
+            ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
+
+          // Create chart
           this.chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
-              labels: this.props.errorList[0].map((_, i) => i + 1), // Generate labels based on error array length
+              labels: this.props.errorList[0].map((_, i) => i + 1),
               datasets: [{
-                  label: 'Errors',
-                  data: this.props.errorList[0],
-                  borderColor: 'rgba(7, 151, 185, 1)',
-                  backgroundColor: 'rgba(7, 151, 185, 0.2)',
+                label: 'Errors',
+                data: this.props.errorList[0],
+                borderColor: 'rgba(7, 151, 185, 1)',
+                backgroundColor: 'rgba(7, 151, 185, 0.2)',
+                tension: 0.4
               }]
             },
             options: {
-              scales: {
-                  y: {
-                      beginAtZero: true
-                  }
-              },
               animation: {
-                duration: 100
+                x: {
+                  type: 'number',
+                  easing: 'linear',
+                  duration: delayBetweenPoints,
+                  from: NaN,
+                  delay(ctx) {
+                    if (ctx.type !== 'data' || ctx.xStarted) return 0;
+                    ctx.xStarted = true;
+                    return ctx.index * delayBetweenPoints;
+                  }
+                },
+                y: {
+                  type: 'number',
+                  easing: 'linear',
+                  duration: delayBetweenPoints,
+                  from: previousY,
+                  delay(ctx) {
+                    if (ctx.type !== 'data' || ctx.yStarted) return 0;
+                    ctx.yStarted = true;
+                    return ctx.index * delayBetweenPoints;
+                  }
+                }
+              },
+              plugins: {
+                legend: false
+              },
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
               },
               responsive: false,
-              maintainAspectRatio: false,
-            }  
+              maintainAspectRatio: false
+            }
           });
         }
       }

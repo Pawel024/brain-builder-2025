@@ -79,6 +79,8 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
     };
 
     const scatterOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
         scales: {
             x: {
                 min: -10,
@@ -217,24 +219,26 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
     return (
         <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
-            
                 <div>Weight: {states['weight']}</div>
-        
                 {weightSlider}
-
                 <div>Bias: {states['bias']}</div>
-                <div className="slider" style={{ marginTop:10   , height:50, display: 'flex', justifyContent: 'center' }}>
+                <div className="slider" style={{ marginTop:10, height:50, display: 'flex', justifyContent: 'center' }}>
                     {biasSlider}
                 </div>
                 
-                {chartRef ? 
-                <canvas ref={chartRef} id="myChart" style={{ height: window.innerHeight*0.55, width: window.innerWidth*0.4, marginBottom:10 }}/>
-                : null}
+                <div style={{ width: '500px', height: '400px' }}>
+                    {chartRef ? 
+                        <canvas 
+                            ref={chartRef} 
+                            id="myChart"
+                            style={{ width: '100%', height: '100%' }}
+                        />
+                        : null}
+                </div>
                 
                 <div>
                     Current error: {states['error']}
                 </div>
-
             </Flex>
         </Box>
     );

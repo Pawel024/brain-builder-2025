@@ -191,10 +191,7 @@ class Building extends Model {
         // Create a new chart if there is no chart
         if (this.chartInstance === null) {
           // Animation configuration
-          const totalDuration = 2000;
-          const delayBetweenPoints = totalDuration / this.props.errorList[0].length;
-          const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(0) : 
-            ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
+          const delayBetweenPoints = 100;
 
           // Create chart
           this.chartInstance = new Chart(ctx, {
@@ -206,33 +203,16 @@ class Building extends Model {
                 data: this.props.errorList[0],
                 borderColor: 'rgba(7, 151, 185, 1)',
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
-                tension: 0.4
+                tension: 0.4,
+                segment: {
+                  borderColor: ctx => ctx.p0.parsed.x <= ctx.p1.parsed.x ? 'rgba(7, 151, 185, 1)' : 'transparent'
+                }
               }]
             },
             options: {
               animation: {
-                x: {
-                  type: 'number',
-                  easing: 'linear',
-                  duration: delayBetweenPoints,
-                  from: NaN,
-                  delay(ctx) {
-                    if (ctx.type !== 'data' || ctx.xStarted) return 0;
-                    ctx.xStarted = true;
-                    return ctx.index * delayBetweenPoints;
-                  }
-                },
-                y: {
-                  type: 'number',
-                  easing: 'linear',
-                  duration: delayBetweenPoints,
-                  from: previousY,
-                  delay(ctx) {
-                    if (ctx.type !== 'data' || ctx.yStarted) return 0;
-                    ctx.yStarted = true;
-                    return ctx.index * delayBetweenPoints;
-                  }
-                }
+                duration: delayBetweenPoints,
+                easing: 'linear'
               },
               plugins: {
                 legend: false

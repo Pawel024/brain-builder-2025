@@ -124,7 +124,7 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
 
 export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
 
-    const chartRef = React.createRef();  // plotting is weird
+    const chartRef = React.createRef();
 
     // TODO: for whatever reason this broke everything
     // if (!(states['weight'] && states['bias'])) {
@@ -145,7 +145,7 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
         states['y'] = y
     }
 
-    const plotData = (weight, bias) => {  // TODO: Copilot-generated, chack if this works
+    const plotData = (weight, bias) => {
         const scatterChart = makeScatterChart(chartRef.current, states['x'], states['y'])
 
         if (weight !== null && bias !== null) {
@@ -226,15 +226,13 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
                     {biasSlider}
                 </div>
                 
-                <div style={{ width: '500px', height: '400px' }}>
-                    {chartRef ? 
-                        <canvas 
-                            ref={chartRef} 
-                            id="myChart"
-                            style={{ width: '100%', height: '100%' }}
-                        />
-                        : null}
-                </div>
+                {chartRef ? 
+                    <canvas 
+                        ref={chartRef} 
+                        id="myChart"
+                        style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginBottom:10 }}
+                    />
+                    : null}
                 
                 <div>
                     Current error: {states['error']}

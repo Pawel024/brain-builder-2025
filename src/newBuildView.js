@@ -199,7 +199,7 @@ class Building extends Model {
                 data: this.props.errorList[0],
                 borderColor: 'rgba(7, 151, 185, 1)',
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
-                tension: 0.4,
+                tension: 0.8,
                 segment: {
                   animation: {
                     draw: (ctx) => {
@@ -216,7 +216,7 @@ class Building extends Model {
             },
             options: {
               animation: {
-                duration: 800,
+                duration: 200,
                 easing: 'linear'
               },
               transitions: {

@@ -3,7 +3,6 @@ import React, {  } from 'react';
 import * as Slider from '@radix-ui/react-slider';
 import { Flex, Box } from '@radix-ui/themes';
 import { Chart, registerables } from 'chart.js';
-//import { Chart, CategoryScale, LinearScale, LineController, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
 Chart.defaults.color = '#333';
 Chart.defaults.font.family = 'sans-serif';
@@ -70,13 +69,22 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
 Chart.register(...registerables);
 let chartInstance = null;
 
-function getMaxY(y) {
+function getMinMaxY(y) {
   const dataMax = Math.max(...y);
   const dataMin = Math.min(...y);
-  return Math.max(dataMax, Math.abs(dataMin)) * 1.2; // 20% padding
+  const median = getMedianY(y);
+  const distance = Math.max(Math.abs(dataMax - median), Math.abs(dataMin - median)) * 1.2;
+  return { min: median - distance, max: median + distance };
 }
 
-let fixedMaxY = null;
+function getMedianY(y) {
+    const sorted = y.slice().sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
+}
+
+let maxY = null;
+let minY = null;
 
 function makeScatterChart(ctx, x, y) {
   const scatterData = {
@@ -96,8 +104,8 @@ function makeScatterChart(ctx, x, y) {
         max: 10
       },
       y: {
-        min: -fixedMaxY,
-        max: fixedMaxY
+        min: minY,
+        max: maxY
       }
     },
     plugins: {
@@ -137,7 +145,9 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
         states['x'] = x;
         stateSetter('y', y);
         states['y'] = y;
-        fixedMaxY = getMaxY(states.y);
+        const minMaxY = getMinMaxY(y);
+        minY = minMaxY.min;
+        maxY = minMaxY.max;
     }
 
     const plotData = (weight, bias) => {

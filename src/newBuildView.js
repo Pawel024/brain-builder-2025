@@ -190,10 +190,6 @@ class Building extends Model {
 
         // Create a new chart if there is no chart
         if (this.chartInstance === null) {
-          // Animation configuration
-          const delayBetweenPoints = 100;
-
-          // Create chart
           this.chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -205,14 +201,32 @@ class Building extends Model {
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
                 tension: 0.4,
                 segment: {
-                  borderColor: ctx => ctx.p0.parsed.x <= ctx.p1.parsed.x ? 'rgba(7, 151, 185, 1)' : 'transparent'
+                  animation: {
+                    draw: (ctx) => {
+                      if (ctx.type === 'segment') {
+                        ctx.element.x = ctx.properties.x;
+                        ctx.element.y = ctx.properties.y;
+                        ctx.element.x2 = ctx.properties.x2;
+                        ctx.element.y2 = ctx.properties.y2;
+                      }
+                    }
+                  }
                 }
               }]
             },
             options: {
               animation: {
-                duration: delayBetweenPoints,
+                duration: 800,
                 easing: 'linear'
+              },
+              transitions: {
+                show: {
+                  animations: {
+                    x: {
+                      from: 0
+                    }
+                  }
+                }
               },
               plugins: {
                 legend: false

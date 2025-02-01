@@ -481,7 +481,7 @@ class Model extends React.Component {
                                 </IconButton>}
                             </Flex>
                         </Box>
-                        {this.state.showCode && <CodePreview code={this.state.code} typ={this.props.typ} /> }
+                        {this.state.showCode && (this.props.taskId>20 ? <CodePreview code={this.state.code} typ={this.props.typ} /> : <SvmCodePreview code={this.state.code} />)}
                     </Tabs.Content>
 
 

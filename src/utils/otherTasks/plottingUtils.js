@@ -68,8 +68,19 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
 }
 
 Chart.register(...registerables);
-let chartInstance = null
-function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if this works
+let chartInstance = null;
+
+// Calculate max Y range once
+const getMaxY = (x, y, weight, bias) => {
+    const dataMax = Math.max(...y);
+    const lineMax = Math.max(
+        weight * 10 + bias,
+        weight * -10 + bias
+    );
+    return Math.max(dataMax, lineMax) * 1.2; // 20% padding
+};
+
+function makeScatterChart(ctx, x, y, fixedMaxY) {
     const scatterData = {
         datasets: [{
             label: 'Scatter Dataset',
@@ -78,20 +89,21 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
         }]
     };
 
-    const maxY = Math.max(...y) * 1.2; // Add 20% padding
-
     const scatterOptions = {
         responsive: true,
         maintainAspectRatio: true,
         scales: {
             x: {
                 min: -10,
-                max: 10
+                max: 10,
+                grid: { color: '#d0d0d0', drawBorder: true },
+                ticks: { color: '#333' }
             },
             y: {
                 min: -10,
-                max: maxY,
-                suggestedMax: maxY
+                max: fixedMaxY,
+                grid: { color: '#d0d0d0', drawBorder: true },
+                ticks: { color: '#333' }
             }
         },
         animation: {
@@ -99,16 +111,6 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
         },
         plugins: {
             legend: { display: false }
-        },
-        scales: {
-            x: {
-                grid: { color: '#d0d0d0', drawBorder: true },
-                ticks: { color: '#333' }
-            },
-            y: {
-                grid: { color: '#d0d0d0', drawBorder: true },
-                ticks: { color: '#333' }
-            }
         }
     };
 
@@ -116,13 +118,13 @@ function makeScatterChart(ctx, x, y) {  // TODO: Copilot-generated, check if thi
         chartInstance.destroy()
     }
 
-    chartInstance =  new Chart(ctx, {
+    chartInstance = new Chart(ctx, {
         type: 'scatter',
         data: scatterData,
         options: scatterOptions
     });
 
-    return chartInstance
+    return chartInstance;
 }
 
 export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
@@ -149,7 +151,8 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
     }
 
     const plotData = (weight, bias) => {
-        const scatterChart = makeScatterChart(chartRef.current, states['x'], states['y'])
+        const fixedMaxY = getMaxY(states['x'], states['y'], weight || 0, bias || 0);
+        const scatterChart = makeScatterChart(chartRef.current, states['x'], states['y'], fixedMaxY);
 
         if (weight !== null && bias !== null) {
             const lineData = {

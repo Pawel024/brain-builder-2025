@@ -199,7 +199,7 @@ class Building extends Model {
                 data: this.props.errorList[0],
                 borderColor: 'rgba(7, 151, 185, 1)',
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
-                tension: 0.95,
+                tension: 1,
                 segment: {
                   animation: {
                     draw: (ctx) => {
@@ -395,7 +395,7 @@ class Building extends Model {
           <img src={color_scale_pic} alt='Color scale from purple for negative to red for positive' width='20' height='auto' style={{ position: 'absolute', top: 15, left: 15 }}/>
 
           {((this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1) &&
-            <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.02, right: window.innerWidth*0.35 }}>
+            <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.02, right: window.innerWidth*0.34 }}>
             <img src={this.props.img} alt={`Plot of the training progress`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/} style={{ height: '200px', width: 'auto' }}/>
             {this.props.taskId === 11 && this.props.weights[0] && this.props.biases[0] && (
               <Flex direction="column" gap="0">

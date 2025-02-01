@@ -91,7 +91,8 @@ function makeScatterChart(ctx, x, y) {
     datasets: [{
       label: 'Scatter Dataset',
       data: x.map((xi, index) => ({ x: xi, y: y[index] })),
-      backgroundColor: 'rgba(4, 151, 185, 1)'
+      backgroundColor: 'rgba(4, 151, 185, 1)',
+      type: 'scatter'
     }]
   };
 
@@ -99,23 +100,15 @@ function makeScatterChart(ctx, x, y) {
     responsive: true,
     maintainAspectRatio: true,
     scales: {
-      x: {
-        min: -10,
-        max: 10
-      },
-      y: {
-        min: minY,
-        max: maxY
-      }
+      x: { min: -10, max: 10 },
+      y: { min: minY, max: maxY }
     },
     plugins: {
       legend: { display: false }
     },
-    animation: {
-      duration: 0
-    },
-    segment: {
-      animation: false
+    animation: false,
+    animations: {
+      y: false
     }
   };
 

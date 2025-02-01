@@ -133,24 +133,15 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
         const x = Array.from({ length: 100 }, () => Math.floor(Math.random() * 20) - 10);
         const y = x.map(xi => target_a * xi + parseFloat(target_b) + (Math.random() * 2.82 - 1.41));  // approximate noise as a normal distribution
         
-        // Initialize all state values
         stateSetter('x', x);
         stateSetter('y', y);
-        stateSetter('weight', Math.tan(45 * Math.PI / 180).toFixed(3));
-        stateSetter('bias', 0);
-        
-        // Update states object
+
         states['x'] = x;
         states['y'] = y;
-        states['weight'] = Math.tan(45 * Math.PI / 180).toFixed(3);
-        states['bias'] = 0;
-        
+
         const minMaxY = getMinMaxY(y);
         minY = minMaxY.min;
         maxY = minMaxY.max;
-        
-        // Initial plot
-        plotData(states['weight'], states['bias']);
     }
 
     const plotData = (weight, bias) => {

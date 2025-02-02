@@ -50,6 +50,77 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
     return sum / x.length;
 }
 
+function polyfit(x, y, degree) {
+    const n = degree + 1;
+    let sums = new Array(2 * n - 1).fill(0);
+    let A = Array(n).fill().map(() => Array(n).fill(0));
+    let b = Array(n).fill(0);
+
+    // Build the normal equations
+    for (let i = 0; i < x.length; i++) {
+        for (let j = 0; j < 2 * n - 1; j++) {
+            sums[j] += Math.pow(x[i], j);
+        }
+        for (let j = 0; j < n; j++) {
+            b[j] += y[i] * Math.pow(x[i], j);
+        }
+    }
+
+    // Build matrix A
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            A[i][j] = sums[i + j];
+        }
+    }
+
+    // Solve using Gaussian elimination
+    for (let i = 0; i < n; i++) {
+        let maxEl = Math.abs(A[i][i]);
+        let maxRow = i;
+        for (let k = i + 1; k < n; k++) {
+            if (Math.abs(A[k][i]) > maxEl) {
+                maxEl = Math.abs(A[k][i]);
+                maxRow = k;
+            }
+        }
+
+        for (let k = i; k < n; k++) {
+            let tmp = A[maxRow][k];
+            A[maxRow][k] = A[i][k];
+            A[i][k] = tmp;
+        }
+        let tmp = b[maxRow];
+        b[maxRow] = b[i];
+        b[i] = tmp;
+
+        for (let k = i + 1; k < n; k++) {
+            let c = -A[k][i] / A[i][i];
+            for (let j = i; j < n; j++) {
+                if (i === j) {
+                    A[k][j] = 0;
+                } else {
+                    A[k][j] += c * A[i][j];
+                }
+            }
+            b[k] += c * b[i];
+        }
+    }
+
+    let x_ = Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) {
+        x_[i] = b[i] / A[i][i];
+        for (let k = i - 1; k >= 0; k--) {
+            b[k] -= A[k][i] * x_[i];
+        }
+    }
+
+    return x_;
+}
+
+function polyval(coefficients, x) {
+    return coefficients.reduce((sum, coef, i) => sum + coef * Math.pow(x, i), 0);
+}
+
 Chart.register(...registerables);
 let chartInstance = null;
 
@@ -221,6 +292,119 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
                 <div>
                     Current error: {states['error']}
                 </div>
+            </Flex>
+        </Box>
+    );
+}
+
+export const renderPolyReg = (width, height, states, stateSetter) => {
+    const chartRef = React.createRef();
+    const limits = [0, 6.28];
+
+    if (!(states['x'] && states['y'])) {
+        const x = Array.from({ length: 10 }, () => Math.random() * (limits[1] - limits[0]) + limits[0]);
+        const y = x.map(xi => Math.sin(xi) + (Math.random() * 0.2 - 0.1));
+        
+        stateSetter('x', x);
+        stateSetter('y', y);
+        states['x'] = x;
+        states['y'] = y;
+
+        const minMaxY = getMinMaxY(y);
+        minY = -2;
+        maxY = 2;
+    }
+
+    const plotData = (degree) => {
+        if (!chartRef.current) return;
+        
+        const x_s = Array.from({ length: 100 }, (_, i) => limits[0] + (i / 99) * (limits[1] - limits[0]));
+        const y_s = x_s.map(x => Math.sin(x));
+
+        if (chartInstance) chartInstance.destroy();
+
+        const datasets = [
+            {
+                label: 'True Function',
+                data: x_s.map((x, i) => ({ x, y: y_s[i] })),
+                borderColor: 'rgba(0, 0, 0, 1)',
+                fill: false,
+                type: 'line',
+                pointRadius: 0
+            },
+            {
+                label: 'Data Points',
+                data: states.x.map((x, i) => ({ x, y: states.y[i] })),
+                backgroundColor: 'rgba(4, 151, 185, 1)',
+                type: 'scatter'
+            }
+        ];
+
+        if (degree !== null) {
+            const coeffs = polyfit(states.x, states.y, degree);
+            const fitted_y = x_s.map(x => polyval(coeffs, x));
+            
+            datasets.push({
+                label: 'Polynomial Fit',
+                data: x_s.map((x, i) => ({ x, y: fitted_y[i] })),
+                borderColor: 'rgba(185, 38, 4, 1)',
+                fill: false,
+                type: 'line',
+                pointRadius: 0
+            });
+        }
+
+        chartInstance = new Chart(chartRef.current, {
+            data: { datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: { min: limits[0], max: limits[1] },
+                    y: { min: minY, max: maxY }
+                },
+                plugins: {
+                    legend: { display: true }
+                },
+                animation: false
+            }
+        });
+    };
+
+    const plottingWrapper = (value) => {
+        plotData(states['degree'])
+    }
+
+    const degreeSlider = (
+        <Slider.Root
+            className="SliderRoot"
+            defaultValue={[1]}
+            onValueChange={(value) => handleChangeWrapper(value[0], Math.round, plottingWrapper, 'degree', states, stateSetter)}
+            min={1}
+            max={9}
+            step={1}
+            style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
+        >
+            <Slider.Track className="SliderTrack" style={{ height: 3 }}>
+                <Slider.Range className="SliderRange" />
+            </Slider.Track>
+            <Slider.Thumb className="SliderThumb" aria-label="Polynomial Degree" />
+        </Slider.Root>
+    );
+
+    return (
+        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
+            <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <div>Polynomial Degree: {states['degree']}</div>
+                {degreeSlider}
+                
+                {chartRef ? 
+                    <canvas 
+                        ref={chartRef} 
+                        id="myChart"
+                        style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginBottom:10 }}
+                    />
+                    : null}
             </Flex>
         </Box>
     );

@@ -4,7 +4,7 @@ import { Flex, Theme, Box, Heading, Separator, Text, Checkbox } from '@radix-ui/
 import Header from './common/header';
 import * as Slider from '@radix-ui/react-slider';
 
-import { renderLinReg } from './utils/otherTasks/plottingUtils'
+import { renderLinReg, renderPolyReg } from './utils/otherTasks/plottingUtils'  // Add renderPolyReg import
 import renderDataMatrix from './utils/otherTasks/matrixUtils';
 import renderEmissions from './utils/otherTasks/emissionUtils';
 
@@ -56,8 +56,22 @@ class BackendTask extends OriginalTask {
     /* This component can be used for simple tasks with a split screen with an explanation on the left and sliders and a visualisation on the right, separated by a vertical line. */
 
     constructor(props) {
-        let inVals = {'ManualLinReg': [1, 0], 'ManualPolyReg': [1], 'ManualMatrix': [5, 3], 'ManualPCA': [45], 'Manual3DPCA': [0], 'ManualEmissions': []}
-        let inNames = {'ManualLinReg': ['Weight', 'Bias'], 'ManualPolyReg': ['Order of the polynomial'], 'ManualMatrix': ['Number of objects', 'Number of features'], 'ManualPCA': ['Angle'], 'Manual3DPCA': ['Angle'], 'ManualEmissions': []}
+        let inVals = {
+            'ManualLinReg': [1, 0], 
+            'ManualPolyReg': [1],  // Add initial value for polynomial degree
+            'ManualMatrix': [5, 3], 
+            'ManualPCA': [45], 
+            'Manual3DPCA': [0], 
+            'ManualEmissions': []
+        }
+        let inNames = {
+            'ManualLinReg': ['Weight', 'Bias'], 
+            'ManualPolyReg': ['Degree'],  // Add name for polynomial degree input
+            'ManualMatrix': ['Number of objects', 'Number of features'], 
+            'ManualPCA': ['Angle'], 
+            'Manual3DPCA': ['Angle'], 
+            'ManualEmissions': []
+        }
         let outNames = {'ManualLinReg': ['Error'], 'ManualPolyReg': [], 'ManualMatrix': [], 'ManualPCA': ['Explained variance'], 'Manual3DPCA': ['Explained variance'], 'ManualEmissions': []}
         super(props);
         this.state = {
@@ -72,7 +86,7 @@ class BackendTask extends OriginalTask {
             img: null,
             view: null
         };
-        if (this.props.type === 'ManualLinReg' || this.props.type === 'ManualPolyReg' || this.props.type === 'ManualPCA' || this.props.type === 'Manual3DPCA') {
+        if (this.props.type === 'ManualLinReg' || this.props.type === 'ManualPCA' || this.props.type === 'Manual3DPCA') {
             this.ws = new WebSocket(`wss://${this.props.host}/ws/${this.props.userId}/`);
         } else {
             this.ws = null;
@@ -100,8 +114,6 @@ class BackendTask extends OriginalTask {
             if (this.props.type === 'ManualLinReg') {
                 // send a message to the websocket to create a baseline plot
                 this.ws.send(JSON.stringify({ header: 'initial_change', task_name: this.props.type, task_id: this.props.customId, a: 1, b: 0 }));
-            } else if (this.props.type === 'ManualPolyReg') {
-                this.ws.send(JSON.stringify({ header: 'initial_change', task_name: this.props.type, task_id: this.props.customId, n: 1 }));
             } else if (this.props.type === 'ManualPCA') {
                 this.ws.send(JSON.stringify({ header: 'initial_change', task_name: this.props.type, task_id: this.props.customId, a: 45 }));
             } else if (this.props.type === 'Manual3DPCA') {
@@ -192,13 +204,6 @@ class BackendTask extends OriginalTask {
         const message = JSON.stringify({ header: 'bias_change', task_name:this.props.type, task_id: this.props.customId, a: this.state.in1, b: value[0]});
         this.ws.send(message);
     }, 100)
-
-    handleOrderChange = this.throttle((value) => {
-        this.setState({ in1: value[0] });
-        // Send a message through the WebSocket
-        const message = JSON.stringify({ header: 'order_change', task_name: this.props.type, task_id: this.props.customId, n: value[0] });
-        this.ws.send(message);
-    }, 50)
 
     setResult = (value) => {
         this.setState({ out1: value[0], out2: value[1] });
@@ -385,6 +390,8 @@ class OtherTask extends Component {
             this.animation = renderLinReg
         } else if (this.props.type === 'ManualMatrix') {
             this.animation = renderDataMatrix
+        } else if (this.props.type === 'ManualPolyReg') {  // Add new condition
+            this.animation = renderPolyReg
         } else {
             alert("Function not implemented yet")
         }

@@ -339,7 +339,7 @@ class Building extends Model {
       <Slider.Root
         key={this.props.NNIndex}
         className="SliderRoot"
-        defaultValue={[50]} //maxEpochs[index] ? maxEpochs[index] / 4 : 25
+        defaultValue={[this.props.maxEpochs ? this.props.maxEpochs / 4 : 25]} //maxEpochs[index] ? maxEpochs[index] / 4 : 25
         onValueChange={(value) => this.handleIterationChange(value)}
         max={this.props.maxEpochs ? this.props.maxEpochs / 2 : 50}
         step={0.5}

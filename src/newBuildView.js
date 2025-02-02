@@ -71,7 +71,7 @@ class Building extends Model {
         code: '',
         description: '',
 
-        sliderValues: {'EpochSlider': 100, 'LRSlider': 0.01},
+        sliderValues: {'EpochSlider': 50, 'LRSlider': 0.01},
         dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
         checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
         runTutorial: false,
@@ -199,7 +199,7 @@ class Building extends Model {
                 data: this.props.errorList[0],
                 borderColor: 'rgba(7, 151, 185, 1)',
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
-                tension: 0.1,
+                tension: 0.8,
                 segment: {
                   animation: {
                     draw: (ctx) => {
@@ -339,7 +339,7 @@ class Building extends Model {
       <Slider.Root
         key={this.props.NNIndex}
         className="SliderRoot"
-        defaultValue={[null]} //maxEpochs[index] ? maxEpochs[index] / 4 : 25
+        defaultValue={[50]} //maxEpochs[index] ? maxEpochs[index] / 4 : 25
         onValueChange={(value) => this.handleIterationChange(value)}
         max={this.props.maxEpochs ? this.props.maxEpochs / 2 : 50}
         step={0.5}
@@ -364,7 +364,7 @@ class Building extends Model {
         <Slider.Root
         key={this.props.NNIndex}
         className="SliderRoot"
-        defaultValue={[null]}
+        defaultValue={[-35]}
         onValueChange={(value) => this.handleLearningRateChange(value)}
         min={-70}
         max={0}

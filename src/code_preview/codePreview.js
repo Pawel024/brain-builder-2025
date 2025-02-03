@@ -122,6 +122,7 @@ function CodePreview({ code, typ, tutorialReset }) {
                 </Box>
             </Box>
             <Joyride
+                key={tutorialReset}
                 steps={steps}
                 run={runTutorial}
                 continuous={true}

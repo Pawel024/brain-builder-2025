@@ -120,6 +120,12 @@ class SvmView extends Model {
             ),
             showCode: true
         });
+        // Force tutorial restart by remounting CodePreview
+        if (this.state.showCode) {
+            this.setState({ showCode: false }, () => {
+                setTimeout(() => this.setState({ showCode: true }), 0);
+            });
+        }
         window.scrollTo(0, document.body.scrollHeight);
     }
 

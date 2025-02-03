@@ -181,6 +181,15 @@ function makeScatterChart(ctx, x, y) {
 export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
     // TODO: actually use the width and height or get rid of the parameters
 
+    if (states.weight === undefined) {
+        states.weight = 1;
+        stateSetter('weight', 1);
+    }
+    if (states.bias === undefined) {
+        states.bias = 0;
+        stateSetter('bias', 0);
+    }
+
     const chartRef = React.createRef();
 
     if (!(states['x'] && states['y'])) {  // TODO: check if this works
@@ -285,7 +294,7 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
                     <canvas 
                         ref={chartRef} 
                         id="myChart"
-                        style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginBottom:10 }}
+                        style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.3 * (window.innerHeight-52)), marginBottom:10 }}
                     />
                     : null}
                 
@@ -394,7 +403,7 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
             defaultValue={[1]}
             onValueChange={(value) => handleChangeWrapper(value[0], Math.round, plottingWrapper, 'degree', states, stateSetter)}
             min={1}
-            max={15}
+            max={10}
             step={1}
             style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
         >
@@ -415,7 +424,7 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
                     <canvas 
                         ref={chartRef} 
                         id="myChart"
-                        style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.36 * (window.innerHeight-140)), marginTop: 20 }}
+                        style={{ width: Math.round(0.32 * (window.innerWidth * 0.97)), height: Math.round(0.25 * (window.innerHeight-52)), marginTop: 40 }}
                     />
                     : null}
             </Flex>

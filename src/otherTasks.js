@@ -4,9 +4,9 @@ import { Flex, Theme, Box, Heading, Separator, Text, Checkbox } from '@radix-ui/
 import Header from './common/header';
 import * as Slider from '@radix-ui/react-slider';
 
-import { RenderLinReg, renderPolyReg } from './utils/otherTasks/plottingUtils'  // Add renderPolyReg import
-import renderDataMatrix from './utils/otherTasks/matrixUtils';
-import renderEmissions from './utils/otherTasks/emissionUtils';
+import { RenderLinReg, RenderPolyReg } from './utils/otherTasks/plottingUtils'
+import { RenderDataMatrix } from './utils/otherTasks/matrixUtils';
+import { RenderEmissions } from './utils/otherTasks/emissionUtils';
 
 import { _ } from 'ajv';
 
@@ -41,7 +41,14 @@ class OriginalTask extends Component {
                     <Separator orientation='vertical' style = {{ height: window.innerHeight-110 }}/>
                     
                     <Box style={{ flex: 2}}>
-                        {this.props.type === 'ManualEmissions' ? renderEmissions( [this.state.out1, this.state.out2], this.setResult, [this.state.in1, this.state.in2], this.updateTime, this.updateWords ) : this.animation()}
+                        {this.props.type === 'ManualEmissions' ? 
+                            <RenderEmissions
+                                states={[this.state.out1, this.state.out2]}
+                                stateSetter={[this.state.in1, this.state.in2, this.updateTime, this.updateWords]}
+                                width={null}
+                                height={null}
+                            /> 
+                            : this.animation()}
                     </Box>
                 </Flex>
             </Box>
@@ -387,13 +394,13 @@ class OtherTask extends Component {
         super(props);
 
         if (this.props.type === 'ManualLinReg') {
-            this.animation = RenderLinReg
+            this.animation = RenderLinReg;
         } else if (this.props.type === 'ManualMatrix') {
-            this.animation = renderDataMatrix
-        } else if (this.props.type === 'ManualPolyReg') {  // Add new condition
-            this.animation = renderPolyReg
+            this.animation = RenderDataMatrix;
+        } else if (this.props.type === 'ManualPolyReg') {
+            this.animation = RenderPolyReg;
         } else {
-            alert("Function not implemented yet")
+            alert("Function not implemented yet");
         }
 
         this.animationWindowRef = React.createRef();
@@ -447,7 +454,12 @@ class OtherTask extends Component {
                     <Separator orientation='vertical' style = {{ height: window.innerHeight-110 }}/>
                     
                     <Box className="animation-window" style={{ flex: 2, position: 'relative' }}>
-                        {this.animation(this.state.animationWindowWidth, this.state.animationWindowHeight, this.state.animationStates, this.setAnimationState)}
+                        <this.animation 
+                            width={this.state.animationWindowWidth}
+                            height={this.state.animationWindowHeight}
+                            states={this.state.animationStates}
+                            stateSetter={this.setAnimationState}
+                        />
                     </Box>
                 </Flex>
             </Box>

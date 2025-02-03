@@ -312,7 +312,7 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
     );
 }
 
-export const renderPolyReg = (width, height, states, stateSetter) => {
+export function RenderPolyReg({ width, height, states, stateSetter }) {
     const chartRef = React.createRef();
     const limits = [0, 6.28];  // 2π
 
@@ -328,6 +328,12 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
         minY = -2;
         maxY = 2;
     }
+
+    useEffect(() => {
+        if (states.x && states.y) {
+            plotData(states.degree);
+        }
+    }, [states.x, states.y]);
 
     const plotData = (degree) => {
         if (!chartRef.current) return;

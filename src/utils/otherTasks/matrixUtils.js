@@ -2,7 +2,7 @@ import '../../css/App.css';
 import React, {  } from 'react';
 import { Flex, Box, Text, Checkbox } from '@radix-ui/themes';
 
-export default function renderDataMatrix(width, height, states, stateSetter) {
+export function RenderDataMatrix({ width, height, states, stateSetter }) {
     let inputOptions = ["Aircraft Type", "Origin", "Destination", "Distance (km)"];  // "Airline", "Number of Passengers", ...
     let allInputData = [
         ['A220', '787', '737'], // 'E190'

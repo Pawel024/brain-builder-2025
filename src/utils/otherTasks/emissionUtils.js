@@ -43,7 +43,10 @@ function renderText( textList, inputFields ) {
     );
 }
 
-function renderEmissions( result, setResult, ins, updateTime, updateWords, writing=true ) {
+export function RenderEmissions({ width, height, states, stateSetter }) {
+    
+    const [result, setResult] = states;
+    const [ins, updateTime, updateWords, writing=true] = stateSetter;
     
     if (writing) {
     if (ins[1] === null) {ins[1] = [null, null]};
@@ -97,5 +100,3 @@ function renderEmissions( result, setResult, ins, updateTime, updateWords, writi
     }
 
 }
-
-export default renderEmissions;

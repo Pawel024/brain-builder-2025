@@ -325,8 +325,8 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
             className="SliderRoot"
             defaultValue={[0]}
             onValueChange={(value) => handleChangeWrapper(value[0], null, plottingWrapper, 'bias', states, stateSetter)}  // COPY THIS LINE
-            min={-5}
-            max={5}
+            min={-10}
+            max={10}
             step={0.01}
             style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
         >

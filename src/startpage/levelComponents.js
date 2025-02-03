@@ -63,27 +63,20 @@ function ChallengeButton({ link, label, Icon, active }) {
 function FeedbackButton() {
   return (
     <Link to={"/feedback"} style={{ color: 'inherit', textDecoration: 'none' }}>
-      <IconButton variant="solid" color="cyan" style={{ 
+      <IconButton className="feedback-button" variant="solid" color="cyan" style={{ 
         borderRadius: 'var(--radius-3)', 
-        padding: 15, 
-        width: 'auto', 
+        padding: '17px 30px',
         height: 'auto', 
         fontSize: 'var(--font-size-3)',
-        transition: 'all 0.3s ease-in-out'
+        overflow: 'hidden'
       }}>
-        <Flex direction="horizontal" gap="0" style={{
-          alignItems: "center", 
-          fontFamily:'monospace'
+        <Flex direction="row" gap="0" style={{
+          alignItems: "center",
+          whiteSpace: 'nowrap'
         }}>
           <ChatBubbleIcon width="27" height="27" />
-          <span style={{
-            opacity: 0,
-            width: 0,
-            overflow: 'hidden',
-            transition: 'all 0.3s ease-in-out',
-            whiteSpace: 'nowrap'
-          }} className="feedback-text">
-            &nbsp;&nbsp;Let us know what you think!
+          <span className="feedback-text">
+            &nbsp;Let us know what you think!
           </span>
         </Flex>
       </IconButton>

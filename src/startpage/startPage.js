@@ -68,7 +68,7 @@ class StartPage extends React.Component {
 
     render () { 
 
-        const gap = 15;
+        const gap = 12;
 
         return(
             <div style={{ height: '100vh', overflow: 'hidden' }}>

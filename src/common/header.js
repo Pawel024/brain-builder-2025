@@ -12,7 +12,7 @@ function Header({ showHomeButton }) {
       <Grid columns='3' mt='1'>
 
         {showHomeButton ? (
-          <Box ml='3' style={{display:"flex"}}>  
+          <Box ml='12px' style={{display:"flex"}}>  
             <Link to="/">
               <IconButton aria-label="navigate to home" height='21' style={{ marginLeft: 'auto', color: 'inherit', textDecoration: 'none' }}>
                 <HomeIcon color="white" height='18' style={{ marginTop: 2 }} />
@@ -27,7 +27,7 @@ function Header({ showHomeButton }) {
         <Heading as='h1' align='center' size='6' style={{ color: 'var(--gray-1)', marginTop: 2, marginBottom: 0, textDecoration: 'none', fontFamily:'monospace, Courier New, Courier' }}><b>brAIn builder</b></Heading>
         </Link>
 
-        <Box align='end' mr='3' style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', paddingRight: 7 }}>
+        <Box align='end' mr='3' style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', paddingRight: 4 }}>
             <Link to="https://www.tudelft.nl/en/" target="_blank" style={{ textDecoration: 'none'}}>
             <img src={tu_delft_pic} alt='Tu Delft Logo' width='auto' height='30'/>
             </Link>

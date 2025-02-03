@@ -203,8 +203,8 @@ function makeScatterChart(ctx, x, y) {
   };
 
   const scatterOptions = {
-    responsive: true,
-    maintainAspectRatio: true,
+    responsive: false,
+    maintainAspectRatio: false,
     scales: {
       x: { min: -10, max: 10 },
       y: { min: minY, max: maxY }
@@ -440,6 +440,8 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
             data: { datasets },
             options: {
                 parsing: false,
+                responsive: false,
+                maintainAspectRatio: false,
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {

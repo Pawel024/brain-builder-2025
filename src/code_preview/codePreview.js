@@ -14,8 +14,8 @@ import a11yDark from './a11y-dark';
  * @returns {JSX.Element} The JSX element representing the code preview.
  */
 
-function CodePreview({ code, typ, tutorialReset }) {
-    const [runTutorial, setRunTutorial] = useState(false);
+function CodePreview({ code, typ }) {
+    const [runTutorial, setRunTutorial] = useState(true);
     const [steps, setSteps] = useState([
         {
             target: '#allparts',
@@ -73,14 +73,7 @@ function CodePreview({ code, typ, tutorialReset }) {
             }
             return newSteps;
         });
-    }, [typ]);
-
-    useEffect(() => {
-        // Re-init the tutorial on each new tutorialReset
-        setRunTutorial(false);
-        const timer = setTimeout(() => setRunTutorial(true), 0);
-        return () => clearTimeout(timer);
-    }, [tutorialReset]);
+    }, [typ, steps]);
 
     // Handle tutorial completion
     const handleJoyrideCallback = (data) => {
@@ -122,7 +115,6 @@ function CodePreview({ code, typ, tutorialReset }) {
                 </Box>
             </Box>
             <Joyride
-                key={tutorialReset}
                 steps={steps}
                 run={runTutorial}
                 continuous={true}

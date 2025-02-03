@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Flex, Box, Heading, IconButton, TextField } from '@radix-ui/themes';
 import { Link } from 'react-router-dom';
-import { CopyIcon } from '@radix-ui/react-icons';
+import { ChatBubbleIcon, CopyIcon } from '@radix-ui/react-icons';
 import Readme from '../readme';
 import * as Progress from '@radix-ui/react-progress';
 import '@radix-ui/themes/styles.css';
@@ -60,6 +60,36 @@ function ChallengeButton({ link, label, Icon, active }) {
   );
 }
 
+function FeedbackButton() {
+  return (
+    <Link to={"/feedback"} style={{ color: 'inherit', textDecoration: 'none' }}>
+      <IconButton variant="solid" color="cyan" style={{ 
+        borderRadius: 'var(--radius-3)', 
+        padding: 15, 
+        width: 'auto', 
+        height: 'auto', 
+        fontSize: 'var(--font-size-3)',
+        transition: 'all 0.3s ease-in-out'
+      }}>
+        <Flex direction="horizontal" gap="0" style={{
+          alignItems: "center", 
+          fontFamily:'monospace'
+        }}>
+          <ChatBubbleIcon width="27" height="27" />
+          <span style={{
+            opacity: 0,
+            width: 0,
+            overflow: 'hidden',
+            transition: 'all 0.3s ease-in-out',
+            whiteSpace: 'nowrap'
+          }} className="feedback-text">
+            &nbsp;&nbsp;Let us know what you think!
+          </span>
+        </Flex>
+      </IconButton>
+    </Link>
+  );
+}
 
 function OtherButton({ link, label, active }) {
 
@@ -229,4 +259,4 @@ function ReadmeBox() {
   );
 }
 
-export { ChallengeButton, OtherButton, LevelBox, LevelHeading, GridBox, ProgressBox, ReadmeBox };
+export { ChallengeButton, FeedbackButton, OtherButton, LevelBox, LevelHeading, GridBox, ProgressBox, ReadmeBox };

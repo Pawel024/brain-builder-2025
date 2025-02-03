@@ -27,7 +27,7 @@ function Header({ showHomeButton }) {
         <Heading as='h1' align='center' size='6' style={{ color: 'var(--gray-1)', marginTop: 2, marginBottom: 0, textDecoration: 'none', fontFamily:'monospace, Courier New, Courier' }}><b>brAIn builder</b></Heading>
         </Link>
 
-        <Box align='end' mr='3' style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+        <Box align='end' mr='3' style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', paddingRight: 7 }}>
             <Link to="https://www.tudelft.nl/en/" target="_blank" style={{ textDecoration: 'none'}}>
             <img src={tu_delft_pic} alt='Tu Delft Logo' width='auto' height='30'/>
             </Link>

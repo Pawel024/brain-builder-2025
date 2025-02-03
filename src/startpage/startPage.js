@@ -1,10 +1,10 @@
 import React from 'react';
 import Header from '../common/header';
 import '../css/App.css';
-import { Flex } from '@radix-ui/themes';
+import { Box, Flex } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 import Level from './level';
-import {ReadmeBox } from './levelComponents';
+import { ReadmeBox, FeedbackButton } from './levelComponents';
 import { groupByIds, groupByIndex } from '../utils/byLevelUtils';
 
 class StartPage extends React.Component {
@@ -68,10 +68,12 @@ class StartPage extends React.Component {
 
     render () { 
 
+        const gap = 15;
+
         return(
-            <div>
+            <div style={{ height: '100vh', overflow: 'hidden' }}>
                 <Header showHomeButton={false} />
-                <Flex direction='row' gap='3' style={{padding:'10px 10px', alignItems: 'flex-start' }}>
+                <div style={{display: 'flex', direction: 'row', gap: `${gap}px`, padding: `${gap}px`, alignItems: 'flex-start' }}>
 
                     <Flex direction='column' gap='3' style={{ flex:1 }}>
 
@@ -85,7 +87,10 @@ class StartPage extends React.Component {
                         <ReadmeBox />
                     </Flex>
 
-                </Flex>
+                </div>
+                <Box style={{ position: 'absolute', bottom: `${gap}px`, right: `${gap}px` }}>
+                    <FeedbackButton/>
+                </Box>
             </div>
         )}
 }

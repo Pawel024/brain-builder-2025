@@ -12,7 +12,7 @@ function Header({ showHomeButton }) {
       <Grid columns='3' mt='1'>
 
         {showHomeButton ? (
-          <Box ml='12px' style={{display:"flex"}}>  
+          <Box ml='3' style={{display:"flex"}}>  
             <Link to="/">
               <IconButton aria-label="navigate to home" height='21' style={{ marginLeft: 'auto', color: 'inherit', textDecoration: 'none' }}>
                 <HomeIcon color="white" height='18' style={{ marginTop: 2 }} />

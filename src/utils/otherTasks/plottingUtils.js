@@ -346,7 +346,7 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
                 {biasSlider}
                 
                 {chartRef ? 
-                    <div style={{ width: Math.round(0.32 * (window.innerWidth * 0.97)), height: Math.round(0.45 * (window.innerHeight-52)), marginTop: 40, marginBottom: 40 }}>
+                    <div style={{ width: Math.round(0.32 * (window.innerWidth * 0.97)), height: Math.round(0.45 * (window.innerHeight-52)), marginTop: 40, marginBottom: 45 }}>
                         <canvas 
                             ref={chartRef} 
                             id="myChart"
@@ -355,7 +355,7 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
                     : null}
                 
                 <div>
-                    Current error: {states['error']}
+                    Current error: <b>{states['error']}</b>
                 </div>
             </Flex>
         </Box>

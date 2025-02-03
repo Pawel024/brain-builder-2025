@@ -178,7 +178,7 @@ function makeScatterChart(ctx, x, y) {
   return chartInstance;
 }
 
-export function RenderLinReg(width, height, states, stateSetter) {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
+export function RenderLinReg({ width, height, states, stateSetter }) {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
     // TODO: actually use the width and height or get rid of the parameters
 
     if (states.weight === undefined) {

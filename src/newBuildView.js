@@ -424,22 +424,24 @@ class Building extends Model {
             <div id="/api-data">
               {this.props.isTraining===2 ? (
                 <Flex direction='column' >
-                  {this.shortDescription}
-                  {(this.props.taskId < 20 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
+                  <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
+                    {this.shortDescription}
+                  </div>
+                  {(this.props.taskId < 30 &&
+                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
                   )}
-                  {(this.props.taskId >= 20 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
+                  {(this.props.taskId >= 30 &&
+                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
                   )}
-                  <div style={{ maxWidth: Math.round(0.27 * (window.innerWidth * 0.97)), maxHeight: Math.round(0.35 * (window.innerHeight-140)), marginTop:10 }}>
+                  <div style={{ maxWidth: Math.round(0.27 * (window.innerWidth * 0.97)), maxHeight: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>
                     <canvas ref={this.chartRef} id="myChart"/>
                   </div>
                 </Flex>
               ) : (this.props.isTraining===1 ? (
                 <Flex direction= 'column'>
                   <div style={{ fontFamily:'monospace' }}><b>Training... </b></div>
-                  <div style={{ fontFamily:'monospace' }}><b>Progress: {Math.round((parseFloat(this.props.progress))*100)}%</b></div>
-                  <div style={{ display: this.state.activeTab === 'training' ? 'block' : 'none', width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginTop:10 }}>
+                  <div style={{ fontFamily:'monospace', marginTop: 20 }}><b>Progress: {Math.round((parseFloat(this.props.progress))*100)}%</b></div>
+                  <div style={{ display: this.state.activeTab === 'training' ? 'block' : 'none', width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>
                     <canvas ref={this.chartRef} id="myChart"/>
                   </div>
                 </Flex>

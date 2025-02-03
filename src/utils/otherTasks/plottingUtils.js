@@ -348,7 +348,7 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
                 </div>
                 
                 {chartRef ? 
-                    <div style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.3 * (window.innerHeight-52)), marginBottom:10 }}>
+                    <div style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.5 * (window.innerHeight-52)), marginBottom:10 }}>
                         <canvas 
                             ref={chartRef} 
                             id="myChart"
@@ -492,7 +492,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
                 {degreeSlider}
                 
                 {chartRef ? 
-                    <div style={{ width: Math.round(0.32 * (window.innerWidth * 0.97)), height: Math.round(0.25 * (window.innerHeight-52)), marginTop: 40 }}>
+                    <div style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.5 * (window.innerHeight-52)), marginTop: 60 }}>
                         <canvas 
                             ref={chartRef} 
                             id="myChart"

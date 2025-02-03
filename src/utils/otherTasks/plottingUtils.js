@@ -50,6 +50,31 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
     return sum / x.length;
 }
 
+function binomial(n, k) {
+    // Simple binomial coefficient for small n
+    let result = 1;
+    for (let i = 0; i < k; i++) {
+        result *= (n - i) / (i + 1);
+    }
+    return result;
+}
+
+function expandCoeffs(cPrime, mean, scale) {
+    // Convert normalized polynomial back to original coordinates
+    const n = cPrime.length;
+    const finalCoeffs = new Array(n).fill(0);
+    for (let k = 0; k < n; k++) {
+        // factor includes dividing by scale^k
+        const factor = cPrime[k] / Math.pow(scale, k);
+        for (let i = 0; i <= k; i++) {
+            // binomial(k, i)* (x^i) * [(-mean)^(k-i)]
+            const sign = ((k - i) % 2 === 0) ? 1 : -1; // handle (-mean)^(k-i)
+            finalCoeffs[i] += factor * binomial(k, i) * sign * Math.pow(mean, (k - i));
+        }
+    }
+    return finalCoeffs;
+}
+
 function polyfit(x, y, degree) {
     try {
         const n = degree + 1;
@@ -128,26 +153,15 @@ function polyfit(x, y, degree) {
             }
         }
 
-        // Denormalize the coefficients properly
-        let coeffs = Array(n).fill(0);
+        // Store solution in cPrime (coeffs for normalized x)
+        let cPrime = Array(n).fill(0);
         for (let i = 0; i < n; i++) {
-            let coef = x_[i];
-            // Apply chain rule to each term
-            for (let j = 0; j < i; j++) {
-                coef *= -xMean / xScale;
-            }
-            for (let j = 0; j < i; j++) {
-                let term = x_[i];
-                for (let k = 0; k < i; k++) {
-                    if (k !== j) term *= -xMean;
-                    else term *= xScale;
-                }
-                coeffs[j] += term / Math.pow(xScale, i);
-            }
-            coeffs[i] += coef / Math.pow(xScale, i);
+            cPrime[i] = x_[i];
         }
 
-        return coeffs;
+        // Expand back to unnormalized polynomial
+        const finalCoeffs = expandCoeffs(cPrime, xMean, xScale);
+        return finalCoeffs;
     } catch (e) {
         console.error("Error in polynomial fitting:", e);
         return null;
@@ -404,12 +418,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
             try {
                 const coeffs = polyfit(states.x, states.y, degree);
                 if (coeffs) {
-                    // Add bounds checking for extreme values
-                    const fitted_y = x_s.map(x => {
-                        const y = polyval(coeffs, x);
-                        return Math.max(Math.min(y, maxY), minY);
-                    });
-                    
+                    const fitted_y = x_s.map(x => polyval(coeffs, x));
                     if (fitted_y.every(y => !isNaN(y) && isFinite(y))) {
                         datasets.push({
                             label: 'Polynomial Fit',

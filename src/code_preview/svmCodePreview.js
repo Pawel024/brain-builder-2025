@@ -5,6 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import a11yDark from './a11y-dark';
 
 function SvmCodePreview({ code }) {
+    const [runTutorial, setRunTutorial] = useState(true);
     const steps = [
         {
             target: '#allparts',
@@ -38,6 +39,14 @@ function SvmCodePreview({ code }) {
         }
     ];
 
+    // Handle tutorial completion
+    const handleJoyrideCallback = (data) => {
+        const { status } = data;
+        if (status === 'finished' || status === 'skipped') {
+            setRunTutorial(false);
+        }
+    };
+
     // Split the code into parts
     const parts = code.split('\n\n');
 
@@ -70,7 +79,7 @@ function SvmCodePreview({ code }) {
             </Box>
             <Joyride
                 steps={steps}
-                run={true}
+                run={runTutorial}
                 continuous={true}
                 scrollToFirstStep={true}
                 showProgress={false}
@@ -81,6 +90,7 @@ function SvmCodePreview({ code }) {
                     }
                 }}
                 locale={{ last: 'Finish' }}
+                callback={handleJoyrideCallback}
             />
         </div>
     );

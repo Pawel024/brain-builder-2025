@@ -51,70 +51,104 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
 }
 
 function polyfit(x, y, degree) {
-    const n = degree + 1;
-    let sums = new Array(2 * n - 1).fill(0);
-    let A = Array(n).fill().map(() => Array(n).fill(0));
-    let b = Array(n).fill(0);
-
-    // Build the normal equations
-    for (let i = 0; i < x.length; i++) {
-        for (let j = 0; j < 2 * n - 1; j++) {
-            sums[j] += Math.pow(x[i], j);
+    try {
+        const n = degree + 1;
+        
+        // Pre-allocate arrays with safe length checking
+        const maxArrayLength = Number.MAX_SAFE_INTEGER;
+        if ((2 * n - 1) > maxArrayLength) {
+            throw new Error("Array length would exceed safe limits");
         }
-        for (let j = 0; j < n; j++) {
-            b[j] += y[i] * Math.pow(x[i], j);
-        }
-    }
 
-    // Build matrix A
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-            A[i][j] = sums[i + j];
-        }
-    }
+        let sums = new Array(2 * n - 1).fill(0);
+        let A = Array(n).fill().map(() => new Array(n).fill(0));
+        let b = new Array(n).fill(0);
 
-    // Solve using Gaussian elimination
-    for (let i = 0; i < n; i++) {
-        let maxEl = Math.abs(A[i][i]);
-        let maxRow = i;
-        for (let k = i + 1; k < n; k++) {
-            if (Math.abs(A[k][i]) > maxEl) {
-                maxEl = Math.abs(A[k][i]);
-                maxRow = k;
+        // Add numerical stability by normalizing x values
+        const xMean = x.reduce((a, b) => a + b, 0) / x.length;
+        const xScale = Math.max(...x.map(xi => Math.abs(xi - xMean))) || 1;
+        const xNorm = x.map(xi => (xi - xMean) / xScale);
+
+        // Build the normal equations with normalized x values
+        for (let i = 0; i < x.length; i++) {
+            let xPow = 1;
+            for (let j = 0; j < 2 * n - 1; j++) {
+                sums[j] += xPow;
+                xPow *= xNorm[i];
+            }
+            let yxPow = y[i];
+            for (let j = 0; j < n; j++) {
+                b[j] += yxPow;
+                yxPow *= xNorm[i];
             }
         }
 
-        for (let k = i; k < n; k++) {
-            let tmp = A[maxRow][k];
-            A[maxRow][k] = A[i][k];
-            A[i][k] = tmp;
+        // Build matrix A
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                A[i][j] = sums[i + j];
+            }
         }
-        let tmp = b[maxRow];
-        b[maxRow] = b[i];
-        b[i] = tmp;
 
-        for (let k = i + 1; k < n; k++) {
-            let c = -A[k][i] / A[i][i];
-            for (let j = i; j < n; j++) {
-                if (i === j) {
-                    A[k][j] = 0;
-                } else {
-                    A[k][j] += c * A[i][j];
+        // Add small value to diagonal for numerical stability
+        const epsilon = 1e-10;
+        for (let i = 0; i < n; i++) {
+            A[i][i] += epsilon;
+        }
+
+        // Solve using Gaussian elimination
+        for (let i = 0; i < n; i++) {
+            let maxEl = Math.abs(A[i][i]);
+            let maxRow = i;
+            for (let k = i + 1; k < n; k++) {
+                if (Math.abs(A[k][i]) > maxEl) {
+                    maxEl = Math.abs(A[k][i]);
+                    maxRow = k;
                 }
             }
-            b[k] += c * b[i];
-        }
-    }
 
-    let x_ = Array(n).fill(0);
-    for (let i = n - 1; i >= 0; i--) {
-        x_[i] = b[i] / A[i][i];
-        for (let k = i - 1; k >= 0; k--) {
-            b[k] -= A[k][i] * x_[i];
-        }
-    }
+            for (let k = i; k < n; k++) {
+                let tmp = A[maxRow][k];
+                A[maxRow][k] = A[i][k];
+                A[i][k] = tmp;
+            }
+            let tmp = b[maxRow];
+            b[maxRow] = b[i];
+            b[i] = tmp;
 
-    return x_;
+            for (let k = i + 1; k < n; k++) {
+                let c = -A[k][i] / A[i][i];
+                for (let j = i; j < n; j++) {
+                    if (i === j) {
+                        A[k][j] = 0;
+                    } else {
+                        A[k][j] += c * A[i][j];
+                    }
+                }
+                b[k] += c * b[i];
+            }
+        }
+
+        let x_ = Array(n).fill(0);
+        for (let i = n - 1; i >= 0; i--) {
+            x_[i] = b[i] / A[i][i];
+            for (let k = i - 1; k >= 0; k--) {
+                b[k] -= A[k][i] * x_[i];
+            }
+        }
+
+        // Denormalize the coefficients
+        let scale = 1;
+        for (let i = 0; i < n; i++) {
+            x_[i] = x_[i] / scale;
+            scale *= xScale;
+        }
+
+        return x_;
+    } catch (e) {
+        console.error("Error in polynomial fitting:", e);
+        return null;
+    }
 }
 
 function polyval(coefficients, x) {
@@ -364,17 +398,24 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
         ];
 
         if (degree !== null) {
-            const coeffs = polyfit(states.x, states.y, degree);
-            const fitted_y = x_s.map(x => polyval(coeffs, x));
-            
-            datasets.push({
-                label: 'Polynomial Fit',
-                data: x_s.map((x, i) => ({ x, y: fitted_y[i] })),
-                borderColor: 'rgba(185, 38, 4, 1)',
-                fill: false,
-                type: 'line',
-                pointRadius: 0
-            });
+            try {
+                const coeffs = polyfit(states.x, states.y, degree);
+                if (coeffs) {
+                    const fitted_y = x_s.map(x => polyval(coeffs, x));
+                    if (fitted_y.every(y => !isNaN(y) && isFinite(y))) {  // Check for valid results
+                        datasets.push({
+                            label: 'Polynomial Fit',
+                            data: x_s.map((x, i) => ({ x, y: fitted_y[i] })),
+                            borderColor: 'rgba(185, 38, 4, 1)',
+                            fill: false,
+                            type: 'line',
+                            pointRadius: 0
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Error plotting polynomial:", e);
+            }
         }
 
         chartInstance = new Chart(chartRef.current, {

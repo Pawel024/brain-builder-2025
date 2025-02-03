@@ -54,32 +54,23 @@ function polyfit(x, y, degree) {
     try {
         const n = degree + 1;
         
-        // Pre-allocate arrays with safe length checking
-        const maxArrayLength = Number.MAX_SAFE_INTEGER;
-        if ((2 * n - 1) > maxArrayLength) {
-            throw new Error("Array length would exceed safe limits");
-        }
-
+        // Pre-allocate arrays
         let sums = new Array(2 * n - 1).fill(0);
         let A = Array(n).fill().map(() => new Array(n).fill(0));
         let b = new Array(n).fill(0);
 
-        // Add numerical stability by normalizing x values
+        // Normalize x values
         const xMean = x.reduce((a, b) => a + b, 0) / x.length;
         const xScale = Math.max(...x.map(xi => Math.abs(xi - xMean))) || 1;
         const xNorm = x.map(xi => (xi - xMean) / xScale);
 
-        // Build the normal equations with normalized x values
+        // Build normal equations with normalized x
         for (let i = 0; i < x.length; i++) {
-            let xPow = 1;
             for (let j = 0; j < 2 * n - 1; j++) {
-                sums[j] += xPow;
-                xPow *= xNorm[i];
+                sums[j] += Math.pow(xNorm[i], j);
             }
-            let yxPow = y[i];
             for (let j = 0; j < n; j++) {
-                b[j] += yxPow;
-                yxPow *= xNorm[i];
+                b[j] += y[i] * Math.pow(xNorm[i], j);
             }
         }
 
@@ -137,14 +128,26 @@ function polyfit(x, y, degree) {
             }
         }
 
-        // Denormalize the coefficients
-        let scale = 1;
+        // Denormalize the coefficients properly
+        let coeffs = Array(n).fill(0);
         for (let i = 0; i < n; i++) {
-            x_[i] = x_[i] / scale;
-            scale *= xScale;
+            let coef = x_[i];
+            // Apply chain rule to each term
+            for (let j = 0; j < i; j++) {
+                coef *= -xMean / xScale;
+            }
+            for (let j = 0; j < i; j++) {
+                let term = x_[i];
+                for (let k = 0; k < i; k++) {
+                    if (k !== j) term *= -xMean;
+                    else term *= xScale;
+                }
+                coeffs[j] += term / Math.pow(xScale, i);
+            }
+            coeffs[i] += coef / Math.pow(xScale, i);
         }
 
-        return x_;
+        return coeffs;
     } catch (e) {
         console.error("Error in polynomial fitting:", e);
         return null;
@@ -401,8 +404,13 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
             try {
                 const coeffs = polyfit(states.x, states.y, degree);
                 if (coeffs) {
-                    const fitted_y = x_s.map(x => polyval(coeffs, x));
-                    if (fitted_y.every(y => !isNaN(y) && isFinite(y))) {  // Check for valid results
+                    // Add bounds checking for extreme values
+                    const fitted_y = x_s.map(x => {
+                        const y = polyval(coeffs, x);
+                        return Math.max(Math.min(y, maxY), minY);
+                    });
+                    
+                    if (fitted_y.every(y => !isNaN(y) && isFinite(y))) {
                         datasets.push({
                             label: 'Polynomial Fit',
                             data: x_s.map((x, i) => ({ x, y: fitted_y[i] })),

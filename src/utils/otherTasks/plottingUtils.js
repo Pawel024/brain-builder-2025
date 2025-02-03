@@ -361,19 +361,24 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
         }
 
         chartInstance = new Chart(chartRef.current, {
+            type: 'scatter',                  // Make the base type scatter
             data: { datasets },
             options: {
+                parsing: false,
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {
-                    x: { 
-                        min: limits[0], 
+                    x: {
+                        type: 'linear',
+                        min: limits[0],
                         max: limits[1],
-                        ticks: {
-                            stepSize: 1
-                        }
+                        ticks: { stepSize: 1 }
                     },
-                    y: { min: minY, max: maxY }
+                    y: {
+                        type: 'linear',
+                        min: minY,
+                        max: maxY
+                    }
                 },
                 plugins: {
                     legend: { display: true }

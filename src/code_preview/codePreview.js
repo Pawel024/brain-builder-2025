@@ -73,7 +73,11 @@ function CodePreview({ code, typ }) {
             }
             return newSteps;
         });
-    }, [typ, steps]);
+    }, [typ]);
+
+    useEffect(() => {
+        setRunTutorial(true); // Restart the tutorial when the component mounts
+    }, [code]);
 
     // Handle tutorial completion
     const handleJoyrideCallback = (data) => {

@@ -305,8 +305,11 @@ class Building extends Model {
     handleCodeClick = (event) => {
         this.setState({
             code: layersToCode(this.props.cytoLayers, this.state.sliderValues['LRSlider'], this.state.sliderValues['EpochSlider'], this.props.taskId, this.state.checkboxValues['AFCheckbox']),
-            showCode: true,
+            showCode: false, // Temporarily hide the code preview
             codePreviewKey: Date.now() // Add timestamp to force remount of CodePreview
+        }, () => {
+            // Show the code preview again after state update
+            this.setState({ showCode: true });
         });
         window.scrollTo(0, document.body.scrollHeight);
     }

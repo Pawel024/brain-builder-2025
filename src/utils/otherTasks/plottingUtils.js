@@ -302,11 +302,7 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
     const limits = [0, 6.28];  // 2π
 
     if (!(states['x'] && states['y'])) {
-        // Fix: Generate x values evenly spread across the domain
-        const x = Array.from({ length: 10 }, (_, i) => 
-            limits[0] + (i / 9) * (limits[1] - limits[0]) + (Math.random() * 0.3 - 0.15)
-        );
-        // Fix: Generate y values with appropriate noise scale
+        const x = Array.from({ length: 10 }, () => Math.random() * (limits[1] - limits[0]) + limits[0]);
         const y = x.map(xi => Math.sin(xi) + (Math.random() * 0.2 - 0.1));
         
         stateSetter('x', x);
@@ -398,7 +394,7 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
             defaultValue={[1]}
             onValueChange={(value) => handleChangeWrapper(value[0], Math.round, plottingWrapper, 'degree', states, stateSetter)}
             min={1}
-            max={9}
+            max={15}
             step={1}
             style={{ width: Math.round(0.16 * (window.innerWidth * 0.97)), margin: 10 }}
         >
@@ -419,7 +415,7 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
                     <canvas 
                         ref={chartRef} 
                         id="myChart"
-                        style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginBottom:10 }}
+                        style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.36 * (window.innerHeight-140)), marginTop: 20 }}
                     />
                     : null}
             </Flex>

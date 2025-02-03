@@ -180,7 +180,7 @@ function getMinMaxY(y) {
   const dataMin = Math.min(...y);
   const median = getMedianY(y);
   const distance = Math.max(Math.abs(dataMax - median), Math.abs(dataMin - median)) * 1.2;
-  return { min: median - distance, max: median + distance };
+  return { min: Math.floor(median - distance), max: Math.ceil(median + distance) };
 }
 
 function getMedianY(y) {
@@ -342,13 +342,11 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <div>Weight: {states['weight']}</div>
                 {weightSlider}
-                <div>Bias: {states['bias']}</div>
-                <div className="slider" style={{ marginTop:10, height:50, display: 'flex', justifyContent: 'center' }}>
-                    {biasSlider}
-                </div>
+                <div style={{ marginTop:5 }}>Bias: {states['bias']}</div>
+                {biasSlider}
                 
                 {chartRef ? 
-                    <div style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.5 * (window.innerHeight-52)), marginBottom:10 }}>
+                    <div style={{ width: Math.round(0.32 * (window.innerWidth * 0.97)), height: Math.round(0.45 * (window.innerHeight-52)), marginTop: 40, marginBottom: 20 }}>
                         <canvas 
                             ref={chartRef} 
                             id="myChart"
@@ -489,7 +487,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
         <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <div>Polynomial Degree: {states['degree']}</div>
-                {degreeSlider}
+                {degreeSlider}     
                 
                 {chartRef ? 
                     <div style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.5 * (window.innerHeight-52)), marginTop: 60 }}>

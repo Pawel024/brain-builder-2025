@@ -299,10 +299,14 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
 
 export const renderPolyReg = (width, height, states, stateSetter) => {
     const chartRef = React.createRef();
-    const limits = [0, 6.28];
+    const limits = [0, 6.28];  // 2π
 
     if (!(states['x'] && states['y'])) {
-        const x = Array.from({ length: 10 }, () => Math.random() * (limits[1] - limits[0]) + limits[0]);
+        // Fix: Generate x values evenly spread across the domain
+        const x = Array.from({ length: 10 }, (_, i) => 
+            limits[0] + (i / 9) * (limits[1] - limits[0]) + (Math.random() * 0.3 - 0.15)
+        );
+        // Fix: Generate y values with appropriate noise scale
         const y = x.map(xi => Math.sin(xi) + (Math.random() * 0.2 - 0.1));
         
         stateSetter('x', x);
@@ -310,7 +314,6 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
         states['x'] = x;
         states['y'] = y;
 
-        const minMaxY = getMinMaxY(y);
         minY = -2;
         maxY = 2;
     }
@@ -318,7 +321,10 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
     const plotData = (degree) => {
         if (!chartRef.current) return;
         
-        const x_s = Array.from({ length: 100 }, (_, i) => limits[0] + (i / 99) * (limits[1] - limits[0]));
+        // Fix: Generate more points for smooth curves
+        const x_s = Array.from({ length: 200 }, (_, i) => 
+            limits[0] + (i / 199) * (limits[1] - limits[0])
+        );
         const y_s = x_s.map(x => Math.sin(x));
 
         if (chartInstance) chartInstance.destroy();
@@ -360,7 +366,13 @@ export const renderPolyReg = (width, height, states, stateSetter) => {
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {
-                    x: { min: limits[0], max: limits[1] },
+                    x: { 
+                        min: limits[0], 
+                        max: limits[1],
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
                     y: { min: minY, max: maxY }
                 },
                 plugins: {

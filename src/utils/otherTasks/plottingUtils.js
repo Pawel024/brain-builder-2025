@@ -342,11 +342,11 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <div>Weight: {states['weight']}</div>
                 {weightSlider}
-                <div style={{ marginTop:5 }}>Bias: {states['bias']}</div>
+                <div style={{ marginTop:10 }}>Bias: {states['bias']}</div>
                 {biasSlider}
                 
                 {chartRef ? 
-                    <div style={{ width: Math.round(0.32 * (window.innerWidth * 0.97)), height: Math.round(0.45 * (window.innerHeight-52)), marginTop: 40, marginBottom: 20 }}>
+                    <div style={{ width: Math.round(0.32 * (window.innerWidth * 0.97)), height: Math.round(0.45 * (window.innerHeight-52)), marginTop: 40, marginBottom: 40 }}>
                         <canvas 
                             ref={chartRef} 
                             id="myChart"
@@ -490,7 +490,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
                 {degreeSlider}     
                 
                 {chartRef ? 
-                    <div style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.5 * (window.innerHeight-52)), marginTop: 60 }}>
+                    <div style={{ width: Math.round(0.35 * (window.innerWidth * 0.97)), height: Math.round(0.5 * (window.innerHeight-52)), marginTop: 80 }}>
                         <canvas 
                             ref={chartRef} 
                             id="myChart"

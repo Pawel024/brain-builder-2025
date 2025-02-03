@@ -15,6 +15,7 @@ import a11yDark from './a11y-dark';
  */
 
 function CodePreview({ code, typ }) {
+    const [runTutorial, setRunTutorial] = useState(true);
     const [steps, setSteps] = useState([
         {
             target: '#allparts',
@@ -74,6 +75,14 @@ function CodePreview({ code, typ }) {
         });
     }, [typ, steps]);
 
+    // Handle tutorial completion
+    const handleJoyrideCallback = (data) => {
+        const { status } = data;
+        if (status === 'finished' || status === 'skipped') {
+            setRunTutorial(false);
+        }
+    };
+
     // Split the code into parts
     const parts = code.split('\n\n'); // Split by two newlines
 
@@ -107,7 +116,7 @@ function CodePreview({ code, typ }) {
             </Box>
             <Joyride
                 steps={steps}
-                run={true}
+                run={runTutorial}
                 continuous={true}
                 scrollToFirstStep={true}
                 showProgress={false}
@@ -118,6 +127,7 @@ function CodePreview({ code, typ }) {
                     }
                 }}
                 locale={{ last: 'Finish' }}
+                callback={handleJoyrideCallback}
             />
         </div>
     );

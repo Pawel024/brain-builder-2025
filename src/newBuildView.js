@@ -305,9 +305,15 @@ class Building extends Model {
     handleCodeClick = (event) => {
         this.setState({
             code: layersToCode(this.props.cytoLayers, this.state.sliderValues['LRSlider'], this.state.sliderValues['EpochSlider'], this.props.taskId, this.state.checkboxValues['AFCheckbox']),
-            showCode: true
-          });
-        window.scrollTo(0, document.body.scrollHeight); // Scroll to the bottom of the page
+            showCode: true,
+        });
+        // Force tutorial restart by remounting CodePreview
+        if (this.state.showCode) {
+            this.setState({ showCode: false }, () => {
+                setTimeout(() => this.setState({ showCode: true }), 0);
+            });
+        }
+        window.scrollTo(0, document.body.scrollHeight);
     }
 
     handleCheckboxChange = (name) => {

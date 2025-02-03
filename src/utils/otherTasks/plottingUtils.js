@@ -1,5 +1,5 @@
 import '../../css/App.css';
-import React, {  } from 'react';
+import React, { useEffect } from 'react';
 import * as Slider from '@radix-ui/react-slider';
 import { Flex, Box } from '@radix-ui/themes';
 import { Chart, registerables } from 'chart.js';
@@ -178,7 +178,7 @@ function makeScatterChart(ctx, x, y) {
   return chartInstance;
 }
 
-export const renderLinReg = (width, height, states, stateSetter) => {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
+export function RenderLinReg(width, height, states, stateSetter) {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
     // TODO: actually use the width and height or get rid of the parameters
 
     if (states.weight === undefined) {
@@ -208,6 +208,12 @@ export const renderLinReg = (width, height, states, stateSetter) => {  // width 
         minY = minMaxY.min;
         maxY = minMaxY.max;
     }
+
+    useEffect(() => {
+        if (states.x && states.y) {
+          plotData(states.weight, states.bias);
+        }
+    }, [states.x, states.y]);
 
     const plotData = (weight, bias) => {
         const scatterChart = makeScatterChart(chartRef.current, states.x, states.y);

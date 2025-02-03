@@ -4,7 +4,7 @@ import { Flex, Theme, Box, Heading, Separator, Text, Checkbox } from '@radix-ui/
 import Header from './common/header';
 import * as Slider from '@radix-ui/react-slider';
 
-import { renderLinReg, renderPolyReg } from './utils/otherTasks/plottingUtils'  // Add renderPolyReg import
+import { RenderLinReg, renderPolyReg } from './utils/otherTasks/plottingUtils'  // Add renderPolyReg import
 import renderDataMatrix from './utils/otherTasks/matrixUtils';
 import renderEmissions from './utils/otherTasks/emissionUtils';
 
@@ -387,7 +387,7 @@ class OtherTask extends Component {
         super(props);
 
         if (this.props.type === 'ManualLinReg') {
-            this.animation = renderLinReg
+            this.animation = RenderLinReg
         } else if (this.props.type === 'ManualMatrix') {
             this.animation = renderDataMatrix
         } else if (this.props.type === 'ManualPolyReg') {  // Add new condition

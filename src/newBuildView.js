@@ -123,6 +123,11 @@ class Building extends Model {
         this.inputFields = {
         }
 
+        this.state = {
+            // ...existing code...
+            tutorialReset: 0 // Add this line
+        };
+
     };
 
     dropdowns = {
@@ -303,15 +308,15 @@ class Building extends Model {
     })();
 
     handleCodeClick = (event) => {
-        this.setState({
+        this.setState(prev => ({
             code: layersToCode(this.props.cytoLayers, this.state.sliderValues['LRSlider'], this.state.sliderValues['EpochSlider'], this.props.taskId, this.state.checkboxValues['AFCheckbox']),
-            showCode: false, // Temporarily hide the code preview
-            codePreviewKey: Date.now() // Add timestamp to force remount of CodePreview
-        }, () => {
-            // Show the code preview again after state update
+            showCode: false,
+            codePreviewKey: Date.now(),
+            tutorialReset: prev.tutorialReset + 1 // Increment tutorialReset
+        }), () => {
             this.setState({ showCode: true });
+            window.scrollTo(0, document.body.scrollHeight);
         });
-        window.scrollTo(0, document.body.scrollHeight);
     }
 
     handleCheckboxChange = (name) => {

@@ -427,7 +427,7 @@ function App() {
 
       if (entry.other_task) {
         currentOtherTasks[entry.task_id] = entry.other_task;
-        currentOtherDescriptions[entry.task_id] = JSON.parse(entry.description);
+        currentOtherDescriptions[entry.task_id] = entry.description;
         currentIcons.push(null);
       } else {
 
@@ -942,13 +942,13 @@ function App() {
               return (
                 <Route
                 key={taskId}
-                path={`/exercise${level}-${task}`}
+                path={path}
                 element={<NotFound />}/>
               );
             }
 
             return (
-              <Route key={taskId} path={`/exercise${level}-${task}`} element={<ClusteringTest clusteringId={taskId} paths = {[path, nextPath]} />} />
+              <Route key={taskId} path={path} element={<ClusteringTest clusteringId={taskId} paths = {[path, nextPath]} />} />
             );
           })}
 
@@ -966,7 +966,7 @@ function App() {
               return (
                 <Route
                 key={taskId}
-                path={`/exercise${level}-${task}`}
+                path={path}
                 element={<NotFound />}/>
               );
             }
@@ -997,7 +997,7 @@ function App() {
               return (
                 <Route
                 key={taskId}
-                path={`/exercise${level}-${task}`}
+                path={path}
                 element={<NotFound />}/>
               );
             }
@@ -1005,7 +1005,7 @@ function App() {
             return (
               <Route
                 key={taskId}
-                path={`/exercise${level}-${task}`}
+                path={path}
                 element={
                   <>
                   <SvmView 

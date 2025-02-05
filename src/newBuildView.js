@@ -172,6 +172,8 @@ class Building extends Model {
     chartInstance = null;
   
     componentDidUpdate(prevProps) {
+      if (prevProps.paths !== this.props.paths) {this.setState({ loading: true })};
+
       if (this.cy) {this.cy.resize();} // this seems to do nothing
       if (this.props.taskId !== 0 && this.chartRef.current) {
         const ctx = this.chartRef.current.getContext('2d');

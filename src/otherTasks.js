@@ -21,18 +21,9 @@ class OtherTask extends Component {
     constructor(props) {
         super(props);
 
-        if (this.props.type === 'ManualLinReg') {
-            this.animation = RenderLinReg;
-        } else if (this.props.type === 'ManualMatrix') {
-            this.animation = RenderDataMatrix;
-        } else if (this.props.type === 'ManualPolyReg') {
-            this.animation = RenderPolyReg;
-        } else {
-            alert("Function not implemented yet");
-        }
-
         this.animationWindowRef = React.createRef();
         this.state = {
+            type: this.props.type,
             description: this.props.description,
             animationStates: {}, // changing one of these in the animation function causes a rerender
             animationWindowWidth: 100, // TODO: update default value
@@ -49,12 +40,40 @@ class OtherTask extends Component {
     }
 
     componentDidMount() {
+        if (this.props.type === 'ManualLinReg') {
+            this.animation = RenderLinReg;
+        } else if (this.props.type === 'ManualMatrix') {
+            this.animation = RenderDataMatrix;
+        } else if (this.props.type === 'ManualPolyReg') {
+            this.animation = RenderPolyReg;
+        } else {
+            alert("Function not implemented yet");
+        }
+
         const { width, height } = document.querySelector('.animation-window').getBoundingClientRect();
         this.setState({ animationWindowWidth: width, animationWindowHeight: height })
         if (this.props.description[0] === '[') {
             this.setState({ description: JSON.parse(this.props.description) });
           } else {
             this.createDescriptionList(this.props.description);
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.type !== this.state.type) {
+            console.log("Check 4: ", this.props.type, this.props.paths)
+
+            if (this.props.type === 'ManualLinReg') {
+                this.animation = RenderLinReg;
+            } else if (this.props.type === 'ManualMatrix') {
+                this.animation = RenderDataMatrix;
+            } else if (this.props.type === 'ManualPolyReg') {
+                this.animation = RenderPolyReg;
+            } else {
+                alert("Function not implemented yet");
+            }
+
+            this.setState({ animationStates: {}, type: this.props.type })
         }
     }
 

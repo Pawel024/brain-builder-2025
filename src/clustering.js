@@ -167,7 +167,7 @@ function ClusteringVisualization({clusteringId}) {
 
     return (
         <Flex direction="column" gap="1" style={{ width: '100%', height: '100%' }}>
-            <Header showHomeButton={true} />
+            <Header showHomeButton={true} paths={this.props.paths} />
 
             <Box style={{ padding: '10px', position: 'relative', width: '100%', height: window.innerHeight - 54, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 

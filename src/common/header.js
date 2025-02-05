@@ -33,7 +33,7 @@ function Header({ showHomeButton, paths=null }) {
         <Box style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
         {paths && paths[1] &&
         <Box>
-        <Link to={window.location.origin+paths[1]}>
+        <Link to={paths[1]}>
           {console.log("Rendering nextButton")}
           <IconButton variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(window.innerWidth * 0.12), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }}> 
             {<><DoubleArrowRightIcon width="18" height="18" />Next Exercise</>}

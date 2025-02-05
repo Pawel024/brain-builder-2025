@@ -246,6 +246,10 @@ class Model extends React.Component {
         console.log("continueComponentDidMount is not implemented in component ", this.props.name)
     }
 
+    componentDidUpdate(prevProps) {
+      if (prevProps.paths !== this.props.paths) {this.setState({ loading: true })};
+    }
+
     valuesUndefined = () => {
         return Object.values(this.state.sliderVisibilities).includes(null) || Object.values(this.state.sliderValues).includes(null);
     }
@@ -357,7 +361,7 @@ class Model extends React.Component {
                 <div className='buildBody'>
                   <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
             
-                  <Header showHomeButton={true} />
+                  <Header showHomeButton={true} paths={this.props.paths} />
             
                   <Tabs.Root defaultValue="training" style={{ fontFamily:'monospace' }}>
             

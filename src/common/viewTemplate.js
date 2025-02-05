@@ -13,6 +13,10 @@ import * as Form from '@radix-ui/react-form';
 import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
 import axios from 'axios';
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import ReactMarkdown from 'react-markdown';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -35,10 +39,10 @@ class Model extends React.Component {
         showCode: false,
         code: '',
         description: [],
-        sliderVisibilities: this.props.sliderVisibilities, 
-        inputFieldVisibilities: this.props.inputFieldVisibilities, 
-        dropdownVisibilities: this.props.dropdownVisibilities, 
-        checkboxVisibilities: this.props.checkboxVisibilities, 
+        sliderVisibilities: [], 
+        inputFieldVisibilities: [], 
+        dropdownVisibilities: [], 
+        checkboxVisibilities: [], 
         // TODO: add all your states here
         sliderValues: {'dummySlider': 50},
       };
@@ -141,6 +145,13 @@ class Model extends React.Component {
           if (preloader) {
             preloader.style.display = "none";
           }
+
+          this.setState({
+            sliderVisibilities: this.props.sliderVisibilities, 
+            inputFieldVisibilities: this.props.inputFieldVisibilities, 
+            dropdownVisibilities: this.props.dropdownVisibilities, 
+            checkboxVisibilities: this.props.checkboxVisibilities, 
+          })
           
           this.shortDescription = response.data.short_description;
           if (response.data.description[0] === '[') {
@@ -327,7 +338,7 @@ class Model extends React.Component {
         return (
         <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
         <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-          <span>{this.shortDescription}</span>
+          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
         </div>
         </Box>
     )}

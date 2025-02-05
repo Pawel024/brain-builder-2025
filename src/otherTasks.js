@@ -40,6 +40,10 @@ class OtherTask extends Component {
     }
 
     componentDidMount() {
+        this.mount()
+    }
+
+    mount() {
         if (this.props.type === 'ManualLinReg') {
             this.animation = RenderLinReg;
         } else if (this.props.type === 'ManualMatrix') {
@@ -51,7 +55,7 @@ class OtherTask extends Component {
         }
 
         const { width, height } = document.querySelector('.animation-window').getBoundingClientRect();
-        this.setState({ animationWindowWidth: width, animationWindowHeight: height })
+        this.setState({ animationWindowWidth: width, animationWindowHeight: height, type: this.props.type })
         if (this.props.description[0] === '[') {
             this.setState({ description: JSON.parse(this.props.description) });
           } else {
@@ -61,21 +65,8 @@ class OtherTask extends Component {
     }
 
     componentDidUpdate() {
-        if (this.props.type !== this.state.type) {
-            console.log("Check 4: ", this.props.type, this.props.paths)
-
-            if (this.props.type === 'ManualLinReg') {
-                this.animation = RenderLinReg;
-            } else if (this.props.type === 'ManualMatrix') {
-                this.animation = RenderDataMatrix;
-            } else if (this.props.type === 'ManualPolyReg') {
-                this.animation = RenderPolyReg;
-            } else {
-                alert("Function not implemented yet");
-            }
-
-            this.setState({ animationStates: {}, type: this.props.type })
-        }
+        console.log("this.state.description", this.state.description);
+        this.mount()
     }
 
     // componentWillUnmount() {

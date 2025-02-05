@@ -948,7 +948,7 @@ function App() {
             }
 
             return (
-              <Route key={taskId} path={path} element={<ClusteringTest clusteringId={taskId} paths = {[path, nextPath]} />} />
+              <Route key={taskId} path={path} element={<ClusteringTest clusteringId={taskId} paths={[path, nextPath]} />} />
             );
           })}
 

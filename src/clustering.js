@@ -55,7 +55,7 @@ function draw(lineg, dotg, centerg, groups, dots) {
     updateCenters(c);
 }
 
-function ClusteringVisualization({clusteringId}) {
+function ClusteringVisualization({clusteringId, paths}) {
     const [clusteringMethod, setClusteringMethod] = useState(clusteringId===71 ? "agglo" : "kmeans"); // TODO handle this through a property in the database
     const [numPoints, setNumPoints] = useState(clusteringId===71 ? 10 : 200);
     const [numClusters, setNumClusters] = useState(2);
@@ -167,7 +167,7 @@ function ClusteringVisualization({clusteringId}) {
 
     return (
         <Flex direction="column" gap="1" style={{ width: '100%', height: '100%' }}>
-            <Header showHomeButton={true} paths={this.props.paths} />
+            <Header showHomeButton={true} paths={paths} />
 
             <Box style={{ padding: '10px', position: 'relative', width: '100%', height: window.innerHeight - 54, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 

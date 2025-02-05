@@ -57,6 +57,7 @@ class OtherTask extends Component {
           } else {
             this.createDescriptionList(this.props.description);
         }
+        console.log("this.props.description: ", this.props.description)
     }
 
     componentDidUpdate() {
@@ -83,6 +84,7 @@ class OtherTask extends Component {
 
     createDescriptionList = (jsonText) => {
         try {
+          console.log("Creating description list")
           const sanitizedJson = jsonText.replace(/<\/?[^>]+(>|$)/g, "")
             .replace(/&/g, "&amp;")
             .replace(/%/g, "&#37;")

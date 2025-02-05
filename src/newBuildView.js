@@ -172,7 +172,7 @@ class Building extends Model {
     chartInstance = null;
   
     componentDidUpdate(prevProps) {
-      if (prevProps.paths !== this.props.paths) {this.setState({ loading: true })};
+      if (prevProps.paths !== this.props.paths) {this.mount()};
 
       if (this.cy) {this.cy.resize();} // this seems to do nothing
       if (this.props.taskId !== 0 && this.chartRef.current) {

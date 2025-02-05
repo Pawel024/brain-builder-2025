@@ -138,6 +138,10 @@ class Model extends React.Component {
     };
 
     componentDidMount() {
+      this.mount()
+    }
+
+    mount() {
         axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
           // hide the preloader when page loads
@@ -247,7 +251,7 @@ class Model extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-      if (prevProps.paths !== this.props.paths) {this.setState({ loading: true })};
+      if (prevProps.paths !== this.props.paths) {this.mount()};
     }
 
     valuesUndefined = () => {

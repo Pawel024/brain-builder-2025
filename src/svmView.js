@@ -28,6 +28,7 @@ class SvmView extends Model {
         showCode: false,
         code: '',
         description: [],
+        taskId: this.props.taskId,  // keeps track of when the URL changes but the component remains the same
 
         sliderValues: {'CSlider': 1, 'GammaSlider': 1},
         checkboxValues: {'KernelCheckbox': false},

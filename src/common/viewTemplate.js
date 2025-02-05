@@ -38,6 +38,7 @@ class Model extends React.Component {
         activeTab: 'training',
         showCode: false,
         code: '',
+        taskId: this.props.taskId,  // keeps track of when the URL changes but the component remains the same
         description: [],
         sliderVisibilities: [], 
         inputFieldVisibilities: [], 
@@ -142,6 +143,7 @@ class Model extends React.Component {
     }
 
     mount() {
+        this.setState({ taskId: this.props.taskId })
         axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
           // hide the preloader when page loads
@@ -250,8 +252,8 @@ class Model extends React.Component {
         console.log("continueComponentDidMount is not implemented in component ", this.props.name)
     }
 
-    componentDidUpdate(prevProps) {
-      if (prevProps.paths !== this.props.paths) {this.mount()};
+    componentDidUpdate() {
+      if (this.state.taskId !== this.props.taskId) {this.mount()};
     }
 
     valuesUndefined = () => {

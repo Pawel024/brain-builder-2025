@@ -62,11 +62,9 @@ class OtherTask extends Component {
           } else {
             this.createDescriptionList(this.props.description);
         }
-        console.log("this.props.description: ", this.props.description)
     }
 
     componentDidUpdate() {
-        console.log("this.state.description", this.state.description)
         if (this.props.type !== this.state.type) {
             this.mount()
         }
@@ -78,7 +76,6 @@ class OtherTask extends Component {
 
     createDescriptionList = (jsonText) => {
         try {
-          console.log("Creating description list")
           const sanitizedJson = jsonText.replace(/<\/?[^>]+(>|$)/g, "")
             .replace(/&/g, "&amp;")
             .replace(/%/g, "&#37;")
@@ -117,17 +114,10 @@ class OtherTask extends Component {
                 <Flex direction='row' gap="0" style={{ height: window.innerHeight-52, width:'100vw', alignItems: 'center', justifyContent: 'center' }}>
                     
                     <Box style={{ flex:1, display: 'flex', flexDirection: 'column', textAlign:'justify', alignItems: 'flex-start', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
-                        {console.log('Is this.state.description an array? ', Array.isArray(this.state.description))}
                         {Array.isArray(this.state.description) && this.state.description.map(([subtitle, text], index) => (
                             <div key={index}>
                             <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
                             <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{text}</ReactMarkdown>
-                            </div>
-                        ))}
-                        {Array.isArray(this.state.description) && this.state.description.map(([subtitle, text], index) => (
-                            <div key={index}>
-                            <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
-                            <p>{text}</p>
                             </div>
                         ))}
                     </Box>

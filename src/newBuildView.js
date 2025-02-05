@@ -74,6 +74,7 @@ class Building extends Model {
         showCode: false,
         code: '',
         description: '',
+        taskId: this.props.taskId,  // keeps track of when the URL changes but the component remains the same
 
         sliderValues: {'EpochSlider': 50, 'LRSlider': 0.01},
         dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
@@ -172,7 +173,7 @@ class Building extends Model {
     chartInstance = null;
   
     componentDidUpdate(prevProps) {
-      if (prevProps.paths !== this.props.paths) {this.mount()};
+      if (this.props.taskId !== this.state.taskId) {this.mount()};
 
       if (this.cy) {this.cy.resize();} // this seems to do nothing
       if (this.props.taskId !== 0 && this.chartRef.current) {

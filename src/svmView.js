@@ -168,7 +168,7 @@ class SvmView extends Model {
         defaultValue={[-0.5]} 
         onValueChange={(value) => this.handleGammaChange(value)}
         min={-0.5}
-        max={3.5}
+        max={2.5}
         step={0.5}
         style={{ width: Math.round(0.19 * (window.innerWidth * 0.97)) }}
         disabled={this.props.isTraining[this.props.index] === 1}
@@ -182,7 +182,7 @@ class SvmView extends Model {
     handleGammaChange = (value) => {
         this.setState( prev => {
             const newSliderValues = {...prev.sliderValues};
-            newSliderValues['GammaSlider'] = (Math.abs(value[0] % 1) + 0.5) * 10**(-Math.round(value[0]));
+            newSliderValues['GammaSlider'] = (Math.abs(-value[0] % 1) + 0.5) * 10**(Math.round(value[0]));
             return {sliderValues: newSliderValues};
         });
     };

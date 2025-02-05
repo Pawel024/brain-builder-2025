@@ -14,6 +14,7 @@ import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
+import { thresholdSturges } from 'd3';
 
 
 class OtherTask extends Component {
@@ -65,8 +66,10 @@ class OtherTask extends Component {
     }
 
     componentDidUpdate() {
-        console.log("this.state.description", this.state.description);
-        this.mount()
+        console.log("this.state.description", this.state.description)
+        if (this.props.type !== this.state.type) {
+            this.mount()
+        }
     }
 
     // componentWillUnmount() {
@@ -114,10 +117,17 @@ class OtherTask extends Component {
                 <Flex direction='row' gap="0" style={{ height: window.innerHeight-52, width:'100vw', alignItems: 'center', justifyContent: 'center' }}>
                     
                     <Box style={{ flex:1, display: 'flex', flexDirection: 'column', textAlign:'justify', alignItems: 'flex-start', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
-                        {Array.isArray(this.props.description) && this.props.description.map(([subtitle, text], index) => (
+                        {console.log('Is this.state.description an array? ', Array.isArray(this.state.description))}
+                        {Array.isArray(this.state.description) && this.state.description.map(([subtitle, text], index) => (
                             <div key={index}>
                             <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
                             <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{text}</ReactMarkdown>
+                            </div>
+                        ))}
+                        {Array.isArray(this.state.description) && this.state.description.map(([subtitle, text], index) => (
+                            <div key={index}>
+                            <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
+                            <p>{text}</p>
                             </div>
                         ))}
                     </Box>

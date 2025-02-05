@@ -10,6 +10,11 @@ import { RenderEmissions } from './utils/otherTasks/emissionUtils';
 
 import { _ } from 'ajv';
 
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import ReactMarkdown from 'react-markdown';
+
 
 class OriginalTask extends Component {
     constructor(props) {
@@ -33,7 +38,7 @@ class OriginalTask extends Component {
                         {Array.isArray(this.props.description) && this.props.description.map(([subtitle, text], index) => (
                             <div key={index}>
                             <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
-                            <p>{text}</p>
+                                      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{text}</ReactMarkdown>
                             </div>
                         ))}
                     </Box>

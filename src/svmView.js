@@ -69,6 +69,11 @@ class SvmView extends Model {
     continueComponentDidMount = () => {
         this.props.loadData(this.props.taskId, this.props.index)  // let the backend load the data  // TODO
         this.setState({ loading: false })
+        this.setState( prev => {
+            const newSliderVisibilities = {...prev.sliderVisibilities}; 
+            newSliderVisibilities['GammaSlider'] = false; 
+            return {sliderVisibilities: newSliderVisibilities}; 
+        }); 
     }
 
     componentWillUnmount() {
@@ -136,11 +141,13 @@ class SvmView extends Model {
     }
 
     handleCheckboxChange = () => {
-        this.setState( prev => {
-            const newSliderVisibilities = {...prev.sliderVisibilities}; 
-            newSliderVisibilities['GammaSlider'] = !prev.sliderVisibilities['GammaSlider']; 
-            return {sliderVisibilities: newSliderVisibilities}; 
-        }); 
+        if (this.props.sliderVisibilities['GammaSlider']) {
+            this.setState( prev => {
+                const newSliderVisibilities = {...prev.sliderVisibilities}; 
+                newSliderVisibilities['GammaSlider'] = !prev.sliderVisibilities['GammaSlider']; 
+                return {sliderVisibilities: newSliderVisibilities}; 
+            }) 
+        };
         this.setState( prev => {
             const newCheckboxValues = {...prev.checkboxValues};
             newCheckboxValues['KernelCheckbox'] = !prev.checkboxValues['KernelCheckbox'];

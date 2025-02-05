@@ -427,7 +427,7 @@ function App() {
 
       if (entry.other_task) {
         currentOtherTasks[entry.task_id] = entry.other_task;
-        currentOtherDescriptions[entry.task_id] = JSON.parse(entry.description);
+        currentOtherDescriptions[entry.task_id] = entry.description;
         currentIcons.push(null);
       } else {
 

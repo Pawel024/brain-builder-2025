@@ -1,10 +1,6 @@
 """
 This module contains the backend code for the SVM tasks. 
-Work in progress.
 """
-
-# TODOs: 
-# ...
 
 import sys
 if __name__ == '__main__':
@@ -52,7 +48,7 @@ def main(kernel, c, gamma, dataset, normalization, user_id, task_id):
     X_train, y_train = modify_data(training_set)
     X_test, y_test = modify_data(test_set)
     
-    model = SVC(kernel=kernel, C=c, gamma=gamma, kernel=kernel)
+    model = SVC(kernel=kernel, C=c, gamma=gamma)
 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)

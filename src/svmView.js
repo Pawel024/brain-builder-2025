@@ -6,6 +6,8 @@ import '@radix-ui/themes/styles.css';
 import { Model } from './common/viewTemplate';
 import LottieLoader from './common/lottieLoader';
 import svmToCode from './code_preview/svmExplainTools';
+import 'katex/dist/katex.min.css';
+import { InlineMath } from 'react-katex';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -40,8 +42,8 @@ class SvmView extends Model {
         ]
 
         this.inputNames = {
-            'CSlider': 'Misclassification cost',
-            'GammaSlider': '&gamma; = \\frac{1}{2\\sigma^2}',
+            'CSlider': <span>Misclassification cost <InlineMath math="C"/></span>,
+            'GammaSlider': <span><InlineMath math="\gamma = \frac{1}{2\sigma^2}"/></span>,
             'KernelCheckbox': 'Enable rbf kernel'
         } 
 
@@ -168,7 +170,7 @@ class SvmView extends Model {
         defaultValue={[-0.5]} 
         onValueChange={(value) => this.handleGammaChange(value)}
         min={-0.5}
-        max={2.5}
+        max={3.5}
         step={0.5}
         style={{ width: Math.round(0.19 * (window.innerWidth * 0.97)) }}
         disabled={this.props.isTraining[this.props.index] === 1}

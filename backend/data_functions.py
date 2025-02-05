@@ -315,7 +315,7 @@ class DataFromExcel(Dataset):
                 if self.normalization:
                     mesh = np.meshgrid(*self.n_features * [np.arange(-0.1, 1.1, step)])
                 else:
-                    mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
+                    mesh = np.meshgrid(*[np.arange(mini-(maxi-mini)*step, maxi+(maxi-mini)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
                 
                 # Plot the decision boundary. For that, we will assign a color to each
                 # point in the mesh.
@@ -515,7 +515,7 @@ class DataFromSklearn1(Dataset):  # this one is for load_wine(), etc.
             if self.normalization:
                 mesh = np.meshgrid(*self.n_features * [np.arange(-0.1, 1.1, step)])
             else:
-                mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
+                mesh = np.meshgrid(*[np.arange(mini-(maxi-mini)*step, maxi(maxi-mini)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
 
             # Plot the decision boundary. For that, we will assign a color to each
             # point in the mesh.
@@ -789,7 +789,7 @@ class DataFromSklearn2(Dataset):  # this one is for make_moons(n_samples, noise)
                 if self.normalization:
                     mesh = np.meshgrid(*self.n_features * [np.arange(-0.1, 1.1, step)])
                 else:
-                    mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
+                    mesh = np.meshgrid(*[np.arange(mini-(maxi-mini)*step, maxi+(maxi-mini)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
                 
                 # Plot the decision boundary. For that, we will assign a color to each
                 # point in the mesh.

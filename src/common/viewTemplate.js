@@ -431,7 +431,7 @@ class Model extends React.Component {
                                       {typeof this.inputNames[name] === 'string' ? 
                                           <label>{this.inputNames[name]}</label> :
                                           this.inputNames[name]
-                                      }: {this.state.sliderValues[name]}
+                                      }: <b>{this.state.sliderValues[name]}</b>
                                     </div>
                                     <div className={name}>
                                         {slider}

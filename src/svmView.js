@@ -41,7 +41,7 @@ class SvmView extends Model {
 
         this.inputNames = {
             'CSlider': 'Misclassification cost',
-            'GammaSlider': 'Kernel width',
+            'GammaSlider': '&gamma; = \\frac{1}{2\\sigma^2}',
             'KernelCheckbox': 'Enable rbf kernel'
         } 
 
@@ -182,7 +182,7 @@ class SvmView extends Model {
     handleGammaChange = (value) => {
         this.setState( prev => {
             const newSliderValues = {...prev.sliderValues};
-            newSliderValues['GammaSlider'] = (Math.abs(-value[0] % 1) + 0.5) * 10**(Math.round(value[0]));
+            newSliderValues['GammaSlider'] = (Math.abs(value[0] % 1) + 0.5) * 10**(Math.floor(value[0]));
             return {sliderValues: newSliderValues};
         });
     };

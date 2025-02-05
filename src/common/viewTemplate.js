@@ -428,7 +428,7 @@ class Model extends React.Component {
                                 this.props.sliderVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.sliderPosition(index), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div style={{ position:"absolute", zIndex: 9999, top: -30, left: 0.095 * (window.innerWidth * 0.97), transform: 'translateX(-50%)', fontSize: '14px', color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
-                                        {this.inputNames[name]}: {this.state.sliderValues[name]}
+                                    <label dangerouslySetInnerHTML={{ __html: this.inputNames[name] }} />: {this.state.sliderValues[name]}
                                     </div>
                                     <div className={name}>
                                         {slider}
@@ -440,7 +440,7 @@ class Model extends React.Component {
                                 this.props.inputFieldVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.inputFieldPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
-                                    {this.inputNames[name]}: {inputField}
+                                    <label dangerouslySetInnerHTML={{ __html: this.inputNames[name] }} />: {inputField}
                                     </div>
                                 </Box>) : (<div></div>)
                             ))}
@@ -449,7 +449,7 @@ class Model extends React.Component {
                                 this.props.dropdownVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.dropdownPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
-                                    {this.inputNames[name]}: {dropdown}
+                                    <label dangerouslySetInnerHTML={{ __html: this.inputNames[name] }} />: {dropdown}
                                     </div>
                                 </Box>) : (<div></div>)
                             ))}
@@ -458,7 +458,7 @@ class Model extends React.Component {
                                 this.props.checkboxVisibilities[name] ?
                                 (<Text className={name} as = "label" size="2">
                                     <Flex style={{ position:"absolute", top: this.checkboxPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), width: Math.round(0.27 * (window.innerWidth * 0.97)), justifyContent:"flex-start", alignItems:"flex-start"}} gap="2">          
-                                    {this.inputNames[name]}: {React.cloneElement(checkbox, {checked: this.state.checkboxValues[name]})}
+                                    <label dangerouslySetInnerHTML={{ __html: this.inputNames[name] }} />: {React.cloneElement(checkbox, {checked: this.state.checkboxValues[name]})}
                                     </Flex>
                                 </Text>) : (<div></div>)
                             ))}

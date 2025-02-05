@@ -154,7 +154,7 @@ class Model extends React.Component {
           })
           
           this.shortDescription = response.data.short_description;
-          console.log('this.shortDescription:', this.shortDescription)  // TODO remove
+          console.log('this.shortDescription:', this.shortDescription, typeof(this.shortDescription))  // TODO remove
           if (response.data.description[0] === '[') {
             this.setState({ description: JSON.parse(response.data.description) });
           } else {
@@ -340,6 +340,7 @@ class Model extends React.Component {
         <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
         <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
           <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{'For the final exercise in this module, the data is both non-linearly distributed and not linearly separable. \r\nYou can play around with the misclassification cost and kernel to find a good fit. \r\n"$\gamma = \frac{1}{2\sigma^2}$"'}</ReactMarkdown>
         </div>
         </Box>
     )}

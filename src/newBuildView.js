@@ -24,6 +24,10 @@ import {
   Legend 
 } from 'chart.js';
 import { Model } from './common/viewTemplate';
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import ReactMarkdown from 'react-markdown';
 
 
 const Dropdown = ({ label, options, onChange, placeholder, disabled }) => (
@@ -453,7 +457,7 @@ class Building extends Model {
                 </Flex>
               ) : (
                 <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-                  {this.shortDescription}
+                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
                 </div>
               ))}
             </div>

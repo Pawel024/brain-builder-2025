@@ -953,7 +953,8 @@ function App() {
             const type = "challenges";
             const level = Math.floor(taskId / 10);
             const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+            //const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+            const isOpen = true;
           
             if (!isOpen) {
               return (

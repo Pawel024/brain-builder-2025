@@ -6,8 +6,8 @@ Laurens and Paweł
 
 ## Authors
 
-- Laurens Ledeganck ([l.a.k.ledeganck@student.tudelft.nl](mailto:l.a.k.ledeganck@student.tudelft.nl))
 - Pawel Rok ([p.j.rok@student.tudelft.nl](mailto:p.j.rok@student.tudelft.nl))
+- Laurens Ledeganck ([l.a.k.ledeganck@student.tudelft.nl](mailto:l.a.k.ledeganck@student.tudelft.nl))
 
 ## Contact us
 

@@ -51,7 +51,7 @@ class TaskDescriptionSerializer(serializers.ModelSerializer):
 class IntroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Intro
-        fields = ('intro_id', 'visibility', ' enabled', 'name', 'content')
+        fields = ('intro_id', 'visibility', 'enabled', 'name', 'content')
 
 class QuizSerializer(serializers.ModelSerializer):
     class Meta:

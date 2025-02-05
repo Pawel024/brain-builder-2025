@@ -154,6 +154,7 @@ class Model extends React.Component {
           })
           
           this.shortDescription = response.data.short_description;
+          console.log('this.shortDescription:', this.shortDescription)  // TODO remove
           if (response.data.description[0] === '[') {
             this.setState({ description: JSON.parse(response.data.description) });
           } else {

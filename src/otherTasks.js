@@ -33,6 +33,7 @@ class OtherTask extends Component {
 
         this.animationWindowRef = React.createRef();
         this.state = {
+            description: this.props.description,
             animationStates: {}, // changing one of these in the animation function causes a rerender
             animationWindowWidth: 100, // TODO: update default value
             animationWindowHeight: 100, // TODO: update default value
@@ -50,11 +51,41 @@ class OtherTask extends Component {
     componentDidMount() {
         const { width, height } = document.querySelector('.animation-window').getBoundingClientRect();
         this.setState({ animationWindowWidth: width, animationWindowHeight: height })
+        if (this.props.description[0] === '[') {
+            this.setState({ description: JSON.parse(this.props.description) });
+          } else {
+            this.createDescriptionList(this.props.description);
+        }
     }
 
     // componentWillUnmount() {
     //     ...
     // }
+
+    createDescriptionList = (jsonText) => {
+        try {
+          const sanitizedJson = jsonText.replace(/<\/?[^>]+(>|$)/g, "")
+            .replace(/&/g, "&amp;")
+            .replace(/%/g, "&#37;")
+            .replace(/#/g, "&#35;")
+            .replace(/!/g, "&#33;")
+            .replace(/\?/g, "&#63;")
+            .replace(/'/g, "&#39;")
+            .replace(/"/g, "&quot;");
+          const splitText = sanitizedJson.split('\n ');
+          const descriptionList = splitText.map(subText => {
+            const [subtitle, ...paragraphs] = subText.split('\n');
+            const formattedParagraphs = paragraphs.map(paragraph => 
+              paragraph.replace(/\*([^*]+)\*/g, '<b>$1</b>')  // bold
+              .replace(/_([^_]+)_/g, '<i>$1</i>') // italic
+            );
+            return [subtitle, ...formattedParagraphs];
+          });
+          this.setState({ description: descriptionList });
+        } catch (error) {
+          console.error('Error parsing JSON or formatting description:', error);
+        }
+    }
 
     animation(props) {
         console.log('Animation not implemented')

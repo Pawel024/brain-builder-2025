@@ -306,18 +306,16 @@ class DataFromExcel(Dataset):
         print("Plot created.")
 
     # This function is based on a CSE2510 Notebook and plots the decision boundary of a classifier
-    def plot_decision_boundary(self, model):
-        step = 0.01
+    def plot_decision_boundary(self, model, step=0.01):
         fig = mf.Figure()
         ax = fig.subplots(1, 1)
 
         if self.data_type == 1:
-            step = 0.1
             if self.n_features < 3 and self.n_targets < 5:
                 if self.normalization:
                     mesh = np.meshgrid(*self.n_features * [np.arange(-0.1, 1.1, step)])
                 else:
-                    mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, step) for mini, maxi in zip(self.minima, self.maxima)])
+                    mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
                 
                 # Plot the decision boundary. For that, we will assign a color to each
                 # point in the mesh.
@@ -511,14 +509,13 @@ class DataFromSklearn1(Dataset):  # this one is for load_wine(), etc.
         self.images.append(img.getvalue())
         fig.clear()
 
-    def plot_decision_boundary(self, model):
-        step = 0.01
+    def plot_decision_boundary(self, model, step=0.01):
 
         if self.n_features < 3:
             if self.normalization:
                 mesh = np.meshgrid(*self.n_features * [np.arange(-0.1, 1.1, step)])
             else:
-                mesh = np.meshgrid(*[np.arange(mini, maxi, step) for mini, maxi in zip(self.minima, self.maxima)])
+                mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
 
             # Plot the decision boundary. For that, we will assign a color to each
             # point in the mesh.
@@ -783,18 +780,16 @@ class DataFromSklearn2(Dataset):  # this one is for make_moons(n_samples, noise)
         self.images.append(img.getvalue())
         fig.clear()
 
-    def plot_decision_boundary(self, model):
-        step = 0.01
+    def plot_decision_boundary(self, model, step=0.01):
         fig = mf.Figure()
         ax = fig.subplots(1, 1)
 
         if self.data_type == 1:
-            step = 0.1
             if self.n_features < 3 and self.n_targets < 5:
                 if self.normalization:
                     mesh = np.meshgrid(*self.n_features * [np.arange(-0.1, 1.1, step)])
                 else:
-                    mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, step) for mini, maxi in zip(self.minima, self.maxima)])
+                    mesh = np.meshgrid(*[np.arange(mini-abs(mini)*step, maxi+abs(maxi)*step, (maxi-mini)*step) for mini, maxi in zip(self.minima, self.maxima)])
                 
                 # Plot the decision boundary. For that, we will assign a color to each
                 # point in the mesh.
@@ -972,8 +967,7 @@ class DataFromFunction(Dataset):  # this one is for one to one regression on sim
         self.images.append(img.getvalue())
         fig.clear()
 
-    def plot_decision_boundary(self, model):
-        step = 0.01
+    def plot_decision_boundary(self, model, step=0.01):
         fig = mf.Figure()
         ax = fig.subplots(1, 1)
 
@@ -981,7 +975,7 @@ class DataFromFunction(Dataset):  # this one is for one to one regression on sim
             inp = np.arange(-0.1, 1.1, step)
         else:
             mini, maxi = self.minima, self.maxima
-            inp = np.arange(mini, maxi, step)
+            inp = np.arange(mini, maxi, (maxi-mini)*step)
 
         # Plot the predicted function. 
         inp = np.array(inp)

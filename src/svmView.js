@@ -36,14 +36,16 @@ class SvmView extends Model {
         this.useCodePreview = true;
 
         this.tabs = [
-            { name: 'Data', value: 'data' },
+            { name: 'More Info', value: 'data' },
             { name: 'Model', value: 'training' },
             { name: 'Result', value: 'testing' },
         ]
 
         this.inputNames = {
-            'CSlider': <span>Misclassification cost <InlineMath math="C"/></span>,
-            'GammaSlider': <span><InlineMath math="\gamma = \frac{1}{2\sigma^2}"/></span>,
+            'CSlider': 'Misclassification cost',
+            //'CSlider': <span>Misclassification cost <InlineMath math="C"/></span>,
+            'GammaSlider': 'Gamma',
+            //'GammaSlider': <span><InlineMath math="\gamma = \frac{1}{2\sigma^2}"/></span>,
             'KernelCheckbox': 'Enable rbf kernel'
         } 
 
@@ -132,6 +134,11 @@ class SvmView extends Model {
     }
 
     handleCheckboxChange = () => {
+        this.setState( prev => {
+            const newSliderVisibilities = {...prev.sliderVisibilities}; 
+            newSliderVisibilities['GammaSlider'] = !prev.sliderVisibilities['GammaSlider']; 
+            return {sliderVisibilities: newSliderVisibilities}; 
+        }); 
         this.setState( prev => {
             const newCheckboxValues = {...prev.checkboxValues};
             newCheckboxValues['KernelCheckbox'] = !prev.checkboxValues['KernelCheckbox'];

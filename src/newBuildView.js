@@ -98,7 +98,7 @@ class Building extends Model {
         this.useCodePreview = true;
 
         this.tabs = [
-            { name: 'Data', value: 'data' },
+            { name: 'More Info', value: 'data' },
             { name: 'Model', value: 'training' },
             { name: 'Result', value: 'testing' },
         ]

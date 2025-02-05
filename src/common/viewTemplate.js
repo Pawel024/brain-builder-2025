@@ -35,6 +35,10 @@ class Model extends React.Component {
         showCode: false,
         code: '',
         description: [],
+        sliderVisibilities: this.props.sliderVisibilities, 
+        inputFieldVisibilities: this.props.inputFieldVisibilities, 
+        dropdownVisibilities: this.props.dropdownVisibilities, 
+        checkboxVisibilities: this.props.checkboxVisibilities, 
         // TODO: add all your states here
         sliderValues: {'dummySlider': 50},
       };
@@ -214,16 +218,16 @@ class Model extends React.Component {
     continueComponentDidMount = () => {
         let loglist = [...
             Object.entries(this.sliders).map(([name, slider], index) => (
-                { type: 'slider', name, visible: this.props.sliderVisibilities[name] }
+                { type: 'slider', name, visible: this.state.sliderVisibilities[name] }
             )),
             Object.entries(this.inputFields).map(([name, inputField], index) => (
-                { type: 'inputField', name, visible: this.props.inputFieldVisibilities[name] }
+                { type: 'inputField', name, visible: this.state.inputFieldVisibilities[name] }
             )),
             Object.entries(this.dropdowns).map(([name, dropdown], index) => (
-                { type: 'dropdown', name, visible: this.props.dropdownVisibilities[name] }
+                { type: 'dropdown', name, visible: this.state.dropdownVisibilities[name] }
             )),
             Object.entries(this.checkboxes).map(([name, checkbox], index) => (
-                { type: 'checkbox', name, visible: this.props.checkboxVisibilities[name] }
+                { type: 'checkbox', name, visible: this.state.checkboxVisibilities[name] }
             ))];
         console.log(loglist);
         // TODO: add any additional code that should run after the description is loaded
@@ -231,7 +235,7 @@ class Model extends React.Component {
     }
 
     valuesUndefined = () => {
-        return Object.values(this.props.sliderVisibilities).includes(null) || Object.values(this.state.sliderValues).includes(null);
+        return Object.values(this.state.sliderVisibilities).includes(null) || Object.values(this.state.sliderValues).includes(null);
     }
     
     handleStartClick = (() => {
@@ -294,18 +298,18 @@ class Model extends React.Component {
     }
 
     inputFieldPosition = (index) => {
-        // const n = Object.values(this.props.sliderVisibilities).filter(value => value !== false).length;
+        // const n = Object.values(this.state.sliderVisibilities).filter(value => value !== false).length;
         const n = Object.keys(this.sliders).length;
         return Math.round(this.sliderPosition(n) + this.textHeight*index)  // (0.14 + 0.12*Object.keys(this.sliders).length)*(window.innerHeight-140) + this.textHeight*index
     }
 
     dropdownPosition = (index) => {
-        const n = Object.values(this.props.inputFieldVisibilities).filter(value => value !== false).length;  // Object.keys(this.inputFields).length
+        const n = Object.values(this.state.inputFieldVisibilities).filter(value => value !== false).length;  // Object.keys(this.inputFields).length
         return Math.round(this.inputFieldPosition(n) + this.textHeight*index)
     }
 
     checkboxPosition = (index) => {
-        const n = Object.values(this.props.dropdownVisibilities).filter(value => value !== false).length;
+        const n = Object.values(this.state.dropdownVisibilities).filter(value => value !== false).length;
         return Math.round(this.dropdownPosition(n) + 1.2*this.textHeight*index)
     }
 
@@ -323,7 +327,7 @@ class Model extends React.Component {
         return (
         <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
         <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-            {this.shortDescription}
+          <span>{this.shortDescription}</span>
         </div>
         </Box>
     )}
@@ -425,7 +429,7 @@ class Model extends React.Component {
 
                         <Box style={{ flex: 1 }}>
                             {Object.entries(this.sliders).map(([name, slider], index) => (
-                                this.props.sliderVisibilities[name] ?
+                                this.state.sliderVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.sliderPosition(index), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div style={{ position:"absolute", zIndex: 9999, top: -30, left: 0.095 * (window.innerWidth * 0.97), transform: 'translateX(-50%)', fontSize: '14px', color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
                                       {typeof this.inputNames[name] === 'string' ? 
@@ -440,7 +444,7 @@ class Model extends React.Component {
                             ))}
 
                             {Object.entries(this.inputFields).map(([name, inputField], index) => (
-                                this.props.inputFieldVisibilities[name] ?
+                                this.state.inputFieldVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.inputFieldPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
                                       {typeof this.inputNames[name] === 'string' ? 
@@ -452,7 +456,7 @@ class Model extends React.Component {
                             ))}
 
                             {Object.entries(this.dropdowns).map(([name, dropdown], index) => (
-                                this.props.dropdownVisibilities[name] ?
+                                this.state.dropdownVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.dropdownPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
                                       {typeof this.inputNames[name] === 'string' ? 
@@ -464,7 +468,7 @@ class Model extends React.Component {
                             ))}
                             
                             {Object.entries(this.checkboxes).map(([name, checkbox], index) => (
-                                this.props.checkboxVisibilities[name] ?
+                                this.state.checkboxVisibilities[name] ?
                                 (<Text className={name} as = "label" size="2">
                                     <Flex style={{ position:"absolute", top: this.checkboxPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), width: Math.round(0.27 * (window.innerWidth * 0.97)), justifyContent:"flex-start", alignItems:"flex-start"}} gap="2">          
                                       {typeof this.inputNames[name] === 'string' ? 

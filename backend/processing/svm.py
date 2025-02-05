@@ -56,7 +56,7 @@ def main(kernel, c, gamma, dataset, normalization, user_id, task_id):
     accuracy = model.score(X_test, y_test)
     f1score = f1_score(y_test, y_pred, average='weighted')
 
-    data.plot_decision_boundary(model, step=0.001)  # plot the current decision boundary (will be ignored if the dataset has too many dimensions)
+    data.plot_decision_boundary(model, step=0.005)  # plot the current decision boundary (will be ignored if the dataset has too many dimensions)
     plot = b64encode(data.images[-1]).decode()
 
     send_update(header='SVM', var_names=['plot', 'f1score'], vars=(plot, f1score), task_id=task_id, user_id=user_id)

@@ -23,7 +23,7 @@ class OtherTask extends Component {
 
         this.animationWindowRef = React.createRef();
         this.state = {
-            loading: true, 
+            //loading: true,    -->   this made 1.1-1.3 not load
             description: this.props.description,
             animationStates: {}, // changing one of these in the animation function causes a rerender
             animationWindowWidth: 100, // TODO: update default value

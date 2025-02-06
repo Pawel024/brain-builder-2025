@@ -512,7 +512,7 @@ class Model extends React.Component {
                         </Box>
                         {this.state.showCode && (
                             this.props.taskId < 30 ? 
-                            <SvmCodePreview code={this.state.code} /> : 
+                            <SvmCodePreview code={this.state.code} sliderVisibilities={this.state.sliderVisibilities} /> :
                             <CodePreview code={this.state.code} typ={this.props.typ} />
                         )}
                     </Tabs.Content>

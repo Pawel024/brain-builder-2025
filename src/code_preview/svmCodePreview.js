@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Joyride from 'react-joyride';
 import { Box } from '@radix-ui/themes';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import a11yDark from './a11y-dark';
 
-function SvmCodePreview({ code }) {
+function SvmCodePreview({ code, sliderVisibilities }) {
     const [runTutorial, setRunTutorial] = useState(true);
-    const steps = [
+    const [steps, setSteps] = useState([
         {
             target: '#allparts',
             content: "This is an example of how you would train this SVM model using scikit-learn. We'll walk you through the most important parts of the code.",
@@ -27,7 +27,7 @@ function SvmCodePreview({ code }) {
         },
         {
             target: '#part3',
-            content: 'Here we create the SVM model with your chosen parameters. C controls the trade-off between having a wide margin and correctly classifying training data. With RBF kernel, gamma determines the "reach" of a single training example.',
+            content: 'Here we create the SVM model with your chosen parameters. C controls the trade-off between having a wide margin and correctly classifying training data.',
             disableBeacon: true,
             placement: 'top',
         },
@@ -37,7 +37,15 @@ function SvmCodePreview({ code }) {
             disableBeacon: true,
             placement: 'top',
         }
-    ];
+    ]);
+
+    useEffect(() => {
+        setSteps((prevSteps) => {
+            const newSteps = [...prevSteps];
+            newSteps[2].content = 'Here we create the SVM model with your chosen parameters. C controls the trade-off between having a wide margin and correctly classifying training data.' + (sliderVisibilities['GammaSlider'] ? ' With RBF kernel, gamma determines the "reach" of a single training example.' : '');
+            return newSteps;
+        });
+    }, [sliderVisibilities]);
 
     // Handle tutorial completion
     const handleJoyrideCallback = (data) => {

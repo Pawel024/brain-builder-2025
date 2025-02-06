@@ -42,7 +42,7 @@ function SvmCodePreview({ code, sliderVisibilities }) {
     useEffect(() => {
         setSteps((prevSteps) => {
             const newSteps = [...prevSteps];
-            newSteps[2].content = 'Here we create the SVM model with your chosen parameters. C controls the trade-off between having a wide margin and correctly classifying training data.' + (sliderVisibilities['GammaSlider'] ? ' With RBF kernel, gamma determines the "reach" of a single training example.' : '');
+            newSteps[3].content = 'Here we create the SVM model with your chosen parameters. C controls the trade-off between having a wide margin and correctly classifying training data.' + (sliderVisibilities['GammaSlider'] ? ' With RBF kernel, gamma determines the "reach" of a single training example.' : '');
             return newSteps;
         });
     }, [sliderVisibilities]);

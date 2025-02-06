@@ -67,7 +67,7 @@ class OtherTask extends Component {
     }
 
     componentDidUpdate() {
-        if (this.props.type !== this.state.type) {
+        if (this.props.type !== this.state.type || this.props.description !== this.state.description) {
             this.mount()
         }
     }

@@ -411,7 +411,7 @@ class Model extends React.Component {
                                         <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
                                         {paragraphs.map((paragraph, pIndex) => (
                                           //<p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
-                                          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
+                                          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{paragraph}</ReactMarkdown>
                                         ))}
                                       </div>
                                     </div>

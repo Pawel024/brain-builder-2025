@@ -936,13 +936,15 @@ function App() {
             const path = `/exercise${level}-${task}`
             const nextTaskId = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds[taskIds.indexOf(taskId) + 1] : null;
             const nextPath = (nextTaskId && Math.floor(nextTaskId/10) === level) ? `/exercise${level}-${nextTaskId % 10}` : null
+            const levelIds = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds.filter(id => id >= 10 * level && id < 10 * (level + 1)) : null;
+            const lastTask = (levelIds && levelIds.length > 0) ? Math.max(...levelIds) % 10 : null;
             const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
               return (
                 <Route
                 key={taskId}
-                path={path}
+                paths = {[path, nextPath, [task, lastTask]]}
                 element={<NotFound />}/>
               );
             }
@@ -959,8 +961,11 @@ function App() {
             const path = `/exercise${level}-${task}`
             const nextTaskId = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds[taskIds.indexOf(Number(taskId)) + 1] : null;
             const nextPath = (nextTaskId && Math.floor(nextTaskId/10) === level) ? `/exercise${level}-${nextTaskId % 10}` : null
-            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+            const levelIds = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds.filter(id => id >= 10 * level && id < 10 * (level + 1)) : null;
+            const lastTask = (levelIds && levelIds.length > 0) ? Math.max(...levelIds) % 10 : null;
+            const isOpen = progressData['challenges'][0] ? progressData[type]?.[level]?.[task-1] === "open" : true;
             //const isOpen = true;  // for local testing of week 1
+            console.log("Check 1: ", taskId, isOpen)
           
             if (!isOpen) {
               return (
@@ -970,11 +975,10 @@ function App() {
                 element={<NotFound />}/>
               );
             }
-            {console.log("Check 2: ", path, nextPath, taskId, taskIds, taskIds.indexOf(Number(taskId)) + 1, nextTaskId)}
 
             return (
               <Route key={taskId} path={path} element={<OtherTask
-                paths = {[path, nextPath]}
+                paths = {[path, nextPath, [task, lastTask]]}
                 type = {taskName}
                 host = {window.location.host}
                 customId = {parseInt(taskId)}
@@ -991,6 +995,8 @@ function App() {
             const path = `/exercise${level}-${task}`
             const nextTaskId = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds[taskIds.indexOf(taskId) + 1] : null;
             const nextPath = (nextTaskId && Math.floor(nextTaskId/10) === level) ? `/exercise${level}-${nextTaskId % 10}` : null
+            const levelIds = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds.filter(id => id >= 10 * level && id < 10 * (level + 1)) : null;
+            const lastTask = (levelIds && levelIds.length > 0) ? Math.max(...levelIds) % 10 : null;
             const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
@@ -1009,7 +1015,7 @@ function App() {
                 element={
                   <>
                   <SvmView 
-                  paths = {[path, nextPath]}
+                  paths = {[path, nextPath, [task, lastTask]]}
                   isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
                   fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
                   />
@@ -1049,6 +1055,8 @@ function App() {
             const path = `/exercise${level}-${task}`
             const nextTaskId = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds[taskIds.indexOf(taskId) + 1] : null;
             const nextPath = (nextTaskId && Math.floor(nextTaskId/10) === level) ? `/exercise${level}-${nextTaskId % 10}` : null
+            const levelIds = (taskIds.indexOf(taskId) < taskIds.length-1) ? taskIds.filter(id => id >= 10 * level && id < 10 * (level + 1)) : null;
+            const lastTask = (levelIds && levelIds.length > 0) ? Math.max(...levelIds) % 10 : null;
             const isOpen = progressData[type]?.[level]?.[task-1] === "open";
           
             if (!isOpen) {
@@ -1067,7 +1075,7 @@ function App() {
                 element={
                   <>
                   <BuildView
-                    paths = {[path, nextPath]}
+                    paths = {[path, nextPath, [task, lastTask]]}
                     nOfInputs={nInputs[taskIds.indexOf(taskId)]}
                     nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
                     // nOfObjects={nObjects[taskIds.indexOf(taskId)]}

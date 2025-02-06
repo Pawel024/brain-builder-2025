@@ -54,7 +54,7 @@ class OtherTask extends Component {
         }
 
         const { width, height } = document.querySelector('.animation-window').getBoundingClientRect();
-        this.setState({ animationWindowWidth: width, animationWindowHeight: height, type: this.props.type })
+        if (width !== 0 && height !== 0) {this.setState({ animationWindowWidth: width, animationWindowHeight: height, type: this.props.type })}  // else {this.mount()}  // danger of update loop 
         if (this.props.description[0] === '[') {
             this.setState({ description: JSON.parse(this.props.description) });
           } else {

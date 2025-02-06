@@ -230,7 +230,7 @@ function makeScatterChart(ctx, x, y) {
 }
 
 export function RenderLinReg({ width, height, states, stateSetter }) {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
-    // TODO: actually use the width and height or get rid of the parameters
+    // TODO: actually use the width and height or get rid of the parameters -> these are used in other functions, bco the way otherTasks is structured they should all use the same args
 
     if (states.weight === undefined) {
         states.weight = 1;

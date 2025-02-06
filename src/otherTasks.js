@@ -39,6 +39,10 @@ class OtherTask extends Component {
     }
 
     componentDidMount() {
+        this.mount()
+    }
+
+    mount() {
         if (this.props.type === 'ManualLinReg') {
             this.animation = RenderLinReg;
         } else if (this.props.type === 'ManualMatrix') {
@@ -50,7 +54,7 @@ class OtherTask extends Component {
         }
 
         const { width, height } = document.querySelector('.animation-window').getBoundingClientRect();
-        this.setState({ animationWindowWidth: width, animationWindowHeight: height })
+        this.setState({ animationWindowWidth: width, animationWindowHeight: height, type: this.props.type })
         if (this.props.description[0] === '[') {
             this.setState({ description: JSON.parse(this.props.description) });
           } else {
@@ -60,18 +64,7 @@ class OtherTask extends Component {
 
     componentDidUpdate() {
         if (this.props.type !== this.state.type) {
-
-            if (this.props.type === 'ManualLinReg') {
-                this.animation = RenderLinReg;
-            } else if (this.props.type === 'ManualMatrix') {
-                this.animation = RenderDataMatrix;
-            } else if (this.props.type === 'ManualPolyReg') {
-                this.animation = RenderPolyReg;
-            } else {
-                alert("Function not implemented yet");
-            }
-
-            this.setState({ animationStates: {}, type: this.props.type })
+            this.mount()
         }
     }
 
@@ -119,7 +112,7 @@ class OtherTask extends Component {
                 <Flex direction='row' gap="0" style={{ height: window.innerHeight-52, width:'100vw', alignItems: 'center', justifyContent: 'center' }}>
                     
                     <Box style={{ flex:1, display: 'flex', flexDirection: 'column', textAlign:'justify', alignItems: 'flex-start', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
-                        {Array.isArray(this.props.description) && this.props.description.map(([subtitle, text], index) => (
+                        {Array.isArray(this.state.description) && this.state.description.map(([subtitle, text], index) => (
                             <div key={index}>
                             <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7 }}>&gt;_{subtitle} </Heading>
                             <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{text}</ReactMarkdown>

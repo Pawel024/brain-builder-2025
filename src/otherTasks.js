@@ -23,6 +23,7 @@ class OtherTask extends Component {
 
         this.animationWindowRef = React.createRef();
         this.state = {
+            loading: true, 
             description: this.props.description,
             animationStates: {}, // changing one of these in the animation function causes a rerender
             animationWindowWidth: 100, // TODO: update default value
@@ -43,6 +44,7 @@ class OtherTask extends Component {
     }
 
     mount() {
+        this.setState({ loading: true })
         if (this.props.type === 'ManualLinReg') {
             this.animation = RenderLinReg;
         } else if (this.props.type === 'ManualMatrix') {
@@ -60,6 +62,8 @@ class OtherTask extends Component {
           } else {
             this.createDescriptionList(this.props.description);
         }
+
+        this.setState({ loading: false })
     }
 
     componentDidUpdate() {
@@ -102,6 +106,14 @@ class OtherTask extends Component {
     }
 
     render() {
+        const preloader = document.getElementById("preloader");
+      
+        if (this.state.loading) {
+          if (preloader) { preloader.style.display = "flex"; };
+        } else {
+          if (preloader) { preloader.style.display = "none"; };
+        
+
         return (
         <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
             <div className='App'>
@@ -136,6 +148,7 @@ class OtherTask extends Component {
             </div>
         </Theme>
         );
+    }
     }
 }
 

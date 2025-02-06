@@ -953,8 +953,8 @@ function App() {
             const type = "challenges";
             const level = Math.floor(taskId / 10);
             const task = taskId % 10;
-            const isOpen = (progressData['challenges']) ? progressData[type]?.[level]?.[task-1] === "open" : true;
-            //const isOpen = true;  // for local testing of week 1
+            const isOpen = (progressData['challenges'][0]) ? progressData[type]?.[level]?.[task-1] === "open" : true;
+            //const isOpen = true;  // for local testing of week 1, above should work though
           
             if (!isOpen) {
               return (

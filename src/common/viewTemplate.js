@@ -410,7 +410,8 @@ class Model extends React.Component {
                                       <div className="slide-content">
                                         <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
                                         {paragraphs.map((paragraph, pIndex) => (
-                                          <p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
+                                          //<p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
+                                          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
                                         ))}
                                       </div>
                                     </div>

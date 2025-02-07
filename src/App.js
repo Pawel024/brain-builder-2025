@@ -23,10 +23,29 @@ import getCookie from './utils/cookieUtils';
 import putRequest from './utils/websockets/websocketUtils';
 import ClusteringTest from './clustering'
 import sensitiveDataPlot from './images/sensitive_kerbals.png';
+import ReactGA from 'react-ga4';
+
+// ------- GOOGLE ANALYTICS -------
+
+try {
+  const TRACKING_ID = process.env.GA_TRACKING_ID;
+  ReactGA.initialize(TRACKING_ID);
+} catch (error) {
+  console.log('Error initializing Google Analytics:', error);
+}
+
 
 // ------- APP FUNCTION -------
 
 function App() {
+  useEffect(() => {
+    // Track page views automatically
+    try {
+      ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+    } catch (error) {
+      console.log('Error sending pageview to Google Analytics:', error);
+    }
+  }, []);
 
   // Setting the interval- and timing-related states
   const intervalTimeout = 20000;  // in milliseconds, the time to wait before ending the interval

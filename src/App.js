@@ -23,12 +23,10 @@ import getCookie from './utils/cookieUtils';
 import putRequest from './utils/websockets/websocketUtils';
 import ClusteringTest from './clustering'
 import sensitiveDataPlot from './images/sensitive_kerbals.png';
-import { usePlausible } from './hooks/usePlausible';
 
 // ------- APP FUNCTION -------
 
 function App() {
-  usePlausible(); // track page views
 
   // Setting the interval- and timing-related states
   const intervalTimeout = 20000;  // in milliseconds, the time to wait before ending the interval

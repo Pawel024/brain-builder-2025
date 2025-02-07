@@ -228,7 +228,7 @@ function App() {
   let accuracyColor = 'var(--slate-11)';
 
   // this is for all the tasks
-  const defaultTaskIds = [11, 12, 13];
+  const defaultTaskIds = (window.location.host === 'localhost') ? [11, 12, 13] : [];
   const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
@@ -298,8 +298,8 @@ function App() {
   const [introIds, setIntroIds] = useState([]);
   const [introData, setIntroData] = useState([]);
 
-  const [otherTasks, setOtherTasks] = useState({11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'});	
-  const [otherDescriptions, setOtherDescriptions] = useState({11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]});
+  const [otherTasks, setOtherTasks] = useState( (window.location.host === 'localhost') ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
+  const [otherDescriptions, setOtherDescriptions] = useState( (window.location.host === 'localhost') ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
   const [constructionTaskIds, setConstructionTaskIds] = useState([23]);
 
 

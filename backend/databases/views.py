@@ -19,6 +19,10 @@ import asyncio
 import os
 import requests
 
+from rest_framework import viewsets
+from .models import Analytics
+from .serializers import AnalyticsSerializer
+
 
 def index(request, path=''):
     user_id = request.GET.get('user_id')
@@ -250,3 +254,18 @@ def get_notebook(request, notebook_path:str):
             return JsonResponse({'error': 'Error loading notebook'}, status=500)  # internal server error
     
     else: return JsonResponse({'error': 'No GitHub linked'}, status=500)  # internal server error
+
+
+@csrf_protect
+@api_view(['POST'])
+def analytics_view(request):
+    serializer = AnalyticsSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AnalyticsViewSet(viewsets.ModelViewSet):
+    queryset = Analytics.objects.all()
+    serializer_class = AnalyticsSerializer

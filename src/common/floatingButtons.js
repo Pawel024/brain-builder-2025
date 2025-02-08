@@ -21,23 +21,29 @@ function FloatingButton(props) {
   return <IconButton {...props} style={buttonStyle} />;
 }
 
-function LayerRemoveButton({setCytoLayers, index, taskId, cytoLayers, isTraining}) {
+function LayerRemoveButton({setCytoLayers, NNIndex, taskId, cytoLayers, isTraining, setWeights}) {
 
     // function to remove a layer
-    const removeLayer = useCallback((setCytoLayers, index) => {
+    const removeLayer = useCallback((setCytoLayers, NNIndex) => {
       const newLayer = [...cytoLayers];
       if (newLayer.length > 2) {newLayer.splice(-2, 1)}
       setCytoLayers(prevLayers => {
         const newLayers = [...prevLayers];
-        newLayers[index] = newLayer;
+        newLayers[NNIndex] = newLayer;
         return newLayers;
+      });
+
+      setWeights(prevWeights => {
+        const newWeights = [...prevWeights];
+        newWeights[NNIndex] = [];
+        return newWeights;
       });
     }, [cytoLayers]);
 
     return (
         <FloatingButton
             variant="outline"
-            onClick = {taskId !== 0 ? () => removeLayer(setCytoLayers, index) : () => {}}
+            onClick = {taskId !== 0 ? () => removeLayer(setCytoLayers, NNIndex) : () => {}}
             size="0"
             disabled={cytoLayers.length<3 || isTraining===1}
             style= {{ top: window.innerHeight*0.285, 
@@ -57,25 +63,31 @@ function LayerRemoveButton({setCytoLayers, index, taskId, cytoLayers, isTraining
     );
 }
 
-function LayerAddButton({setCytoLayers, index, taskId, cytoLayers, nOfOutputs, maxLayers, isTraining}) {
+function LayerAddButton({setCytoLayers, NNIndex, taskId, cytoLayers, nOfOutputs, maxLayers, isTraining, setWeights}) {
 
   // function to add a layer
-  const addLayer = useCallback((setCytoLayers, nOfOutputs, index, max_layers) => {
+  const addLayer = useCallback((setCytoLayers, nOfOutputs, NNIndex, max_layers) => {
       let newLayer = [...cytoLayers];
       if (cytoLayers.length < max_layers) {
         newLayer.push(nOfOutputs)
         setCytoLayers(prevLayers => {
           const newLayers = [...prevLayers];
-          newLayers[index] = newLayer;
+          newLayers[NNIndex] = newLayer;
           return newLayers;
         });
       }
+
+      setWeights(prevWeights => {
+        const newWeights = [...prevWeights];
+        newWeights[NNIndex] = [];
+        return newWeights;
+      });
   }, [cytoLayers]);
 
   return (
     <FloatingButton
       variant="outline"
-      onClick = {taskId !== 0 ? () => addLayer(setCytoLayers, nOfOutputs, index, maxLayers) : () => {}}
+      onClick = {taskId !== 0 ? () => addLayer(setCytoLayers, nOfOutputs, NNIndex, maxLayers) : () => {}}
       size="0"
       disabled={cytoLayers.length>maxLayers-1 || isTraining===1}
       style={{top: window.innerHeight*0.285, 

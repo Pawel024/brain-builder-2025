@@ -410,10 +410,10 @@ class Building extends Model {
           {((this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1) &&
             <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.02, right: window.innerWidth*0.34 }}>
             <img src={this.props.img} alt={`Plot of the training progress`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/} style={{ height: '200px', width: 'auto' }}/>
-            {this.props.taskId === 11 && this.state.weights[0] && this.state.biases[0] && (
+            {this.props.taskId === 11 && this.props.weights[0] && this.props.biases[0] && (
               <Flex direction="column" gap="0">
-              <p>Weight: {Number(this.state.weights[0]).toFixed(3)}</p>
-              <p>Bias: {Number(this.state.biases[0]).toFixed(3)}</p>
+              <p>Weight: {Number(this.props.weights[0]).toFixed(3)}</p>
+              <p>Bias: {Number(this.props.biases[0]).toFixed(3)}</p>
               </Flex>
             )}
             </Flex>

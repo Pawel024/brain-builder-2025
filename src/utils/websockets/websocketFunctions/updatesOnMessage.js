@@ -58,12 +58,14 @@ function updateWeightsIfNeeded(data, params) {
 
   /*update the weights if they changed*/
 
-  if (data?.network_weights?.[0]?.[0] !== undefined) {
-    params.setWeights(prevWeights => {
-      const newWeights = [...prevWeights];
-      newWeights[params.index] = data.network_weights;
-      return newWeights;
-    });
+  if (params?.weights?.length !== undefined && data?.network_weights?.[0]?.[0] !== undefined) {  // && params?.weights?.[0]?.[0] !== undefined) {
+    if (params.weights.length === 0 || data.network_weights[0][0] !== params.weights[0][0]) {
+      params.setWeights(prevWeights => {
+        const newWeights = [...prevWeights];
+        newWeights[params.index] = data.network_weights;
+        return newWeights;
+      });
+    }
   }
 }
 

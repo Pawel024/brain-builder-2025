@@ -66,7 +66,7 @@ function SvmCodePreview({ code, sliderVisibilities }) {
                 height: window.innerHeight*0.97,
                 justifyContent: 'center', 
                 alignItems: 'center',
-                marginTop: window.innerHeight*0.15
+                marginTop: window.innerHeight*0.1
             }}>
                 <Box style={{ 
                     position: 'relative', 

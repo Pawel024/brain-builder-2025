@@ -74,9 +74,6 @@ class Building extends Model {
           showCode: false,
           code: '',
           description: '',
-          // Initialize weights and biases to proper defaults for neural network tasks.
-          weights: props.weights && props.weights.length ? props.weights : [],  // ensure an empty array is set if not provided
-          biases: props.biases && props.biases.length ? props.biases : [],
           sliderValues: {'EpochSlider': 50, 'LRSlider': 0.01},
           dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
           checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},

@@ -56,7 +56,7 @@ export function generateCytoElements(list, apiData, isTraining, weights, biases)
         const target = cumulativeSums[i] + k;
         if (target <= cElements.length) {
           let weight = 5;
-          if (apiData && weights.length > 0 && isTraining !== 0) { 
+          if (apiData && weights.length > 0 && isTraining >= 0) { 
             try {
               weight = parseFloat(weights[i][k][j])/absMax;
               console.log(`CytoElements weight: ${weight}`)  // weights logging

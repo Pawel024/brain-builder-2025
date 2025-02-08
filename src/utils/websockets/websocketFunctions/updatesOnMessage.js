@@ -56,18 +56,15 @@ function updateF1ScoreIfNeeded(data, params) {
 
 function updateWeightsIfNeeded(data, params) {
 
-    /*update the weights if they changed*/
-
-    if (params?.weights?.length !== undefined && data?.network_weights?.[0]?.[0] !== undefined) {  // && params?.weights?.[0]?.[0] !== undefined) {
-      if (params.weights.length === 0 || data.network_weights[0][0] !== params.weights[0][0]) {
-          console.log("updating weights");  // for debugging
-          params.setWeights(prevWeights => {
-            const newWeights = [...prevWeights];
-            newWeights[params.index] = data.network_weights;
-            return newWeights;
-          });
-      }
-    }
+  /*update the weights if they changed*/
+  if (data?.network_weights?.[0]?.[0] !== undefined) {
+    console.log("updating weights");  // for debugging
+    params.setWeights(prevWeights => {
+      const newWeights = [...prevWeights];
+      newWeights[params.index] = data.network_weights;
+      return newWeights;
+    });
+  }
 }
 
 function updateBiasesIfNeeded(data, params) {

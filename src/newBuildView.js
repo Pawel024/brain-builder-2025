@@ -74,7 +74,7 @@ class Building extends Model {
           showCode: false,
           code: '',
           description: '',
-          sliderValues: {'EpochSlider': 50, 'LRSlider': 0.01},
+          sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': 0.01},  
           dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
           checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
           runTutorial: false,

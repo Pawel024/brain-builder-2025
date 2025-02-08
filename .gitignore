@@ -36,6 +36,3 @@ yarn-debug.log*
 yarn-error.log*
 
 get-pip.py
-
-streamlit/
-traffic_data.csv

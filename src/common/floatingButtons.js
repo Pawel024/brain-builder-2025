@@ -96,10 +96,10 @@ function LayerAddButton({setCytoLayers, index, taskId, cytoLayers, nOfOutputs, m
 }
 
 
-function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers, setCytoLayers, taskId, index, NNIndex, maxNodes, isTraining}) {
+function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers, setCytoLayers, taskId, index, NNIndex, maxNodes, isTraining, setWeights}) {
 
   // function to add a node to a layer
-  const addNode = useCallback((column, setCytoLayers, taskId, index, max_nodes) => {
+  const addNode = useCallback((column, setCytoLayers, taskId, index, max_nodes, setWeights) => {
     const newLayer = [...cytoLayers];
     newLayer[column] < max_nodes ? newLayer[column] += 1 : newLayer[column] = max_nodes;
     document.getElementById(taskId + "-input" + column).value = newLayer[column];
@@ -108,10 +108,16 @@ function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers
       newLayers[index] = newLayer;
       return newLayers;
     });
+
+    setWeights(prevWeights => {
+      const newWeights = [...prevWeights];
+      newWeights[NNIndex] = [];
+      return newWeights;
+    });
   }, [cytoLayers]);
 
   // function to remove a node from a layer
-  const removeNode = useCallback((column, setCytoLayers, taskId, index) => {
+  const removeNode = useCallback((column, setCytoLayers, taskId, index, setWeights) => {
     const newLayer = [...cytoLayers];
     newLayer[column] > 1 ? newLayer[column] -= 1 : newLayer[column] = 1;
     document.getElementById(taskId + "-input" + column).value = newLayer[column];
@@ -120,10 +126,16 @@ function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers
       newLayers[index] = newLayer;
       return newLayers;
     });
+
+    setWeights(prevWeights => {
+      const newWeights = [...prevWeights];
+      newWeights[NNIndex] = [];
+      return newWeights;
+    });
   }, [cytoLayers]);
 
   // function to set a custom number of nodes for a layer
-  const setNodes = useCallback((column, cytoLayers, setCytoLayers, taskId, index, maxNodes) => {
+  const setNodes = useCallback((column, cytoLayers, setCytoLayers, taskId, index, maxNodes, setWeights) => {
     try {
       var nodeInput = Number(document.getElementById(taskId + "-input" + column).value)
     } catch (error) {
@@ -150,6 +162,12 @@ function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers
       console.log("Invalid nodeInput, setting to: ", nodeInput);
     }
     document.getElementById(taskId + "-input" + column).value = nodeInput;
+
+    setWeights(prevWeights => {
+      const newWeights = [...prevWeights];
+      newWeights[NNIndex] = [];
+      return newWeights;
+    });
   }, []);
 
 
@@ -160,7 +178,7 @@ function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers
             <FloatingButton
             variant="outline"
             disabled={(isItPlus && cytoLayers[i+1] >= maxNodes) || (!isItPlus && cytoLayers[i+1] < 2) || isTraining[index] === 1}
-            onClick = {taskId !== 0 ? (isItPlus ? () => addNode(i+1, setCytoLayers, taskId, NNIndex, maxNodes) : () => removeNode(i+1, setCytoLayers, taskId, NNIndex)) : () => {}}
+            onClick = {taskId !== 0 ? (isItPlus ? () => addNode(i+1, setCytoLayers, taskId, NNIndex, maxNodes, setWeights) : () => removeNode(i+1, setCytoLayers, taskId, NNIndex, setWeights)) : () => {}}
             style={{ position: 'absolute', top: window.innerHeight - 178 - 45*isItPlus, left: left + (i+1) * dist }}
             >
             {isItPlus ? <PlusIcon /> : <MinusIcon />}
@@ -183,11 +201,11 @@ function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers
                   color: 'var(--cyan-12)',
                   fontWeight: 'bold'
               }}
-              onBlur={(taskId !== 0 && isTraining[index] !== 1) ? () => setNodes(i+1, cytoLayers, setCytoLayers, taskId, NNIndex, maxNodes) : () => {}}
+              onBlur={(taskId !== 0 && isTraining[index] !== 1) ? () => setNodes(i+1, cytoLayers, setCytoLayers, taskId, NNIndex, maxNodes, setWeights) : () => {}}
               onKeyDown={(event) => {
                   if (event.key === "Enter" && taskId !== 0 && isTraining[index] !== 1) {
                   event.preventDefault();
-                  setNodes(i+1, cytoLayers, setCytoLayers, taskId, NNIndex, maxNodes);
+                  setNodes(i+1, cytoLayers, setCytoLayers, taskId, NNIndex, maxNodes, setWeights);
                   }
               }}
               />

@@ -68,35 +68,37 @@ class Building extends Model {
         super(props);
 
         this.state = {
-        loading: true,
-        currentSlide: 0,
-        activeTab: 'training',
-        showCode: false,
-        code: '',
-        description: '',
-
-        sliderValues: {'EpochSlider': 50, 'LRSlider': 0.01},
-        dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
-        checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
-        runTutorial: false,
-        steps: [
-            {
-              target: '.buildBody',
-              content: 'Welcome to the Building View! This is where you can build and test your own neural networks.',
-              placement: 'center',
-            },
-            {
-              target: '.cytoscape',
-              content: 'This is the neural network you will be building. You can add and remove layers with the buttons on the right. You can also use the + and - buttons below the network to add or remove nodes.',
-            },
-            {
-              target: '.iterationsSlider',
-              content: 'This is the slider to adjust the number of epochs. Put simply: the more epochs, the more your network will learn. But be careful, too many epochs can lead to overfitting!',
-            },
-            {
-              target: '.learningRateSlider',
-              content: 'This is the slider to adjust the learning rate. Put simply: the lower the learning rate, the less the network will adjust itself at every step.',
-            }]
+          loading: true,
+          currentSlide: 0,
+          activeTab: 'training',
+          showCode: false,
+          code: '',
+          description: '',
+          // Initialize weights and biases to proper defaults for neural network tasks.
+          weights: props.weights && props.weights.length ? props.weights : [],  // ensure an empty array is set if not provided
+          biases: props.biases && props.biases.length ? props.biases : [],
+          sliderValues: {'EpochSlider': 50, 'LRSlider': 0.01},
+          dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
+          checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
+          runTutorial: false,
+          steps: [
+              {
+                target: '.buildBody',
+                content: 'Welcome to the Building View! This is where you can build and test your own neural networks.',
+                placement: 'center',
+              },
+              {
+                target: '.cytoscape',
+                content: 'This is the neural network you will be building. You can add and remove layers with the buttons on the right. You can also use the + and - buttons below the network to add or remove nodes.',
+              },
+              {
+                target: '.iterationsSlider',
+                content: 'This is the slider to adjust the number of epochs. Put simply: the more epochs, the more your network will learn. But be careful, too many epochs can lead to overfitting!',
+              },
+              {
+                target: '.learningRateSlider',
+                content: 'This is the slider to adjust the learning rate. Put simply: the lower the learning rate, the less the network will adjust itself at every step.',
+              }]
         };
 
         this.useCodePreview = true;

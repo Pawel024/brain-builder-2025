@@ -57,8 +57,8 @@ function updateF1ScoreIfNeeded(data, params) {
 function updateWeightsIfNeeded(data, params) {
 
   /*update the weights if they changed*/
+
   if (data?.network_weights?.[0]?.[0] !== undefined) {
-    console.log("updating weights");  // for debugging
     params.setWeights(prevWeights => {
       const newWeights = [...prevWeights];
       newWeights[params.index] = data.network_weights;

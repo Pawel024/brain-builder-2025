@@ -93,7 +93,8 @@ function CodePreview({ code, typ }) {
                 width: window.innerWidth*0.97,
                 height: window.innerHeight*0.97,
                 justifyContent: 'center', 
-                alignItems: 'center'
+                alignItems: 'center',
+                marginTop: window.innerHeight*0.15
             }}>
                 <Box style={{ 
                     position: 'relative', 

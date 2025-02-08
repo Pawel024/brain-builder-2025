@@ -831,7 +831,8 @@ function AppContent() {
     if (Array.isArray(cytoLayers)) {
       setCytoElements(NNTaskIds.map((taskId, index) => {
         console.log(`App.js weights[index] = ${weights[index]}`)
-        return generateCytoElements(cytoLayers[index], apiData[index], isTraining[taskIds.indexOf(NNTaskIds[index])], weights[index], biases[index])
+        const correspondingTaskIndex = taskIds.indexOf(NNTaskIds[index]);
+        return generateCytoElements(cytoLayers[index], apiData[correspondingTaskIndex], isTraining[correspondingTaskIndex], weights[index], biases[index])
       }
       ));
     }

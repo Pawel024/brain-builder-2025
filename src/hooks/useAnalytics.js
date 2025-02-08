@@ -25,7 +25,7 @@ export const useAnalytics = () => {
         page_path: location.pathname || '/',
       };
 
-      axios.post('/api/analytics/', analyticsData, {
+      axios.post('/api/pageview', analyticsData, {
         headers: {
           'X-CSRFToken': csrftoken,
           'Content-Type': 'application/json',

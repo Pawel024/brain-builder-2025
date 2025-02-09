@@ -338,11 +338,11 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
     );  
 
     return (
-        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
+        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px', fontFamily:'monospace' }}>
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <div>Weight: {states['weight']}</div>
+                <div>Weight: <b>{states['weight']}</b></div>
                 {weightSlider}
-                <div style={{ marginTop:10 }}>Bias: {states['bias']}</div>
+                <div style={{ marginTop:10 }}>Bias: <b>{states['bias']}</b></div>
                 {biasSlider}
                 
                 {chartRef ? 
@@ -484,9 +484,9 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
     );
 
     return (
-        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
+        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px', fontFamily:'monospace' }}>
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <div>Polynomial Degree: {states['degree']}</div>
+                <div>Polynomial Degree: <b>{states['degree']}</b></div>
                 {degreeSlider}     
                 
                 {chartRef ? 

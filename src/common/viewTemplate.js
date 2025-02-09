@@ -12,11 +12,11 @@ import Slider from 'react-animated-slider';
 import * as Form from '@radix-ui/react-form';
 import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
-import axios from 'axios';
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
+import { safeGet } from '../utils/axiosUtils';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -138,7 +138,7 @@ class Model extends React.Component {
     };
 
     componentDidMount() {
-        axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
+        safeGet(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
           // hide the preloader when page loads
           const preloader = document.getElementById("preloader");
@@ -359,7 +359,7 @@ class Model extends React.Component {
             
                   <Header showHomeButton={true} />
             
-                  <Tabs.Root defaultValue="training" style={{ fontFamily:'monospace' }}>
+                  <Tabs.Root defaultValue="training">
             
                     <Tabs.List size="2">
                         {this.tabs.map(tab => (   // cycle through all possible tabs and include the ones specified in this.props.tab
@@ -434,7 +434,7 @@ class Model extends React.Component {
 
                     {/* THE TRAINING TAB - this tab contains the training interface */} 
 
-                    <Tabs.Content value="training">   
+                    <Tabs.Content value="training" style={{ fontFamily:'monospace' }}>   
                         
                         {this.renderModel()}
                         

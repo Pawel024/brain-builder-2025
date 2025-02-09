@@ -26,8 +26,8 @@ class OtherTask extends Component {
             //loading: true,    -->   this made 1.1-1.3 not load
             description: this.props.description,
             animationStates: {}, // changing one of these in the animation function causes a rerender
-            animationWindowWidth: 100, // TODO: update default value
-            animationWindowHeight: 100, // TODO: update default value
+            animationWindowWidth: window.innerWidth * 0.67,
+            animationWindowHeight: window.innerHeight,
         }
     }
 
@@ -478,11 +478,11 @@ class BackendTask extends OriginalTask {
         // );
 
         return (
-            <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px',  }}>
+            <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px', fontFamily:'monospace' }}>
                 <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 
                 {this.state.in1Name !== 'Angle' && (
-                <div>{this.state.in1Name}: {this.state.in1}</div>
+                <div>{this.state.in1Name}: <b>{this.state.in1}</b></div>
                 )}
                 <div className="slider" style={{ marginTop:10, height:50, display: 'flex', justifyContent: 'center' }}>
                     {
@@ -495,7 +495,7 @@ class BackendTask extends OriginalTask {
 
                 {this.state.in2Name !== null && (
                 <>
-                <div>{this.state.in2Name}: {this.state.in2}</div>
+                <div>{this.state.in2Name}: <b>{this.state.in2}</b></div>
                 <div className="slider" style={{ marginTop:10   , height:50, display: 'flex', justifyContent: 'center' }}>
                     {this.props.type === 'ManualLinReg' ? biasSlider
                     // : this.props.type === 'ManualMatrix' ? nFeaturesSlider
@@ -516,13 +516,13 @@ class BackendTask extends OriginalTask {
                 {this.state.out1Name !== null && (
                 <div>
                     {/* Drag the sliders to change the weight and bias of the perceptron. Try to minimize the error. */}
-                    Current {this.state.out1Name}: {this.state.out1}
+                    Current {this.state.out1Name}: <b>{this.state.out1}</b>
                 </div>)}
                 
                 {this.state.out2Name !== null && (
                 <>
                 <div>
-                    Current {this.state.out2Name}: {this.state.out2}
+                    Current {this.state.out2Name}: <b>{this.state.out2}</b>
                 </div>
                 </>)}
                 </Flex>

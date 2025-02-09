@@ -2,6 +2,11 @@ import { prepareNNTrainingData, prepareSVMTrainingData } from './websocketFuncti
 import initializeWebSocket from './websocketFunctions/initializeWebsocket';
 
 const putRequest = (e, params, type) => {
+
+    if (window.location.hostname === 'localhost') {
+        console.warn('WebSocket connections disabled in localhost environment');
+        return;
+    }
     
     /*send the training data to the server and start the training process*/
   

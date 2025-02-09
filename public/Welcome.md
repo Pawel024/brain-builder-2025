@@ -1,8 +1,8 @@
 # Welcome to brAIn builder!
 
-We created this app in 2023-2024 while taking the course AE2224-II "Artificial Intelligence for Aerospace Engineering". After a test run that same year, we developed it further to include all topics treated in the course. 
+We created this app in 2023-2024 while taking the course AE2224-II "Artificial Intelligence for Aerospace Engineering". After a test run that same year, we extended it to all the topics of the course. 
 
-Our goal is to give you a conceptual idea of the different models and techniques covered in the lectures, without getting too much into the math. By providing some example code, we hope to bridge the gap between the lectures and the labs. Please know the app is still in an early stage, so some bugs are possible. 
+Our goal is to give you a conceptual idea of the different models and techniques covered in the lectures without getting too much into the math. By providing some example code, we hope to bridge the gap between the lectures and the labs. Please know the app is still young, so some bugs are possible. 
 
 Please let us know if you encounter any issues or have any suggestions. 
 

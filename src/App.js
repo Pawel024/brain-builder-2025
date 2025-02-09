@@ -4,7 +4,10 @@ import { Theme } from '@radix-ui/themes';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 
-import { Link2Icon } from '@radix-ui/react-icons';
+// ------- COMPONENTS -------
+import { Link2Icon } from '@radix-ui/react-icons'; // for external links
+// startpage is the only view that is not lazy loaded because it's very likely to be loaded
+import StartPage from './startpage/startPage';
 
 // ------- STYLES -------
 import './css/App.css';
@@ -18,7 +21,6 @@ import putRequest from './utils/websockets/websocketUtils';
 import { useAnalytics } from './utils/hooks/useAnalytics';
 
 // ------- LAZY LOADING OF ROUTED VIEWS -------
-const StartPage = lazy(() => import('./startpage/startPage'));
 const Introduction = lazy(() => import('./introduction'));
 const QuizApp = lazy(() => import('./quiz'));
 const OtherTask = lazy(() => import('./otherTasks'))
@@ -53,6 +55,7 @@ export default function App() {
 
 
 // ------- APP CONTENT -------
+
 function AppContent() {
   useAnalytics();
 
@@ -780,7 +783,7 @@ function AppContent() {
         });
       }
     });
-  }, [cytoLayers, NNTaskIds, nInputs, nOutputs, taskIds]);
+  }, [cytoLayers, NNTaskIds, nInputs, nOutputs, taskIds, isTraining]);
 
 
   useEffect(() => {

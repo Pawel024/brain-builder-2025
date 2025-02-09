@@ -18,15 +18,6 @@ function throttle(func, limit) {
     };
 }
 
-function debounce(func, delay) {
-    let debounceTimer;
-    return function(...args) {
-      const context = this;
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func.apply(context, args), delay);
-    };
-}
-
 const handleChangeWrapper = (value, processingFunction, plottingFunction, state, all_states, stateSetter, delay=50) => {
     const handleChange = throttle((value, processingFunction, plottingFunction, state, all_states) => {  // TODO: switch to throttle while user is dragging the slider, but somehow take value the user lands on
         if (processingFunction) {value = processingFunction(value)}
@@ -264,7 +255,7 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
         if (states.x && states.y) {
           plotData(states.weight, states.bias);
         }
-    }, [states.x, states.y]);
+    }, [states.x, states.y, plotData, states.weight, states.bias]);
 
     const plotData = (weight, bias) => {
         const scatterChart = makeScatterChart(chartRef.current, states.x, states.y);
@@ -366,6 +357,11 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
     const chartRef = React.createRef();
     const limits = [0, 6.28];  // 2π
 
+    if (states.degree === undefined) {
+        states.degree = 1;
+        stateSetter('degree', 1);
+    }
+
     if (!(states['x'] && states['y'])) {
         const x = Array.from({ length: 10 }, () => Math.random() * (limits[1] - limits[0]) + limits[0]);
         const y = x.map(xi => Math.sin(xi) + (Math.random() * 0.2 - 0.1));
@@ -383,7 +379,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
         if (states.x && states.y) {
             plotData(states.degree);
         }
-    }, [states.x, states.y]);
+    }, [states.x, states.y, plotData, states.degree]);
 
     const plotData = (degree) => {
         if (!chartRef.current) return;

@@ -1,4 +1,4 @@
-export default {
+const a11yDark = {
     "code[class*=\"language-\"]": {
         "color": "#f8f8f2",
         "background": "none",
@@ -144,3 +144,5 @@ export default {
         "fontStyle": "italic"
     }
 }
+
+export default a11yDark;

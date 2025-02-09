@@ -1,39 +1,58 @@
 /* eslint-disable no-lone-blocks */
-import React, { useState, useEffect, useRef } from 'react';
-import './css/App.css';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { Theme } from '@radix-ui/themes';
-import '@radix-ui/themes/styles.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Link2Icon } from '@radix-ui/react-icons';
 import axios from 'axios';
+
+import { Link2Icon } from '@radix-ui/react-icons';
+
+// ------- STYLES -------
+import './css/App.css';
+import '@radix-ui/themes/styles.css';
+
+// ------- UTILS -------
 import { safeGet } from './utils/axiosUtils';
-import BuildView from './newBuildView';
-import Introduction from './introduction';
-import QuizApp from './quiz';
-import OtherTask from './otherTasks';
-import FeedbackApp from './feedback';
-import NotFound from './common/notFound';
-import Header from './common/header';
-import SvmView from './svmView';
-import ConstructionView from './common/constructionView';
-import StartPage from './startpage/startPage';
 import { generateCytoElements, generateCytoStyle } from './utils/cytoUtils';
 import getCookie from './utils/cookieUtils';
 import putRequest from './utils/websockets/websocketUtils';
-import ClusteringTest from './clustering'
-import sensitiveDataPlot from './images/sensitive_kerbals.png';
 import { useAnalytics } from './utils/hooks/useAnalytics';
 
-// ------- APP FUNCTION -------
+// ------- LAZY LOADING OF ROUTED VIEWS -------
+const StartPage = lazy(() => import('./startpage/startPage'));
+const Introduction = lazy(() => import('./introduction'));
+const QuizApp = lazy(() => import('./quiz'));
+const OtherTask = lazy(() => import('./otherTasks'))
+const SvmView = lazy(() => import('./svmView'));
+const BuildView = lazy(() => import('./newBuildView'));
+const ClusteringTest = lazy(() => import('./clustering'));
+const FeedbackApp = lazy(() => import('./feedback'));
+const NotFound = lazy(() => import('./common/notFound'));
+const ConstructionView = lazy(() => import('./common/constructionView'));
 
-function App() {
+
+// ------- APP WRAPPER -------
+
+export default function App() {
+  // Loading view for in between pages
+  const LoadingFallback = () => {
+    const preloader = document.getElementById("preloader");
+    if (preloader) {
+      preloader.style.display = "flex";
+    }
+    return null;
+  };
+  
   return (
     <Router>
-      <AppContent />
+      <Suspense fallback={<LoadingFallback />}>
+        <AppContent />
+      </Suspense>
     </Router>
   );
 }
 
+
+// ------- APP CONTENT -------
 function AppContent() {
   useAnalytics();
 
@@ -948,7 +967,9 @@ function AppContent() {
           } else {
             return (
               <Route key={`intro${introId}`} path={`/introduction${level}-${task}`} element={
-                <Introduction introId={introId}/>
+                <div className="App">
+                  <Introduction introId={introId}/>
+                </div>
               } />
             );
           }
@@ -970,7 +991,11 @@ function AppContent() {
           }
 
           return (
-            <Route key={taskId} path={`/exercise${level}-${task}`} element={<ClusteringTest clusteringId={taskId} />} />
+            <Route key={taskId} path={`/exercise${level}-${task}`} element={
+              <div className="App">
+                <ClusteringTest clusteringId={taskId} />
+              </div>
+            } />
           );
         })}
 
@@ -990,13 +1015,17 @@ function AppContent() {
           }
 
           return (
-            <Route key={taskId} path={`/exercise${level}-${task}`} element={<OtherTask
-              type = {taskName}
-              host = {window.location.host}
-              customId = {parseInt(taskId)}
-              userId = {getCookie('user_id')}
-              description = {otherDescriptions[taskId]}
-            />} />
+            <Route key={taskId} path={`/exercise${level}-${task}`} element={
+              <div className="App">
+                <OtherTask
+                  type = {taskName}
+                  host = {window.location.host}
+                  customId = {parseInt(taskId)}
+                  userId = {getCookie('user_id')}
+                  description = {otherDescriptions[taskId]}
+                />
+              </div>
+            } />
           ); 
         })}
 
@@ -1020,38 +1049,17 @@ function AppContent() {
               key={taskId}
               path={`/exercise${level}-${task}`}
               element={
-                <>
+                <div className="App">
                 <SvmView 
                 isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
                 fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
                 />
-                </>
+                </div>
               }
             />
           );
         })}
 
-        {sensitiveIds.map((taskId, NNIndex) => (
-          // TODO currently unused as this whole idea turned into a big stinky mess
-          <>
-          <Route
-            key={taskId}
-            path={`/exercise${taskId/10}`}
-            element={
-              <>
-              <BuildView
-                nOfInputs={nInputs[taskIds.indexOf(taskId)]} nOfOutputs={nOutputs[taskIds.indexOf(taskId)]} maxLayers={maxLayers[taskIds.indexOf(taskId)]} taskId={taskId} NNIndex={NNIndex} index={taskIds.indexOf(taskId)} cytoElements={cytoElements[NNIndex]} cytoStyle={cytoStyle[NNIndex]} cytoLayers={cytoLayers[NNIndex]} setCytoLayers={setCytoLayers} updateCytoLayers={updateCytoLayers} loadLastCytoLayers={loadLastCytoLayers} 
-                isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} apiData={apiData[taskIds.indexOf(taskId)]} setApiData={setApiData} accuracy={accuracy[NNIndex]} setAccuracy={setAccuracy} accuracyColor={accuracyColor} handleSubmit={handleSubmit} isResponding={isResponding[taskIds.indexOf(taskId)]} setIsResponding={setIsResponding} loadData={loadData} pendingTime={pendingTime} intervalTimeout={intervalTimeout} cancelRequestRef={cancelRequestRef}
-                progress={NNProgress[NNIndex]} setProgress={setNNProgress} featureNames={featureNames[taskIds.indexOf(taskId)]} errorList={errorList[NNIndex]} setErrorList={setErrorList} weights={weights[NNIndex]} setWeights={setWeights} biases={biases[NNIndex]} setBiases={setBiases} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} userId={getCookie('user_id')}
-                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} maxNodes={maxNodes[NNIndex]} maxEpochs={maxEpochs[NNIndex]} typ={typ[taskIds.indexOf(taskId)]} dataset={dataset[taskIds.indexOf(taskId)]} name={taskNames[taskId]} startTraining={putRequest} imageVisibility={imageVisibility[NNIndex]} gamesData={gamesData}
-                initPlot={sensitiveDataPlot}
-                tabs={['data', 'training']} sliderVisibilities={{}} inputFieldVisibilities={{}} dropdownVisibilities={{}} dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}} checkboxVisibilities={{'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true}}
-              />
-              </>
-            }
-          />
-          </>
-        ))}
         {NNTaskIds.map((taskId, NNIndex) => {
           const type = "challenges";
           const level = Math.floor(taskId / 10);
@@ -1072,65 +1080,65 @@ function AppContent() {
               key={taskId}
               path={`/exercise${level}-${task}`}
               element={
-                <>
-                <BuildView
-                  nOfInputs={nInputs[taskIds.indexOf(taskId)]}
-                  nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
-                  // nOfObjects={nObjects[taskIds.indexOf(taskId)]}
-                  maxLayers={maxLayers[NNIndex]}
-                  taskId={taskId}
-                  NNIndex={NNIndex}
-                  index={taskIds.indexOf(taskId)}
-                  cytoElements={cytoElements[NNIndex]}
-                  cytoStyle={cytoStyle[NNIndex]}
-                  cytoLayers={cytoLayers[NNIndex]}
-                  setCytoLayers={setCytoLayers}
-                  updateCytoLayers={updateCytoLayers}
-                  loadLastCytoLayers={loadLastCytoLayers}
-                  isTraining={isTraining[taskIds.indexOf(taskId)]}
-                  setIsTraining={setIsTraining}
-                  apiData={apiData[taskIds.indexOf(taskId)]}
-                  setApiData={setApiData}
-                  setAccuracy={setAccuracy}
-                  accuracyColor={accuracyColor}
-                  handleSubmit={handleSubmit}
-                  isResponding={isResponding[taskIds.indexOf(taskId)]}
-                  setIsResponding={setIsResponding}
-                  progress={NNProgress[NNIndex]}
-                  featureNames={featureNames[taskIds.indexOf(taskId)]}
-                  errorList={errorList[NNIndex]}
-                  weights={weights[NNIndex]}
-                  biases={biases[NNIndex]}
-                  img={imgs[taskIds.indexOf(taskId)]}
-                  initPlot={initPlots[taskIds.indexOf(taskId)]}
-                  loadData={loadData}
-                  imageVisibility={imageVisibility[NNIndex]}
-                  setProgress={setNNProgress}
-                  setErrorList={setErrorList}
-                  setWeights={setWeights}
-                  setBiases={setBiases}
-                  pendingTime={pendingTime}
-                  cancelRequestRef={cancelRequestRef}
-                  fileName={fileNames[taskIds.indexOf(taskId)]}
-                  functionName={functionNames[taskIds.indexOf(taskId)]}
-                  maxNodes={maxNodes[NNIndex]}
-                  maxEpochs={maxEpochs[NNIndex]}
-                  setImgs={setImgs}
-                  userId={getCookie('user_id')}
-                  intervalTimeout={intervalTimeout}
-                  typ={typ[taskIds.indexOf(taskId)]}
-                  dataset={dataset[taskIds.indexOf(taskId)]}
-                  name={taskNames[taskId]}
-                  startTraining={putRequest}
-                  tabs={['data', 'training', 'testing']}
-                  sliderVisibilities={{'EpochSlider': iterationsSliderVisibility[NNIndex], 'LRSlider': lrSliderVisibility[NNIndex]}}
-                  inputFieldVisibilities={{}}
-                  dropdownVisibilities={{'AFDropdown': !!afOptions[NNIndex].length, 'OptimizerDropdown': !!optimOptions[NNIndex].length}}
-                  dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
-                  checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
-                  gamesData={gamesData}
-                />
-                </>
+                <div className="App">
+                  <BuildView
+                    nOfInputs={nInputs[taskIds.indexOf(taskId)]}
+                    nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
+                    // nOfObjects={nObjects[taskIds.indexOf(taskId)]}
+                    maxLayers={maxLayers[NNIndex]}
+                    taskId={taskId}
+                    NNIndex={NNIndex}
+                    index={taskIds.indexOf(taskId)}
+                    cytoElements={cytoElements[NNIndex]}
+                    cytoStyle={cytoStyle[NNIndex]}
+                    cytoLayers={cytoLayers[NNIndex]}
+                    setCytoLayers={setCytoLayers}
+                    updateCytoLayers={updateCytoLayers}
+                    loadLastCytoLayers={loadLastCytoLayers}
+                    isTraining={isTraining[taskIds.indexOf(taskId)]}
+                    setIsTraining={setIsTraining}
+                    apiData={apiData[taskIds.indexOf(taskId)]}
+                    setApiData={setApiData}
+                    setAccuracy={setAccuracy}
+                    accuracyColor={accuracyColor}
+                    handleSubmit={handleSubmit}
+                    isResponding={isResponding[taskIds.indexOf(taskId)]}
+                    setIsResponding={setIsResponding}
+                    progress={NNProgress[NNIndex]}
+                    featureNames={featureNames[taskIds.indexOf(taskId)]}
+                    errorList={errorList[NNIndex]}
+                    weights={weights[NNIndex]}
+                    biases={biases[NNIndex]}
+                    img={imgs[taskIds.indexOf(taskId)]}
+                    initPlot={initPlots[taskIds.indexOf(taskId)]}
+                    loadData={loadData}
+                    imageVisibility={imageVisibility[NNIndex]}
+                    setProgress={setNNProgress}
+                    setErrorList={setErrorList}
+                    setWeights={setWeights}
+                    setBiases={setBiases}
+                    pendingTime={pendingTime}
+                    cancelRequestRef={cancelRequestRef}
+                    fileName={fileNames[taskIds.indexOf(taskId)]}
+                    functionName={functionNames[taskIds.indexOf(taskId)]}
+                    maxNodes={maxNodes[NNIndex]}
+                    maxEpochs={maxEpochs[NNIndex]}
+                    setImgs={setImgs}
+                    userId={getCookie('user_id')}
+                    intervalTimeout={intervalTimeout}
+                    typ={typ[taskIds.indexOf(taskId)]}
+                    dataset={dataset[taskIds.indexOf(taskId)]}
+                    name={taskNames[taskId]}
+                    startTraining={putRequest}
+                    tabs={['data', 'training', 'testing']}
+                    sliderVisibilities={{'EpochSlider': iterationsSliderVisibility[NNIndex], 'LRSlider': lrSliderVisibility[NNIndex]}}
+                    inputFieldVisibilities={{}}
+                    dropdownVisibilities={{'AFDropdown': !!afOptions[NNIndex].length, 'OptimizerDropdown': !!optimOptions[NNIndex].length}}
+                    dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
+                    checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
+                    gamesData={gamesData}
+                  />
+                </div>
               }
             />
           );
@@ -1155,7 +1163,6 @@ function AppContent() {
               path={`/quiz${level}-${task}`}
               element={
                 <div className="App">
-                  <Header showHomeButton={true}/>
                   <QuizApp quizId={quizId} />
                 </div>
               }/>
@@ -1165,7 +1172,6 @@ function AppContent() {
 
         <Route path={`/feedback`} element={
           <div className="App">
-            <Header showHomeButton={true}/>
             <FeedbackApp host={window.location.origin} cookie={getCookie('csrftoken')} />
           </div>
         } />
@@ -1179,5 +1185,3 @@ function AppContent() {
     </Theme>
   );
 }
-
-export default App;

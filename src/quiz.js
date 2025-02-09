@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
+import { safeGet } from './utils/axiosUtils';
 import { Flex, Box, Button, Heading, TextField } from '@radix-ui/themes';
-import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
-import '@radix-ui/themes/styles.css';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Progress from '@radix-ui/react-progress';
+import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
+import Header from './common/header';
+import '@radix-ui/themes/styles.css';
 import './css/App.css';
-import { safeGet } from './utils/axiosUtils';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import a11yDark from './code_preview/a11y-dark';
 
@@ -100,6 +101,8 @@ const Quiz = ({ questions }) => {
   };
 
   return (
+    <div>
+    <Header showHomeButton={true}/>
     <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: window.innerHeight-52, backgroundImage: 'linear-gradient(330deg, rgba(7,62,185, 0.15) 0%, rgba(7,185,130, 0.15) 100%)'}}>
     {isQuizFinished ? <ScoreScreen score={score} userAnswers={userAnswers} handleRetry={handleRetry} /> : (
       <Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/3, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
@@ -160,36 +163,22 @@ const Quiz = ({ questions }) => {
       </Box>
     )}
     </Box>
+    </div>
   );
 };
   
 function QuizApp({ quizId=11 }) {
 
-  // ------- WINDOW RESIZING -------
-
-  function getWindowSize() {
-    const {innerWidth, innerHeight} = window;
-    return {innerWidth, innerHeight};
-  }
-  
-  // eslint-disable-next-line no-unused-vars
-  const [windowSize, setWindowSize] = useState(getWindowSize());
-
-  // update window size when window is resized
+  // ------- HIDE PRELOADER -------
   useEffect(() => {
-    function handleWindowResize() {
-      setWindowSize(getWindowSize());
+    const preloader = document.getElementById("preloader");
+    if (preloader) {
+        preloader.style.display = "none";
     }
-
-    window.addEventListener('resize', handleWindowResize);
-    return () => {
-      window.removeEventListener('resize', handleWindowResize);
-    };
   }, []);
 
-
   // ------- ACTUAL QUIZ -------
-
+  
   const [questions, setQuestions] = useState([
     {
       question: 'What is the capital of France?',

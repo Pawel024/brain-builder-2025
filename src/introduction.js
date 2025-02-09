@@ -39,21 +39,27 @@ class Introduction extends React.Component {
     componentDidMount() {
         safeGet(window.location.origin + '/api/intros/?intro_id=' + this.props.introId)
         .then(response => {
-        if (response.data.content[0] === '[') {
-            this.setState({ content: JSON.parse(response.data.content),
-              showContent: Array(JSON.parse(response.data.content).length).fill(false)
-            }, () => {
-              const urlParams = new URLSearchParams(window.location.search);
-              const openBox = urlParams.get('section');
-              if (openBox !== null) {
-                this.handleShowContent(parseInt(openBox), true);
-              }
-            });
-        } else if (response.data.content[0] === '*') {
-          this.typeWriter(response.data.content);  // this works
-        } else {
-          this.createDescriptionList(response.data.content);
-        }
+          // hide the preloader when page loads
+          const preloader = document.getElementById("preloader");
+          if (preloader) {
+              preloader.style.display = "none";
+          }
+
+          if (response.data.content[0] === '[') {
+              this.setState({ content: JSON.parse(response.data.content),
+                showContent: Array(JSON.parse(response.data.content).length).fill(false)
+              }, () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const openBox = urlParams.get('section');
+                if (openBox !== null) {
+                  this.handleShowContent(parseInt(openBox), true);
+                }
+              });
+          } else if (response.data.content[0] === '*') {
+            this.typeWriter(response.data.content);  // this works
+          } else {
+            this.createDescriptionList(response.data.content);
+          }
         })
         .catch(error => {
         console.error('Introduction error:', error);

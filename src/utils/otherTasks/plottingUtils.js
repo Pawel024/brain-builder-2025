@@ -255,7 +255,7 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
         if (states.x && states.y) {
           plotData(states.weight, states.bias);
         }
-    }, [states.x, states.y, plotData, states.weight, states.bias]);
+    }, [states.x, states.y]);
 
     const plotData = (weight, bias) => {
         const scatterChart = makeScatterChart(chartRef.current, states.x, states.y);
@@ -379,7 +379,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
         if (states.x && states.y) {
             plotData(states.degree);
         }
-    }, [states.x, states.y, plotData, states.degree]);
+    }, [states.x, states.y]);
 
     const plotData = (degree) => {
         if (!chartRef.current) return;

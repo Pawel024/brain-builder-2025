@@ -12,7 +12,6 @@ import Introduction from './introduction';
 import QuizApp from './quiz';
 import OtherTask from './otherTasks';
 import FeedbackApp from './feedback';
-import LinksPage from './links';
 import NotFound from './common/notFound';
 import Header from './common/header';
 import SvmView from './svmView';
@@ -23,7 +22,7 @@ import getCookie from './utils/cookieUtils';
 import putRequest from './utils/websockets/websocketUtils';
 import ClusteringTest from './clustering'
 import sensitiveDataPlot from './images/sensitive_kerbals.png';
-import { useAnalytics } from './hooks/useAnalytics';
+import { useAnalytics } from './utils/hooks/useAnalytics';
 
 // ------- APP FUNCTION -------
 
@@ -1169,9 +1168,6 @@ function AppContent() {
             <Header showHomeButton={true}/>
             <FeedbackApp host={window.location.origin} cookie={getCookie('csrftoken')} />
           </div>
-        } />
-        <Route path={`/links`} element={
-          <LinksPage/>
         } />
 
         <Route path="/:ex" element={

@@ -1,8 +1,8 @@
 import React from 'react';
 import './css/App.css';
 import { Theme, Box, Heading } from '@radix-ui/themes';
-import Readme from './readme';
-import Header from './common/header';
+import Readme from '../readme';
+import Header from '../common/header';
 
 function LinksPage () {
     return(

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import getCookie from '../utils/cookieUtils';
+import getCookie from '../cookieUtils';
 
 export const useAnalytics = () => {
   const location = useLocation();

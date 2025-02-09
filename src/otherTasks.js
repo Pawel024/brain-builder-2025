@@ -1,6 +1,6 @@
-import React, { Component, useState, useRef } from 'react';
+import React, { Component } from 'react';
 import './css/App.css';
-import { Flex, Theme, Box, Heading, Separator, Text, Checkbox } from '@radix-ui/themes';
+import { Flex, Theme, Box, Heading, Separator } from '@radix-ui/themes';
 import Header from './common/header';
 import * as Slider from '@radix-ui/react-slider';
 

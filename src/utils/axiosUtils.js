@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const isDevelopment = window.location.hostname === 'localhost';
+const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 export const safeGet = async (url, options = {}) => {
   if (isDevelopment) {

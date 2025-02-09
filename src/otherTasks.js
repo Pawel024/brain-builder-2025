@@ -8,8 +8,6 @@ import { RenderLinReg, RenderPolyReg } from './utils/otherTasks/plottingUtils'
 import { RenderDataMatrix } from './utils/otherTasks/matrixUtils';
 import { RenderEmissions } from './utils/otherTasks/emissionUtils';
 
-import { _ } from 'ajv';
-
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -23,7 +21,6 @@ class OtherTask extends Component {
 
         this.animationWindowRef = React.createRef();
         this.state = {
-            //loading: true,    -->   this made 1.1-1.3 not load
             description: this.props.description,
             animationStates: {}, // changing one of these in the animation function causes a rerender
             animationWindowWidth: window.innerWidth * 0.67,
@@ -155,9 +152,6 @@ class OtherTask extends Component {
 
 
 class OriginalTask extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     animation() {
     }

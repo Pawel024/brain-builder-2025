@@ -237,7 +237,7 @@ function AppContent() {
   let accuracyColor = 'var(--slate-11)';
 
   // this is for all the tasks
-  const defaultTaskIds = (window.location.hostname === 'localhost') ? [11, 12, 13] : [];
+  const defaultTaskIds = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? [11, 12, 13] : [];
   const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
@@ -307,8 +307,8 @@ function AppContent() {
   const [introIds, setIntroIds] = useState([]);
   const [introData, setIntroData] = useState([]);
 
-  const [otherTasks, setOtherTasks] = useState( (window.location.hostname === 'localhost') ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
-  const [otherDescriptions, setOtherDescriptions] = useState( (window.location.hostname === 'localhost') ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
+  const [otherTasks, setOtherTasks] = useState( (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
+  const [otherDescriptions, setOtherDescriptions] = useState( (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
   const [constructionTaskIds, setConstructionTaskIds] = useState([23]);
 
 
@@ -978,7 +978,7 @@ function AppContent() {
           const type = "challenges";
           const level = Math.floor(taskId / 10);
           const task = taskId % 10;
-          const isOpen = (window.location.hostname === 'localhost') ? progressData[type]?.[level]?.[task-1] === "open" : true;
+          const isOpen = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? progressData[type]?.[level]?.[task-1] === "open" : true;
         
           if (!isOpen) {
             return (

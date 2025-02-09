@@ -3,7 +3,7 @@ import initializeWebSocket from './websocketFunctions/initializeWebsocket';
 
 const putRequest = (e, params, type) => {
 
-    if (window.location.hostname === 'localhost') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.warn('WebSocket connections disabled in localhost environment');
         return;
     }

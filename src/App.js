@@ -909,8 +909,13 @@ function AppContent() {
       const networkData = response.data[0];
       const formData = new FormData(event.target);
       const values = Array.from(formData.values()).map((value) => Number(value));
-      networkData.in_out['model_input'] = JSON.stringify(values);
+
+      let newInOut = JSON.parse(networkData.in_out);
+      newInOut['model_input'] = JSON.stringify(values);
+      networkData.in_out = JSON.stringify(newInOut);
+
       networkData.action = 2;
+      
       axios.put(window.location.origin + `/api/backend/${networkData.pk}`, networkData, {
         headers: {
           'X-CSRFToken': csrftoken

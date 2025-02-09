@@ -202,7 +202,7 @@ class Building extends Model {
                 data: this.props.errorList[0],
                 borderColor: 'rgba(7, 151, 185, 1)',
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
-                tension: 0.8,
+                tension: 0,
                 segment: {
                   animation: {
                     draw: (ctx) => {
@@ -405,7 +405,7 @@ class Building extends Model {
           <img src={color_scale_pic} alt='Color scale from purple for negative to red for positive' width='20' height='auto' style={{ position: 'absolute', top: 15, left: 15 }}/>
 
           {((this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1) &&
-            <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.02, right: window.innerWidth*0.34 }}>
+            <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.05, right: window.innerWidth*0.34 }}>
             <img src={this.props.img} alt={`Plot of the training progress`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/} style={{ height: '200px', width: 'auto' }}/>
             </Flex>
           )}
@@ -422,8 +422,10 @@ class Building extends Model {
     )}
 
     additionalComponents = () => {
+       const extraMarginNeeded = this.dropdowns.length * 20 + this.checkboxes.length * 20;
+      
         return (
-        <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
+        <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
             <div id="/api-data">
               {this.props.isTraining===2 ? (
                 <Flex direction='column' >
@@ -447,7 +449,6 @@ class Building extends Model {
                 </Flex>
               ) : (this.props.isTraining===1 ? (
                 <Flex direction= 'column'>
-                  <div style={{ fontFamily:'monospace' }}><b>Training... </b></div>
                   <div style={{ fontFamily:'monospace', marginTop: 20 }}><b>Progress: {Math.round((parseFloat(this.props.progress))*100)}%</b></div>
                   <div style={{ display: this.state.activeTab === 'training' ? 'block' : 'none', width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>
                     <canvas ref={this.chartRef} id="myChart"/>

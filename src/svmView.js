@@ -10,6 +10,7 @@ import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
+import './css/App.css';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).

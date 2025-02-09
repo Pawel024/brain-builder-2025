@@ -407,12 +407,6 @@ class Building extends Model {
           {((this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1) &&
             <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.02, right: window.innerWidth*0.34 }}>
             <img src={this.props.img} alt={`Plot of the training progress`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/} style={{ height: '200px', width: 'auto' }}/>
-            {this.props.taskId === 11 && this.props.weights[0] && this.props.biases[0] && (
-              <Flex direction="column" gap="0">
-              <p>Weight: {Number(this.props.weights[0]).toFixed(3)}</p>
-              <p>Bias: {Number(this.props.biases[0]).toFixed(3)}</p>
-              </Flex>
-            )}
             </Flex>
           )}
 
@@ -436,12 +430,17 @@ class Building extends Model {
                   <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
                     {this.shortDescription}
                   </div>
-                  {(this.props.taskId < 30 &&
+
+                  {/* regression */}
+                  {(this.props.type === 2 &&
                   <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
                   )}
-                  {(this.props.taskId >= 30 &&
+                  
+                  {/* classification */}
+                  {(this.props.typ === 1 &&
                   <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
                   )}
+
                   <div style={{ maxWidth: Math.round(0.27 * (window.innerWidth * 0.97)), maxHeight: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>
                     <canvas ref={this.chartRef} id="myChart"/>
                   </div>

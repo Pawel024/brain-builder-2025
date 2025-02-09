@@ -378,7 +378,7 @@ class Model extends React.Component {
 
                     <Tabs.Content value="data">
                       {this.props.taskId !== 0 && (    // a taskId of 0 is used for tutorials
-                        <Flex direction="row" gap="2" style={{ overflow: 'hidden', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
+                        <Flex direction="row" gap="2" style={{ overflow: 'hidden', width: '100%', height: window.innerHeight-116 }}>
                             
                             {/* slides with descriptions loaded from the database */}
                             <Box style={{ flexBasis: '50%' }}>   
@@ -494,7 +494,7 @@ class Model extends React.Component {
 
                             {this.additionalComponents()}
 
-                            <Flex direction="row" gap="3" style={{ position: 'absolute', transform: 'translateX(-50%)', top: this.buttonPosition, left: Math.round(0.835 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
+                            <Flex direction="row" gap="3" style={{ position: 'absolute', transform: 'translateX(-50%)', top: this.buttonPosition, left: Math.round(0.835 * (window.innerWidth * 0.97)) }}>
                                 <IconButton onClick={this.handleStartClick} variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }} 
                                 disabled = { this.props.isTraining < 0 || this.valuesUndefined() } >
                                     <Flex direction="horizontal" gap="2" style={{alignItems: "center", fontFamily:'monospace' }}>
@@ -528,7 +528,7 @@ class Model extends React.Component {
                       <Flex direction="column" gap="2" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                       
                       {/* This will render the form with the feature names received from the backend, if it exists */}
-                      <Form.Root className="FormRoot" onSubmit={this.props.taskId !== 0 ? (event) => this.props.handleSubmit(event, this.props.setIsResponding, this.props.setApiData, this.props.taskId, this.props.index) : () => {}} style={{ fontFamily:'monospace' }}>
+                      <Form.Root className="FormRoot" onSubmit={this.props.taskId !== 0 ? (event) => this.props.handleSubmit(event, this.props.setIsResponding, this.props.setApiData, this.props.taskId, this.props.index) : () => {}}>
                           {this.props.featureNames.length > 0 && this.props.featureNames.map((featureName, index) => (
                           <Form.Field className="FormField" name={featureName} key={index}>
                               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -552,7 +552,7 @@ class Model extends React.Component {
                           </button>
                           </Form.Submit>}
                       </Form.Root>
-                      <div id="query-response" style={{ fontFamily:'monospace' }}>
+                      <div id="query-response">
                           {this.props.isResponding===2 ? (
                               <div>Output: {this.props.apiData["in_out"]}</div>
                           ) : (this.props.isResponding===1 ? (

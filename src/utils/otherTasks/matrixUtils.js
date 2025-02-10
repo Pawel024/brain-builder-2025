@@ -156,7 +156,7 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
                     </table>
                 </Flex>
 
-                <Flex direction='column' style={{ position:'absolute', top: 0.72*height }}>
+                <Flex direction='column' style={{ position:'absolute', top: 0.62*height }}>
                 <div style={{textAlign: 'center'}} >Predictions</div>
                     <table style={{ borderCollapse: 'collapse', textAlign: 'center' }}>
                         {displayMatrix(states['outputData'], states['targets'])}

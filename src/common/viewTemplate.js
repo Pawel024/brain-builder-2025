@@ -311,24 +311,28 @@ class Model extends React.Component {
       const keys = Object.keys(this.sliders);
       const visibleKeys = keys.filter(key => this.state.sliderVisibilities[key]);
       const visibleIndex = visibleKeys.indexOf(keys[index]);
+      console.log("visibleIndex: ", visibleIndex);
       return Math.round((0.14 + 0.12 * visibleIndex) * (window.innerHeight - 140));
     }
 
     inputFieldPosition = (index) => {
       // Position input fields below the sliders
       const visibleSliderCount = Object.keys(this.sliders).filter(key => this.state.sliderVisibilities[key]).length;
+      console.log("visibleSliderCount: ", visibleSliderCount);
       return Math.round(this.sliderPosition(visibleSliderCount) + this.textHeight * index);
     }
 
     dropdownPosition = (index) => {
       // Position dropdowns below the input fields
       const visibleInputCount = Object.keys(this.inputFields).filter(key => this.state.inputFieldVisibilities[key]).length;
+      console.log("visibleInputCount: ", visibleInputCount);
       return Math.round(this.inputFieldPosition(visibleInputCount) + this.textHeight * index);
     }
 
     checkboxPosition = (index) => {
       // Position checkboxes below the dropdowns
       const visibleDropdownCount = Object.keys(this.dropdowns).filter(key => this.state.dropdownVisibilities[key]).length;
+      console.log("visibleDropdownCount: ", visibleDropdownCount);
       return Math.round(this.dropdownPosition(visibleDropdownCount) + 1.2 * this.textHeight * index);
     }
 

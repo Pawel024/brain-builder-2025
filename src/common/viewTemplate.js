@@ -3,7 +3,7 @@ import '../css/App.css';
 import { Theme, Flex, Box, Tabs, Heading, IconButton, Separator, Checkbox, Text } from '@radix-ui/themes';
 import * as SliderSlider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
-import { PlayIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
+import { PlayIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
 import CodePreview from '../code_preview/codePreview';
 import SvmCodePreview from '../code_preview/svmCodePreview';
 import Header from '../common/header';
@@ -17,6 +17,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
 import { safeGet } from '../utils/axiosUtils';
+import { SlideButton } from './floatingButtons';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -334,7 +335,7 @@ class Model extends React.Component {
         </Box>)
     }
 
-    additionalComponents = () => {
+    additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
         // TODO: use this to add any additional components like charts or text
         return (
         <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
@@ -387,23 +388,29 @@ class Model extends React.Component {
                                 <Flex style={{ flexbasis:'100%', marginBottom: 0, width:'100%' }}>
                                 <Slider key={this.state.currentSlide} classNames={horizontalCss} infinite={false} slideIndex={this.state.currentSlide}
                                   previousButton={
-                                    <ChevronLeftIcon
-                                      style={{ color: 'var(--slate-9)', width:64, height:64 }}
+                                    <SlideButton 
                                       onClick={() => {
                                         const prevSlide = this.state.currentSlide - 1;
                                         if (prevSlide >= 0) {
                                           this.setState({ currentSlide: prevSlide });
                                         }
-                                    }}/>}
+                                      }}
+                                      disabled={this.state.currentSlide <= 0}
+                                      rightPointing={false}
+                                    />
+                                  }
                                   nextButton={
-                                    <ChevronRightIcon
-                                      style={{ color: 'var(--slate-9)', width:64, height:64 }}
+                                    <SlideButton
                                       onClick={() => {
                                         const nextSlide = this.state.currentSlide + 1;
                                         if (nextSlide < this.state.description.length) {
                                           this.setState({ currentSlide: nextSlide });
                                         }
-                                    }}/>}
+                                      }}
+                                      disabled={this.state.currentSlide >= this.state.description.length - 1}
+                                      rightPointing={true}
+                                    />
+                                  }
                                 >
                                   {this.state.description.map(([subtitle, ...paragraphs], index) => (
                                     <div key={index} className="slide-container">
@@ -492,7 +499,7 @@ class Model extends React.Component {
                                 </Text>) : (<div></div>)
                             ))}
 
-                            {this.additionalComponents()}
+                            {this.additionalComponents(this.state.dropdownVisibilities, this.state.checkboxVisibilities)}
 
                             <Flex direction="row" gap="3" style={{ position: 'absolute', transform: 'translateX(-50%)', top: this.buttonPosition, left: Math.round(0.835 * (window.innerWidth * 0.97)) }}>
                                 <IconButton onClick={this.handleStartClick} variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }} 

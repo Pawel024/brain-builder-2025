@@ -2,8 +2,6 @@
 import React, { useCallback } from 'react';
 import { PlusIcon, MinusIcon, ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import { IconButton } from '@radix-ui/themes';
-import { max } from 'd3';
-
 
 function FloatingButton(props) {
   let buttonStyle
@@ -19,6 +17,28 @@ function FloatingButton(props) {
   } else {buttonStyle = props.style}
 
   return <IconButton {...props} style={buttonStyle} />;
+}
+
+function SlideButton({onClick, disabled, rightPointing}) {
+  return (
+      <FloatingButton
+          variant="outline"
+          onClick = {onClick}
+          size="0"
+          disabled={disabled}
+          style={{
+            zIndex: 9999,
+            borderRadius: 'var(--radius-5)',
+            width: 35,
+            height: 60,
+            boxShadow: '0 2px 8px var(--slate-a11)'
+          }}
+          >
+
+          {rightPointing ? (<ChevronRightIcon style={{height: 30, width: 30}}/>) : (<ChevronLeftIcon style={{height: 30, width: 30}}/>)}
+          
+      </FloatingButton>
+  );
 }
 
 function LayerRemoveButton({setCytoLayers, NNIndex, taskId, cytoLayers, isTraining, setWeights}) {
@@ -229,4 +249,4 @@ function GenerateFloatingButtons({top, left, dist, isItPlus, nLayers, cytoLayers
   );
 }
 
-export { GenerateFloatingButtons, LayerRemoveButton, LayerAddButton};
+export { SlideButton, GenerateFloatingButtons, LayerRemoveButton, LayerAddButton};

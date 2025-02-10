@@ -307,23 +307,29 @@ class Model extends React.Component {
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
     sliderPosition = (index) => {
-        return Math.round((0.14 + 0.12*index) * (window.innerHeight-140))
+      // Position sliders at the top
+      const keys = Object.keys(this.sliders);
+      const visibleKeys = keys.filter(key => this.state.sliderVisibilities[key]);
+      const visibleIndex = visibleKeys.indexOf(keys[index]);
+      return Math.round((0.14 + 0.12 * visibleIndex) * (window.innerHeight - 140));
     }
 
     inputFieldPosition = (index) => {
-        // const n = Object.values(this.state.sliderVisibilities).filter(value => value !== false).length;
-        const n = Object.keys(this.sliders).length;
-        return Math.round(this.sliderPosition(n) + this.textHeight*index)  // (0.14 + 0.12*Object.keys(this.sliders).length)*(window.innerHeight-140) + this.textHeight*index
+      // Position input fields below the sliders
+      const visibleSliderCount = Object.keys(this.sliders).filter(key => this.state.sliderVisibilities[key]).length;
+      return Math.round(this.sliderPosition(visibleSliderCount) + this.textHeight * index);
     }
 
     dropdownPosition = (index) => {
-        const n = Object.values(this.state.inputFieldVisibilities).filter(value => value !== false).length;  // Object.keys(this.inputFields).length
-        return Math.round(this.inputFieldPosition(n) + this.textHeight*index)
+      // Position dropdowns below the input fields
+      const visibleInputCount = Object.keys(this.inputFields).filter(key => this.state.inputFieldVisibilities[key]).length;
+      return Math.round(this.inputFieldPosition(visibleInputCount) + this.textHeight * index);
     }
 
     checkboxPosition = (index) => {
-        const n = Object.values(this.state.dropdownVisibilities).filter(value => value !== false).length;
-        return Math.round(this.dropdownPosition(n) + 1.2*this.textHeight*index)
+      // Position checkboxes below the dropdowns
+      const visibleDropdownCount = Object.keys(this.dropdowns).filter(key => this.state.dropdownVisibilities[key]).length;
+      return Math.round(this.dropdownPosition(visibleDropdownCount) + 1.2 * this.textHeight * index);
     }
 
     renderModel = () => {

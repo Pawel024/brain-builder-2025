@@ -424,7 +424,7 @@ class Building extends Model {
     additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
         // add 30 px extra margin needed for each visible checkbox or dropdown
         const extraMarginNeeded = [...Object.entries(dropdownVisibilities), ...Object.entries(checkboxVisibilities)]
-          .reduce((margin, [_, isVisible]) => isVisible ? margin + 30 : margin, 0);
+          .reduce((margin, [_, isVisible]) => isVisible ? margin + 45 : margin, 0);
       
         return (
         <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>

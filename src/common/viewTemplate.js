@@ -303,6 +303,7 @@ class Model extends React.Component {
     // TODO: delete the functions you don't change
 
     // TODO: tune the vertical positioning here
+    sliderBottomMargin = 40
     textHeight = 40
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
@@ -319,7 +320,7 @@ class Model extends React.Component {
       // Position input fields below the sliders
       const visibleSliderCount = Object.keys(this.sliders).filter(key => this.state.sliderVisibilities[key]).length;
       console.log("visibleSliderCount: ", visibleSliderCount);
-      return Math.round(this.sliderPosition(visibleSliderCount-1) + this.textHeight * index);
+      return Math.round(this.sliderPosition(visibleSliderCount-1) + this.textHeight * index + this.sliderBottomMargin);
     }
 
     dropdownPosition = (index) => {

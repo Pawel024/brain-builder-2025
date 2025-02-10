@@ -424,7 +424,7 @@ class Building extends Model {
     additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
         // add 30 px extra margin needed for each visible checkbox or dropdown
         const extraMarginNeeded = [...Object.entries(dropdownVisibilities), ...Object.entries(checkboxVisibilities)]
-          .reduce((margin, [_, isVisible]) => isVisible ? margin + 45 : margin, 0);
+          .reduce((margin, [_, isVisible]) => isVisible ? margin + 40 : margin, 0);
       
         return (
         <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
@@ -437,12 +437,12 @@ class Building extends Model {
 
                   {/* regression */}
                   {(this.props.type === 2 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
+                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
                   )}
                   
                   {/* classification */}
                   {(this.props.typ === 1 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
+                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
                   )}
 
                   <div style={{ maxWidth: Math.round(0.27 * (window.innerWidth * 0.97)), maxHeight: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>

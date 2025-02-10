@@ -303,7 +303,7 @@ class Model extends React.Component {
     // TODO: delete the functions you don't change
 
     // TODO: tune the vertical positioning here
-    sliderBottomMargin = 40
+    sliderBottomMargin = 60
     textHeight = 40
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 

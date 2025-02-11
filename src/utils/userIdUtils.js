@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * Checks if a string is a valid UUID
  * Supports UUIDs with or without dashes
@@ -27,7 +29,8 @@ export const shouldExcludeUser = (userId, excludeList = []) => {
   return excludeList.some(pattern => {
     if (pattern === '*') return true;
     if (pattern.includes('*')) {
-      const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
+      const safePattern = _.escapeRegExp(pattern).replace(/\\\*/g, '.*');
+      const regex = new RegExp('^' + safePattern + '$');
       return regex.test(userId);
     }
     return pattern === userId;

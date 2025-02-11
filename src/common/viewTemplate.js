@@ -303,36 +303,40 @@ class Model extends React.Component {
     // TODO: delete the functions you don't change
 
     // TODO: tune the vertical positioning here
-    sliderBottomMargin = 60
+    sliderBottomMargin = -20
     textHeight = 40
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
-    sliderPosition = (index) => {
-      // Position sliders at the top
+    sliderIndex = (index) => {
       const keys = Object.keys(this.sliders);
-      const visibleKeys = keys.filter(key => this.state.sliderVisibilities[key]);
+      const visibleKeys = keys.filter(key => this.props.sliderVisibilities[key]);
       const visibleIndex = visibleKeys.indexOf(keys[index]);
       console.log("visibleIndex: ", visibleIndex);
-      return Math.round((0.14 + 0.12 * visibleIndex) * (window.innerHeight - 140));
+      return visibleIndex
+    }
+
+    sliderPosition = (index) => {
+      // Position sliders at the top
+      return Math.round((0.14 + 0.12 * index) * (window.innerHeight - 140));
     }
 
     inputFieldPosition = (index) => {
       // Position input fields below the sliders
-      const visibleSliderCount = Object.keys(this.sliders).filter(key => this.state.sliderVisibilities[key]).length;
-      console.log("visibleSliderCount: ", visibleSliderCount);
-      return Math.round(this.sliderPosition(visibleSliderCount-1) + this.textHeight * index + this.sliderBottomMargin);
+      const visibleSliderCount = Object.keys(this.sliders).filter(key => this.props.sliderVisibilities[key]).length;
+      console.log("visibleSliderCount: ", visibleSliderCount, this.sliderPosition(visibleSliderCount));
+      return Math.round(this.sliderPosition(visibleSliderCount) + 1.2 * this.textHeight * index + this.sliderBottomMargin);
     }
 
     dropdownPosition = (index) => {
       // Position dropdowns below the input fields
-      const visibleInputCount = Object.keys(this.inputFields).filter(key => this.state.inputFieldVisibilities[key]).length;
-      console.log("visibleInputCount: ", visibleInputCount);
-      return Math.round(this.inputFieldPosition(visibleInputCount) + this.textHeight * index);
+      const visibleInputCount = Object.keys(this.inputFields).filter(key => this.props.inputFieldVisibilities[key]).length;
+      console.log("visibleInputCount: ", visibleInputCount, this.inputFieldPosition(visibleInputCount));
+      return Math.round(this.inputFieldPosition(visibleInputCount) + 1.2 * this.textHeight * index);
     }
 
     checkboxPosition = (index) => {
       // Position checkboxes below the dropdowns
-      const visibleDropdownCount = Object.keys(this.dropdowns).filter(key => this.state.dropdownVisibilities[key]).length;
+      const visibleDropdownCount = Object.keys(this.dropdowns).filter(key => this.props.dropdownVisibilities[key]).length;
       console.log("visibleDropdownCount: ", visibleDropdownCount);
       return Math.round(this.dropdownPosition(visibleDropdownCount) + 1.2 * this.textHeight * index);
     }
@@ -461,7 +465,7 @@ class Model extends React.Component {
                         <Box style={{ flex: 1 }}>
                             {Object.entries(this.sliders).map(([name, slider], index) => (
                                 this.state.sliderVisibilities[name] ?
-                                (<Box style={{ position:"absolute", top: this.sliderPosition(index), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
+                                (<Box style={{ position:"absolute", top: this.sliderPosition(this.sliderIndex(index)), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div style={{ position:"absolute", zIndex: 9999, top: -30, left: 0.095 * (window.innerWidth * 0.97), transform: 'translateX(-50%)', fontSize: '14px', color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
                                       {typeof this.inputNames[name] === 'string' ? 
                                           <label>{this.inputNames[name]}</label> :

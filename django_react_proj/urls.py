@@ -21,8 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('readme', views.serve_readme),
-    path('links', views.serve_links),
-    re_path('api/notebooks/(?P<notebook_path>.+)/?$', views.get_notebook),
+    #path('links', views.serve_links),
+    #re_path('api/notebooks/(?P<notebook_path>.+)/?$', views.get_notebook),
     re_path(r'^api/backend$', views.query_list),
     re_path(r'^api/backend/$', views.query_list),
     re_path(r'^api/backend/(?P<pk>[0-9]+)$', views.query_detail),
@@ -39,8 +39,14 @@ urlpatterns = [
     re_path(r'^api/intros$', views.intro_description_detail),
     re_path(r'^api/intros/$', views.intro_description_detail),
     re_path(r'^api/feedback$', views.feedback),
+
+    # analytics
     re_path(r'^api/pageview$', views.analytics_view),
     re_path(r'^api/pageview/$', views.analytics_view),
+
+    # get client IP
+    re_path(r'^api/client-ip$', views.get_client_ip),
+    re_path(r'^api/client-ip/$', views.get_client_ip),
 
     # serve .lottie files directly
     re_path(r'^(?P<filename>.+\.lottie)$', views.serve_lottie_file),

@@ -5,26 +5,31 @@ import getCookie from '../cookieUtils';
 import { shouldExcludeIP } from '../ipUtils';
 import { shouldExcludeUser } from '../userIdUtils';
 
+
+/**
+ * Hook to log page views and count users anonymously 
+ */
 export const useAnonymizedUserCount = () => {
   const location = useLocation();
 
   useEffect(() => {
     const logPageView = async () => {
       try {
-        // USER ID
+        // USER ID - this is the only critical requirement
         const userId = getCookie('user_id');
         if (!userId) {
           console.warn('No user ID found');
           return;
         }
 
-        // Check excluded users from environment
-        const excludeUsersStr = process.env.REACT_APP_EXCLUDE_USERS;
-        const excludeUsers = excludeUsersStr ? excludeUsersStr.split(',') : [];
-        
-        if (shouldExcludeUser(userId, excludeUsers)) {
-          console.debug('Analytics: User ID excluded from tracking');
-          return;
+        // Check excluded users from environment - continue if not configured
+        const excludeUsersStr = process.env.EXCLUDE_USERS;
+        if (excludeUsersStr) {
+          const excludeUsers = excludeUsersStr.split(',');
+          if (shouldExcludeUser(userId, excludeUsers)) {
+            console.debug('Analytics: User ID excluded from tracking');
+            return;
+          }
         }
 
         // CSRF TOKEN
@@ -34,28 +39,33 @@ export const useAnonymizedUserCount = () => {
           return;
         }
 
-        // CLIENT IP
-        const ipResponse = await axios.get('/api/client-ip');
-        if (!ipResponse.data || !ipResponse.data.ip) {
-          return;
-        }
-        const clientIP = ipResponse.data.ip;
-
-        // Check excluded IPs from environment
-        const excludeIPsStr = process.env.REACT_APP_EXCLUDE_IPS;
-        const excludeIPs = excludeIPsStr ? excludeIPsStr.split(',') : [];
-        
-        if (shouldExcludeIP(clientIP, excludeIPs)) {
-          console.debug('Analytics: IP excluded from tracking');
-          return;
-        }
-
         // ANALYTICS DATA
         const analyticsData = {
           user_id: userId,
           page_path: location.pathname || '/',
           referrer: document.referrer || 'direct'
         };
+
+        // Try to get client IP, but continue without it if not available
+        try {
+          const ipResponse = await axios.get('/api/client-ip');
+          if (ipResponse.data?.ip) {
+            const clientIP = ipResponse.data.ip;
+            
+            /// Check excluded IPs from environment - continue if not configured
+            const excludeIPsStr = process.env.EXCLUDE_IPS;
+            if (excludeIPsStr) {
+              const excludeIPs = excludeIPsStr.split(',');
+              if (shouldExcludeIP(clientIP, excludeIPs)) {
+                console.debug('Analytics: IP excluded from tracking');
+                return;
+              }
+            }
+          }
+        } catch (ipError) {
+          console.debug('Could not fetch client IP:', ipError.message);
+          // Continue without IP information
+        }
 
         await axios.post('/api/pageview', analyticsData, {
           headers: {

@@ -56,8 +56,10 @@ function draw(lineg, dotg, centerg, groups, dots) {
 }
 
 function ClusteringVisualization({clusteringId}) {
-    const [clusteringMethod, setClusteringMethod] = useState(clusteringId===61 ? "agglo" : "kmeans"); // TODO handle this through a property in the database
-    const [numPoints, setNumPoints] = useState(clusteringId===71 ? 10 : 200);
+    const cluMet = (clusteringId === 61) ? "agglo" : "kmeans"; // TODO handle this through a property in the database
+
+    const [clusteringMethod, setClusteringMethod] = useState(cluMet);
+    const [numPoints, setNumPoints] = useState((cluMet === "agglo") ? 10 : 200);
     const [numClusters, setNumClusters] = useState(2);
     const [isRestartDisabled, setIsRestartDisabled] = useState(true);
     const [isStepDisabled, setIsStepDisabled] = useState(false);
@@ -186,7 +188,7 @@ function ClusteringVisualization({clusteringId}) {
                             </Box>
                         </Flex>
 
-                        {clusteringId !== 71 && (
+                        {clusteringMethod === 'kmeans' && (
                             <Flex gap="2" style={{ alignItems: 'center' }}>
                                 <label style={{ verticalAlign: 'middle', fontSize: "var(--font-size-2)" }}>
                                     Number of clusters:

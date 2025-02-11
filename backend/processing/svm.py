@@ -1,10 +1,6 @@
 """
 This module contains the backend code for the SVM tasks. 
-Work in progress.
 """
-
-# TODOs: 
-# ...
 
 import sys
 if __name__ == '__main__':
@@ -52,7 +48,7 @@ def main(kernel, c, gamma, dataset, normalization, user_id, task_id):
     X_train, y_train = modify_data(training_set)
     X_test, y_test = modify_data(test_set)
     
-    model = SVC(kernel=kernel)
+    model = SVC(kernel=kernel, C=c, gamma=gamma)
 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
@@ -60,7 +56,7 @@ def main(kernel, c, gamma, dataset, normalization, user_id, task_id):
     accuracy = model.score(X_test, y_test)
     f1score = f1_score(y_test, y_pred, average='weighted')
 
-    data.plot_decision_boundary(model)  # plot the current decision boundary (will be ignored if the dataset has too many dimensions)
+    data.plot_decision_boundary(model, step=0.005)  # plot the current decision boundary (will be ignored if the dataset has too many dimensions)
     plot = b64encode(data.images[-1]).decode()
 
     send_update(header='SVM', var_names=['plot', 'f1score'], vars=(plot, f1score), task_id=task_id, user_id=user_id)

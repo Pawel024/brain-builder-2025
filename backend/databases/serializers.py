@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Row, Progress, TaskDescription, ExternalLink, NeuralNetworkDescription, ClusteringDescription, BasicsDescription, SVMDescription, Quiz, Intro, Feedback, LevelState
+from .models import Row, Progress, TaskDescription, ExternalLink, NeuralNetworkDescription, ClusteringDescription, BasicsDescription, SVMDescription, Quiz, Intro, Feedback, LevelState, Analytics
 
 class RowSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,7 +51,7 @@ class TaskDescriptionSerializer(serializers.ModelSerializer):
 class IntroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Intro
-        fields = ('intro_id', 'visibility', ' enabled', 'name', 'content')
+        fields = ('intro_id', 'visibility', 'enabled', 'name', 'content')
 
 class QuizSerializer(serializers.ModelSerializer):
     class Meta:
@@ -70,8 +70,12 @@ class FeedbackSerializer(serializers.ModelSerializer):
         model = Feedback
         fields = ['feedback']
 
-
 class LevelStateSerializer(serializers.Serializer):
     class Meta:
         model = LevelState
         fields = '__all__'
+
+class AnalyticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Analytics
+        fields = ('user_id', 'page_path', 'timestamp')

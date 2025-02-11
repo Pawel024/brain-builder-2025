@@ -20,6 +20,12 @@ class StartPage extends React.Component {
     }
 
     componentDidMount() {
+        // hide the preloader when page loaded
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+            preloader.style.display = "none";
+        }
+
         const tasksByLevel = groupByIds(this.props.taskIds);
         const iconsByLevel = groupByIndex(this.props.taskIcons, this.props.taskIds, tasksByLevel);
         const quizzesByLevel = groupByIds(this.props.quizIds);

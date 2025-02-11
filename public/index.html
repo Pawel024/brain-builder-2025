@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Web site created using create-react-app" />
@@ -29,18 +29,34 @@
         to { transform: rotate(360deg); }
       }
     </style>
-    <script defer="defer" src="/static/js/main.5a6f1999.js"></script>
-    <link rel="stylesheet" href="/static/css/main.e6161515.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="/static/css/main.e2ea1a57.css"></noscript>
     <script>
+      const jsBuild = '2131a3d6';
+      const cssBuild = '17650a1c';
+
+      // Load bundled assets only in production
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        window.addEventListener('DOMContentLoaded', () => {
+          const script = document.createElement('script');
+          script.src = `/static/js/main.${jsBuild}.js`;
+          script.defer = true;
+          document.head.appendChild(script);
+
+          const style = document.createElement('link');
+          style.rel = 'stylesheet';
+          style.href = `/static/css/main.${cssBuild}.css`;
+          style.media = 'print';
+          style.onload = function() { this.media = 'all'; };
+          document.head.appendChild(style);
+        });
+      }
       var userId = "{{ user_id }}";
       localStorage.setItem('userId', userId);
     </script>
-</head>
+  </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="preloader"></div>
     <div id="root"></div>
+    <div id="preloader"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

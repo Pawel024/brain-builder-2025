@@ -1,4 +1,3 @@
-import { act } from 'react';
 import getCookie from '../../cookieUtils';
 
 // Extracted task-specific configurations for better separation of concerns
@@ -47,7 +46,6 @@ const prepareNNTrainingData = ({
   const taskConfig = getTaskConfiguration(taskId);
   const finalLearningRate = taskConfig.learningRate || learningRate;
   const normalization = taskConfig.normalization ?? true;
-  const activationFunctionsEnabled = taskConfig.activationFunctionsEnabled ?? true;
 
   let userId = getCookie('user_id');
 

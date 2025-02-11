@@ -28,7 +28,6 @@ function endTraining(ws, params) {
     newIsTraining[params.globalIndex] = 2;
     return newIsTraining;
   });
-  console.log("Training finished")
 }
 
 function updateErrorListIfNeeded(data, params) {
@@ -37,7 +36,6 @@ function updateErrorListIfNeeded(data, params) {
     
     if (data?.error_list?.[0] !== undefined && data?.error_list?.[1] !== undefined && params?.errorList?.[0] !== undefined && params?.errorList?.[1] !== undefined) { 
       if (data.error_list[0].length !== params.errorList[0].length || data.error_list[1] !== params.errorList[1]) {
-        console.log("updating error list");  // for debugging
         params.setErrorList(prevErrorList => {
           const newErrorList = [...prevErrorList];
           newErrorList[params.index] = data.error_list;
@@ -49,25 +47,25 @@ function updateErrorListIfNeeded(data, params) {
 
 function updateF1ScoreIfNeeded(data, params) {
   if(data.f1score !== undefined && params.setF1Score !== undefined) {
-    console.log("updating f1 score");  // for debugging TODO remove
     params.setF1Score(data.f1score);
   }
 }
 
 function updateWeightsIfNeeded(data, params) {
+  if (!data?.network_weights || !params?.setWeights) {
+    return;
+  }
 
-    /*update the weights if they changed*/
+  const currentWeights = params.weights?.[params.index];
+  const shouldUpdate = !currentWeights || currentWeights[0][0] !== data.network_weights[0][0]; // will update if the first weight is different
 
-    if (params?.weights?.length !== undefined && data?.network_weights?.[0]?.[0] !== undefined) {  // && params?.weights?.[0]?.[0] !== undefined) {
-      if (params.weights.length === 0 || data.network_weights[0][0] !== params.weights[0][0]) {
-          console.log("updating weights");  // for debugging
-          params.setWeights(prevWeights => {
-            const newWeights = [...prevWeights];
-            newWeights[params.index] = data.network_weights;
-            return newWeights;
-          });
-      }
-    }
+  if (shouldUpdate) {
+    params.setWeights(prevWeights => {
+      const newWeights = [...prevWeights];
+      newWeights[params.index] = data.network_weights;
+      return newWeights;
+    });
+  }
 }
 
 function updateBiasesIfNeeded(data, params) {
@@ -90,7 +88,6 @@ function updateImagesIfNeeded(data, params) {
     /*decompress and parse the images in 'plots', but only if it's not empty or the same as the current params.imgs*/
 
     if (data?.plot) {
-        console.log("updating images");  // for debugging
         params.setImgs(prevImgs => {
           const newImgs = [...prevImgs];
           const binaryString = atob(data.plot);  // decode from base64 to binary string

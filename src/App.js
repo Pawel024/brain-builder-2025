@@ -1,32 +1,63 @@
 /* eslint-disable no-lone-blocks */
-import React, { useState, useEffect, useRef } from 'react';
-import './css/App.css';
-import { Theme, Box, Heading, Grid, IconButton } from '@radix-ui/themes';
-import '@radix-ui/themes/styles.css';
-import tu_delft_pic from './images/tud_black_new.png';
-import { Link, BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { HomeIcon, Link2Icon } from '@radix-ui/react-icons';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import { Theme } from '@radix-ui/themes';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
-import BuildView from './newBuildView';
-import Introduction from './introduction';
-import QuizApp from './quiz';
-import OtherTask from './otherTasks';
-import FeedbackApp from './feedback';
-import LinksPage from './links';
-import NotFound from './common/notFound';
-import Header from './common/header';
-import SvmView from './svmView';
-import ConstructionView from './common/constructionView';
+
+// ------- COMPONENTS -------
+import { Link2Icon } from '@radix-ui/react-icons'; // for external links
+// startpage is the only view that is not lazy loaded because it's very likely to be loaded
 import StartPage from './startpage/startPage';
+
+// ------- STYLES -------
+import './css/App.css';
+import '@radix-ui/themes/styles.css';
+
+// ------- UTILS -------
+import { safeGet } from './utils/axiosUtils';
 import { generateCytoElements, generateCytoStyle } from './utils/cytoUtils';
 import getCookie from './utils/cookieUtils';
 import putRequest from './utils/websockets/websocketUtils';
-import ClusteringTest from './clustering'
-import sensitiveDataPlot from './images/sensitive_kerbals.png';
+import { useAnalytics } from './utils/hooks/useAnalytics';
 
-// ------- APP FUNCTION -------
+// ------- LAZY LOADING OF ROUTED VIEWS -------
+const Introduction = lazy(() => import('./introduction'));
+const QuizApp = lazy(() => import('./quiz'));
+const OtherTask = lazy(() => import('./otherTasks'))
+const SvmView = lazy(() => import('./svmView'));
+const BuildView = lazy(() => import('./newBuildView'));
+const ClusteringTest = lazy(() => import('./clustering'));
+const FeedbackApp = lazy(() => import('./feedback'));
+const NotFound = lazy(() => import('./common/notFound'));
+const ConstructionView = lazy(() => import('./common/constructionView'));
 
-function App() {
+
+// ------- APP WRAPPER -------
+
+export default function App() {
+  // Loading view for in between pages
+  const LoadingFallback = () => {
+    const preloader = document.getElementById("preloader");
+    if (preloader) {
+      preloader.style.display = "flex";
+    }
+    return null;
+  };
+  
+  return (
+    <Router>
+      <Suspense fallback={<LoadingFallback />}>
+        <AppContent />
+      </Suspense>
+    </Router>
+  );
+}
+
+
+// ------- APP CONTENT -------
+
+function AppContent() {
+  useAnalytics();
 
   // Setting the interval- and timing-related states
   const intervalTimeout = 20000;  // in milliseconds, the time to wait before ending the interval
@@ -103,7 +134,7 @@ function App() {
         ws.onopen = () => {
           console.log('WebSocket connection opened');
           // now, check if there is an entry in /api/backend:
-          axios.get(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
+          safeGet(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
             headers: {
               'X-CSRFToken': csrftoken
             }
@@ -202,7 +233,7 @@ function App() {
     var userId = getCookie('user_id');
     var csrftoken = getCookie('csrftoken');
 
-    axios.get(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
+    safeGet(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
       headers: {
         'X-CSRFToken': csrftoken
       }
@@ -228,7 +259,7 @@ function App() {
   let accuracyColor = 'var(--slate-11)';
 
   // this is for all the tasks
-  const defaultTaskIds = [11, 12, 13];
+  const defaultTaskIds = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? [11, 12, 13] : [];
   const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
@@ -298,8 +329,8 @@ function App() {
   const [introIds, setIntroIds] = useState([]);
   const [introData, setIntroData] = useState([]);
 
-  const [otherTasks, setOtherTasks] = useState({11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'});	
-  const [otherDescriptions, setOtherDescriptions] = useState({11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]});
+  const [otherTasks, setOtherTasks] = useState( (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
+  const [otherDescriptions, setOtherDescriptions] = useState( (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
   const [constructionTaskIds, setConstructionTaskIds] = useState([23]);
 
 
@@ -427,7 +458,7 @@ function App() {
 
       if (entry.other_task) {
         currentOtherTasks[entry.task_id] = entry.other_task;
-        currentOtherDescriptions[entry.task_id] = JSON.parse(entry.description);
+        currentOtherDescriptions[entry.task_id] = entry.description;
         currentIcons.push(null);
       } else {
 
@@ -501,95 +532,99 @@ function App() {
       preloader.style.display = "none";
     }
 
-    axios.get('/api/all_tasks/')
+    safeGet('/api/all_tasks/')
       .then(response => {
-        const currentTaskData = response.data;
-        currentTaskData.sort((a, b) => a.task_id - b.task_id); // sort the taskData by taskIds
-        setTaskData(currentTaskData); 
-        // IMPORTANT: taskData will include challenges with 'visibility' set to false
-        console.log('currentTaskData: ', currentTaskData)  // for debugging
-    
-        currentTaskData.forEach(entry => {
-          readTaskEntry(entry);
-        });
-    
-        // Set universal states
-        setTaskIds(currentTaskIds);
-        setFileNames(currentFileNames);
-        setFunctionNames(currentFunctionNames);
-        setGamesData(JSON.stringify(currentTaskData));
-        setNInputs(currentNInputs);
-        setNOutputs(currentNOutputs);
-        setNObjects(currentTaskIds.map(() => 0));
-        setTaskNames(currentTaskNames);
-        setTaskIcons(currentIcons);
+        if (response.data === null) {
+          throw new Error('running locally');
+        } else {
+          const currentTaskData = response.data;
+          currentTaskData.sort((a, b) => a.task_id - b.task_id); // sort the taskData by taskIds
+          setTaskData(currentTaskData); 
+          // IMPORTANT: taskData will include challenges with 'visibility' set to false
+          console.log('currentTaskData: ', currentTaskData)  // for debugging
+      
+          currentTaskData.forEach(entry => {
+            readTaskEntry(entry);
+          });
+      
+          // Set universal states
+          setTaskIds(currentTaskIds);
+          setFileNames(currentFileNames);
+          setFunctionNames(currentFunctionNames);
+          setGamesData(JSON.stringify(currentTaskData));
+          setNInputs(currentNInputs);
+          setNOutputs(currentNOutputs);
+          setNObjects(currentTaskIds.map(() => 0));
+          setTaskNames(currentTaskNames);
+          setTaskIcons(currentIcons);
 
-        // Set neural network states
-        setNNTaskIds(currentNNTaskIds);
-        setSensitiveIds(currentSensitiveIds);
-        setMaxEpochs(currentMaxEpochs);
-        setMaxLayers(currentMaxLayers);
-        setMaxNodes(currentMaxNodes);
-        setWeights(currentWeights);
-        setNormalizationVisibility(currentNormalizationVisibility);
-        setAfVisibility(currentAfVisibility);
-        setIterationsSliderVisibility(currentIterationsSliderVisibility);
-        setLRSliderVisibility(currentLRSliderVisibility);
-        setImageVisibility(currentImageVisibility);
-        setAfOptions(currentAfOptions);
-        setOptimOptions(currentOptimOptions);
+          // Set neural network states
+          setNNTaskIds(currentNNTaskIds);
+          setSensitiveIds(currentSensitiveIds);
+          setMaxEpochs(currentMaxEpochs);
+          setMaxLayers(currentMaxLayers);
+          setMaxNodes(currentMaxNodes);
+          setWeights(currentWeights);
+          setNormalizationVisibility(currentNormalizationVisibility);
+          setAfVisibility(currentAfVisibility);
+          setIterationsSliderVisibility(currentIterationsSliderVisibility);
+          setLRSliderVisibility(currentLRSliderVisibility);
+          setImageVisibility(currentImageVisibility);
+          setAfOptions(currentAfOptions);
+          setOptimOptions(currentOptimOptions);
 
-        // Set svm states
-        setSVMTaskIds(currentSVMTaskIds);
-        setCSliderVisibility(currentCSliderVisibility);
-        setGammaSliderVisibility(currentGammaSliderVisibility);
-        setRbfVisibility(currentRbfVisibility);
+          // Set svm states
+          setSVMTaskIds(currentSVMTaskIds);
+          setCSliderVisibility(currentCSliderVisibility);
+          setGammaSliderVisibility(currentGammaSliderVisibility);
+          setRbfVisibility(currentRbfVisibility);
 
-        // Set basics states
-        setBasicsIds(currentBasicsTaskIds);
-        // TODO
+          // Set basics states
+          setBasicsIds(currentBasicsTaskIds);
+          // TODO
 
-        // Set clustering states
-        setClusteringIds(currentClusteringTaskIds);
-        // TODO
+          // Set clustering states
+          setClusteringIds(currentClusteringTaskIds);
+          // TODO
 
-        // Set link states
-        setLinkIds(currentLinkIds)
-        setLinks(currentLinks)
+          // Set link states
+          setLinkIds(currentLinkIds)
+          setLinks(currentLinks)
 
-        // Initialise the rest of the states 
-        setTyp(currentTyp);
-        setDataset(currentDataset);
-        setIsTraining(currentTaskIds.map(() => 0));
-        setApiData(currentTaskIds.map(() => null));
-        setIsResponding(currentTaskIds.map(() => false));
-        setFeatureNames(currentTaskIds.map(() => []));  // TODO: load these somewhere else
-        setImgs(currentTaskIds.map(() => null));
-        setInitPlots(currentTaskIds.map(() => null));
+          // Initialise the rest of the states 
+          setTyp(currentTyp);
+          setDataset(currentDataset);
+          setIsTraining(currentTaskIds.map(() => 0));
+          setApiData(currentTaskIds.map(() => null));
+          setIsResponding(currentTaskIds.map(() => false));
+          setFeatureNames(currentTaskIds.map(() => []));  // TODO: load these somewhere else
+          setImgs(currentTaskIds.map(() => null));
+          setInitPlots(currentTaskIds.map(() => null));
 
-        setCytoLayers(currentNNTaskIds.map(() => []));
+          setCytoLayers(currentNNTaskIds.map(() => []));
 
-        setAccuracy(currentNNTaskIds.map(() => 0));
-        setNNProgress(currentNNTaskIds.map(() => 0));
-        setErrorList(currentNNTaskIds.map(() => [[], null]));
-        setBiases(currentNNTaskIds.map(() => []));
+          setAccuracy(currentNNTaskIds.map(() => 0));
+          setNNProgress(currentNNTaskIds.map(() => 0));
+          setErrorList(currentNNTaskIds.map(() => [[], null]));
+          setBiases(currentNNTaskIds.map(() => []));
 
-        // some custom taskIds
-        setOtherTasks(currentOtherTasks);
-        setOtherDescriptions(currentOtherDescriptions);
-        setConstructionTaskIds(currentConstructionTaskIds);
+          // some custom taskIds
+          setOtherTasks(currentOtherTasks);
+          setOtherDescriptions(currentOtherDescriptions);
+          setConstructionTaskIds(currentConstructionTaskIds);
 
-        setLoadedTasks(true); // unify this with the whichPulled state
-        setWhichPulled(prev => {
-          const updated = {...prev};
-          updated.challenges = true;
-          return updated
-        });
-        setProgressData(prev => {
-          const updated = {...prev};
-          updated.challenges = currentTaskProgressData;
-          return updated
-        });
+          setLoadedTasks(true); // unify this with the whichPulled state
+          setWhichPulled(prev => {
+            const updated = {...prev};
+            updated.challenges = true;
+            return updated
+          });
+          setProgressData(prev => {
+            const updated = {...prev};
+            updated.challenges = currentTaskProgressData;
+            return updated
+          });
+        }
       })
       .catch(error => {
         setLoadedTasks(false);
@@ -614,69 +649,84 @@ function App() {
           updated[5] = ['SGD', 'Adam'];
           return updated;
         });
-        console.error('Error fetching tasks:', error);
+        // no need to print error if data is null - that means we're just running locally
+        if (error.message !== 'running locally') {
+          console.error('Error fetching tasks:', error);
+        }
       });
 
-    axios.get('/api/all_quizzes/')
+    safeGet('/api/all_quizzes/')
       .then(response => {
-        const currentQuizData = response.data;
-        currentQuizData.sort((a, b) => a.quiz_id - b.quiz_id)// sort the quizData by quizIds
-        setQuizData(currentQuizData);
-        
-        const currentQuizIds = [];
+        if (response.data === null) {
+          throw new Error('running locally');
+        } else {
+          const currentQuizData = response.data;
+          currentQuizData.sort((a, b) => a.quiz_id - b.quiz_id)// sort the quizData by quizIds
+          setQuizData(currentQuizData);
+          
+          const currentQuizIds = [];
 
-        currentQuizData.forEach(entry => {
-          currentQuizIds.push(entry.quiz_id);
-          readQuizOrIntroEntry(entry, true); // isQuiz=true
-        });
-        setQuizIds(currentQuizIds);
-        setWhichPulled(prev => {
-          const updated = {...prev};
-          updated.quizzes = true;
-          return updated
-        });
-        setProgressData(prev => {
-          const updated = {...prev};
-          updated.quizzes = currentQuizProgressData;
-          return updated
-        });
+          currentQuizData.forEach(entry => {
+            currentQuizIds.push(entry.quiz_id);
+            readQuizOrIntroEntry(entry, true); // isQuiz=true
+          });
+          setQuizIds(currentQuizIds);
+          setWhichPulled(prev => {
+            const updated = {...prev};
+            updated.quizzes = true;
+            return updated
+          });
+          setProgressData(prev => {
+            const updated = {...prev};
+            updated.quizzes = currentQuizProgressData;
+            return updated
+          });
+        }
       })
       .catch(error => {
-        console.error('Error fetching quizzes:', error);
         const defaultQuizIds = [];
         setQuizIds(defaultQuizIds);
         console.log("Setting default states instead.")
+        if (error.message !== 'running locally') {
+          console.error('Error fetching quizzes:', error);
+        }
       });
 
-      axios.get('/api/all_intros/')
+      safeGet('/api/all_intros/')
       .then(response => {
-        const currentIntroData = response.data;
-        currentIntroData.sort((a, b) => a.intro_id - b.intro_id)// sort the introData by introIds
-        setIntroData(currentIntroData);
-        
-        const currentIntroIds = [];
+        if (response.data === null) {
+          throw new Error('running locally');
+        } else {
+          const currentIntroData = response.data;
+          currentIntroData.sort((a, b) => a.intro_id - b.intro_id)// sort the introData by introIds
+          setIntroData(currentIntroData);
+          
+          const currentIntroIds = [];
 
-        currentIntroData.forEach(entry => {
-          currentIntroIds.push(entry.intro_id);
-          readQuizOrIntroEntry(entry, false); // isQuiz=false
-        });
-        setIntroIds(currentIntroIds);
-        setWhichPulled(prev => {
-          const updated = {...prev};
-          updated.intros = true;
-          return updated
-        });
-        setProgressData(prev => {
-          const updated = {...prev};
-          updated.intros = currentIntroProgressData;
-          return updated
-        });
+          currentIntroData.forEach(entry => {
+            currentIntroIds.push(entry.intro_id);
+            readQuizOrIntroEntry(entry, false); // isQuiz=false
+          });
+          setIntroIds(currentIntroIds);
+          setWhichPulled(prev => {
+            const updated = {...prev};
+            updated.intros = true;
+            return updated
+          });
+          setProgressData(prev => {
+            const updated = {...prev};
+            updated.intros = currentIntroProgressData;
+            return updated
+          });
+        }
       })
       .catch(error => {
-        console.error('Error fetching intros:', error);
         const defaultIntroIds = [];
         setIntroIds(defaultIntroIds);
         console.log("Setting default states instead.")
+        if (error.message !== 'running locally') {
+          console.error('Error fetching intros:', error);
+        }
       });
     
     setTimeout(() => {
@@ -772,7 +822,7 @@ function App() {
     var csrftoken = getCookie('csrftoken');
 
     if (goToStep2) {
-      axios.get(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
+      safeGet(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
         headers: {
           'X-CSRFToken': csrftoken
         }
@@ -817,11 +867,10 @@ function App() {
 
   // Update the state when the dependencies change
   useEffect(() => {
-    console.log(`App.js weights = ${weights}`)  // weights logging
     if (Array.isArray(cytoLayers)) {
       setCytoElements(NNTaskIds.map((taskId, index) => {
-        console.log(`App.js weights[index] = ${weights[index]}`)
-        return generateCytoElements(cytoLayers[index], apiData[index], isTraining[taskIds.indexOf(NNTaskIds[index])], weights[index], biases[index])
+        const correspondingTaskIndex = taskIds.indexOf(NNTaskIds[index]);
+        return generateCytoElements(cytoLayers[index], apiData[correspondingTaskIndex], isTraining[correspondingTaskIndex], weights[index], biases[index])
       }
       ));
     }
@@ -851,7 +900,7 @@ function App() {
     var userId = getCookie('user_id');
     var csrftoken = getCookie('csrftoken');
 
-    axios.get(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
+    safeGet(window.location.origin + `/api/backend/?user_id=${userId}&task_id=${taskId}`, {
       headers: {
         'X-CSRFToken': csrftoken
       }
@@ -860,8 +909,13 @@ function App() {
       const networkData = response.data[0];
       const formData = new FormData(event.target);
       const values = Array.from(formData.values()).map((value) => Number(value));
-      networkData.in_out['model_input'] = JSON.stringify(values);
+
+      let newInOut = JSON.parse(networkData.in_out);
+      newInOut['model_input'] = JSON.stringify(values);
+      networkData.in_out = JSON.stringify(newInOut);
+
       networkData.action = 2;
+      
       axios.put(window.location.origin + `/api/backend/${networkData.pk}`, networkData, {
         headers: {
           'X-CSRFToken': csrftoken
@@ -903,151 +957,138 @@ function App() {
 
   // ------- RETURN THE APP CONTENT -------
   return (
-    <body class='light-theme' >
-      <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
-      <Router>
-        <Routes>
-          <Route path="/" element={<StartPage levelNames={levelNames} taskNames={taskNames} introData={introData} quizData={quizData} taskIds={taskIds} taskIcons={taskIcons} quizIds={quizIds} introIds={introIds} links={linksDict} progressData={progressData} />} />
+    <Theme accentColor="cyan" grayColor="slate" panelBackground="solid" radius="large" appearance='light'>
+      <Routes>
+        <Route path="/" element={<StartPage levelNames={levelNames} taskNames={taskNames} introData={introData} quizData={quizData} taskIds={taskIds} taskIcons={taskIcons} quizIds={quizIds} introIds={introIds} links={linksDict} progressData={progressData} />} />
+        
+        {introIds.map((introId, index) => {
+          const level = Math.floor(introId / 10);
+          const task = introId % 10;
           
-          {introIds.map((introId, index) => {
-            const level = Math.floor(introId / 10);
-            const task = introId % 10;
-            
-            if (!introData[index].visibility || !introData[index].enabled) {
-              return (
-                <Route
-                key={`intro${introId}`}
-                path={`/introduction${level}-${task}`}
-                element={<NotFound />}/>
-              );
-            } else {
-              return (
-                <Route key={`intro${introId}`} path={`/introduction${level}-${task}`} element={
-                  <Introduction introId={introId}/>
-                } />
-              );
-            }
-          })}
-
-          {clusteringTaskIds.map((taskId, index) => {
-            const type = "challenges";
-            const level = Math.floor(taskId / 10);
-            const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
-          
-            if (!isOpen) {
-              return (
-                <Route
-                key={taskId}
-                path={`/exercise${level}-${task}`}
-                element={<NotFound />}/>
-              );
-            }
-
-            return (
-              <Route key={taskId} path={`/exercise${level}-${task}`} element={<ClusteringTest clusteringId={taskId} />} />
-            );
-          })}
-
-          {Object.entries(otherTasks).map(([taskId, taskName], index) => {
-            const type = "challenges";
-            const level = Math.floor(taskId / 10);
-            const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
-          
-            if (!isOpen) {
-              return (
-                <Route
-                key={taskId}
-                path={`/exercise${level}-${task}`}
-                element={<NotFound />}/>
-              );
-            }
-
-            return (
-              <Route key={taskId} path={`/exercise${level}-${task}`} element={<OtherTask
-                type = {taskName}
-                host = {window.location.host}
-                customId = {parseInt(taskId)}
-                userId = {getCookie('user_id')}
-                description = {otherDescriptions[taskId]}
-              />} />
-            ); 
-          })}
-
-          {SVMTaskIds.map((taskId, SVMIndex) => {
-            const type = "challenges";
-            const level = Math.floor(taskId / 10);
-            const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
-          
-            if (!isOpen) {
-              return (
-                <Route
-                key={taskId}
-                path={`/exercise${level}-${task}`}
-                element={<NotFound />}/>
-              );
-            }
-
+          if (!introData[index].visibility || !introData[index].enabled) {
             return (
               <Route
-                key={taskId}
-                path={`/exercise${level}-${task}`}
-                element={
-                  <>
-                  <SvmView 
-                  isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
-                  fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
-                  />
-                  </>
-                }
-              />
+              key={`intro${introId}`}
+              path={`/introduction${level}-${task}`}
+              element={<NotFound />}/>
             );
-          })}
+          } else {
+            return (
+              <Route key={`intro${introId}`} path={`/introduction${level}-${task}`} element={
+                <div className="App">
+                  <Introduction introId={introId}/>
+                </div>
+              } />
+            );
+          }
+        })}
 
-          {sensitiveIds.map((taskId, NNIndex) => (
-            // TODO currently unused as this whole idea turned into a big stinky mess
-            <>
+        {clusteringTaskIds.map((taskId, index) => {
+          const type = "challenges";
+          const level = Math.floor(taskId / 10);
+          const task = taskId % 10;
+          const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+        
+          if (!isOpen) {
+            return (
+              <Route
+              key={taskId}
+              path={`/exercise${level}-${task}`}
+              element={<NotFound />}/>
+            );
+          }
+
+          return (
+            <Route key={taskId} path={`/exercise${level}-${task}`} element={
+              <div className="App">
+                <ClusteringTest clusteringId={taskId} />
+              </div>
+            } />
+          );
+        })}
+
+        {Object.entries(otherTasks).map(([taskId, taskName], index) => {
+          const type = "challenges";
+          const level = Math.floor(taskId / 10);
+          const task = taskId % 10;
+          const isOpen = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? progressData[type]?.[level]?.[task-1] === "open" : true;
+        
+          if (!isOpen) {
+            return (
+              <Route
+              key={taskId}
+              path={`/exercise${level}-${task}`}
+              element={<NotFound />}/>
+            );
+          }
+
+          return (
+            <Route key={taskId} path={`/exercise${level}-${task}`} element={
+              <div className="App">
+                <OtherTask
+                  type = {taskName}
+                  host = {window.location.host}
+                  customId = {parseInt(taskId)}
+                  userId = {getCookie('user_id')}
+                  description = {otherDescriptions[taskId]}
+                />
+              </div>
+            } />
+          ); 
+        })}
+
+        {SVMTaskIds.map((taskId, SVMIndex) => {
+          const type = "challenges";
+          const level = Math.floor(taskId / 10);
+          const task = taskId % 10;
+          const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+        
+          if (!isOpen) {
+            return (
+              <Route
+              key={taskId}
+              path={`/exercise${level}-${task}`}
+              element={<NotFound />}/>
+            );
+          }
+
+          return (
             <Route
               key={taskId}
-              path={`/exercise${taskId/10}`}
+              path={`/exercise${level}-${task}`}
               element={
-                <>
-                <BuildView
-                  nOfInputs={nInputs[taskIds.indexOf(taskId)]} nOfOutputs={nOutputs[taskIds.indexOf(taskId)]} maxLayers={maxLayers[taskIds.indexOf(taskId)]} taskId={taskId} NNIndex={NNIndex} index={taskIds.indexOf(taskId)} cytoElements={cytoElements[NNIndex]} cytoStyle={cytoStyle[NNIndex]} cytoLayers={cytoLayers[NNIndex]} setCytoLayers={setCytoLayers} updateCytoLayers={updateCytoLayers} loadLastCytoLayers={loadLastCytoLayers} 
-                  isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} apiData={apiData[taskIds.indexOf(taskId)]} setApiData={setApiData} accuracy={accuracy[NNIndex]} setAccuracy={setAccuracy} accuracyColor={accuracyColor} handleSubmit={handleSubmit} isResponding={isResponding[taskIds.indexOf(taskId)]} setIsResponding={setIsResponding} loadData={loadData} pendingTime={pendingTime} intervalTimeout={intervalTimeout} cancelRequestRef={cancelRequestRef}
-                  progress={NNProgress[NNIndex]} setProgress={setNNProgress} featureNames={featureNames[taskIds.indexOf(taskId)]} errorList={errorList[NNIndex]} setErrorList={setErrorList} weights={weights[NNIndex]} setWeights={setWeights} biases={biases[NNIndex]} setBiases={setBiases} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} userId={getCookie('user_id')}
-                  fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} maxNodes={maxNodes[NNIndex]} maxEpochs={maxEpochs[NNIndex]} typ={typ[taskIds.indexOf(taskId)]} dataset={dataset[taskIds.indexOf(taskId)]} name={taskNames[taskId]} startTraining={putRequest} imageVisibility={imageVisibility[NNIndex]} gamesData={gamesData}
-                  initPlot={sensitiveDataPlot}
-                  tabs={['data', 'training']} sliderVisibilities={{}} inputFieldVisibilities={{}} dropdownVisibilities={{}} dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}} checkboxVisibilities={{'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true}}
+                <div>
+                <SvmView 
+                isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
+                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
                 />
-                </>
+                </div>
               }
             />
-            </>
-          ))}
-          {NNTaskIds.map((taskId, NNIndex) => {
-            const type = "challenges";
-            const level = Math.floor(taskId / 10);
-            const task = taskId % 10;
-            const isOpen = progressData[type]?.[level]?.[task-1] === "open";
-          
-            if (!isOpen) {
-              return (
-                <Route
-                key={taskId}
-                path={`/exercise${level}-${task}`}
-                element={<NotFound />}/>
-              );
-            }
+          );
+        })}
 
+        {NNTaskIds.map((taskId, NNIndex) => {
+          const type = "challenges";
+          const level = Math.floor(taskId / 10);
+          const task = taskId % 10;
+          const isOpen = progressData[type]?.[level]?.[task-1] === "open";
+        
+          if (!isOpen) {
             return (
               <Route
-                key={taskId}
-                path={`/exercise${level}-${task}`}
-                element={
-                  <>
+              key={taskId}
+              path={`/exercise${level}-${task}`}
+              element={<NotFound />}/>
+            );
+          }
+
+          return (
+            <Route
+              key={taskId}
+              path={`/exercise${level}-${task}`}
+              element={
+                <div>
                   <BuildView
                     nOfInputs={nInputs[taskIds.indexOf(taskId)]}
                     nOfOutputs={nOutputs[taskIds.indexOf(taskId)]}
@@ -1105,77 +1146,50 @@ function App() {
                     checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
                     gamesData={gamesData}
                   />
-                  </>
-                }
-              />
+                </div>
+              }
+            />
+          );
+        })}
+
+        {quizIds.map((quizId, index) => {
+          const level = Math.floor(quizId / 10);
+          const task = quizId % 10;
+
+          if (!quizData[index].visibility || !quizData[index].enabled) {
+            return (
+              <Route
+              key={`quiz${quizId}`}
+              path={`/quiz${level}-${task}`}
+              element={<NotFound />}/>
             );
-          })}
+          } else {
+            
+            return (
+              <Route
+              key={`quiz${quizId}`}
+              path={`/quiz${level}-${task}`}
+              element={
+                <div className="App">
+                  <QuizApp quizId={quizId} />
+                </div>
+              }/>
+            );
+          }
+        })}
 
-          {quizIds.map((quizId, index) => {
-            const level = Math.floor(quizId / 10);
-            const task = quizId % 10;
+        <Route path={`/feedback`} element={
+          <div className="App">
+            <FeedbackApp host={window.location.origin} cookie={getCookie('csrftoken')} />
+          </div>
+        } />
 
-            if (!quizData[index].visibility || !quizData[index].enabled) {
-              return (
-                <Route
-                key={`quiz${quizId}`}
-                path={`/quiz${level}-${task}`}
-                element={<NotFound />}/>
-              );
-            } else {
-              
-              return (
-                <Route
-                key={`quiz${quizId}`}
-                path={`/quiz${level}-${task}`}
-                element={
-                  <div className="App">
-                    <Box py="2" style={{ backgroundColor: "var(--cyan-10)"}}>
-                    <Grid columns='3' mt='1'>
-                      <Box ml='3' style={{display:"flex"}}>  
-                        <Link to="/">
-                          <IconButton aria-label="navigate to home" height='21' style={{ marginLeft: 'auto', color: 'inherit', textDecoration: 'none' }}>
-                            <HomeIcon color="white" height='18' style={{ marginTop: 2 }} />
-                          </IconButton>
-                        </Link>
-                      </Box>
-                      <Link to={window.location.origin} style={{ textDecoration: 'none' }}>
-                      <Heading as='h1' align='center' size='6' style={{ color: 'var(--gray-1)', marginTop: 2, marginBottom: 0, textDecoration: 'none', fontFamily:'monospace, Courier New, Courier' }}>brAIn builder</Heading>
-                      </Link>
-                      <Box align='end' mr='3' >
-                          <Link to="https://www.tudelft.nl/en/" target="_blank" style={{ textDecoration: 'none'}}>
-                          <img src={tu_delft_pic} alt='Tu Delft Logo' width='auto' height='30'/>
-                          </Link>
-                      </Box>
-                    </Grid>
-                    </Box>
-                    <QuizApp quizId={quizId} />
-                  </div>
-                }/>
-              );
-            }
-          })}
+        <Route path="/:ex" element={
+          <ConstructionView taskIds={constructionTaskIds} />
+        } />
 
-          <Route path={`/feedback`} element={
-            <div className="App">
-              <Header showHomeButton={true}/>
-              <FeedbackApp host={window.location.origin} cookie={getCookie('csrftoken')} />
-            </div>
-          } />
-          <Route path={`/links`} element={
-            <LinksPage/>
-          } />
-
-          <Route path="/:ex" element={
-            <ConstructionView taskIds={constructionTaskIds} />
-          } />
-
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-      </Theme>
-    </body>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Theme>
   );
 }
-
-export default App;

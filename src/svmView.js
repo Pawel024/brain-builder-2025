@@ -6,6 +6,11 @@ import '@radix-ui/themes/styles.css';
 import { Model } from './common/viewTemplate';
 import LottieLoader from './common/lottieLoader';
 import svmToCode from './code_preview/svmExplainTools';
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import ReactMarkdown from 'react-markdown';
+import './css/App.css';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -34,14 +39,16 @@ class SvmView extends Model {
         this.useCodePreview = true;
 
         this.tabs = [
-            { name: 'Data', value: 'data' },
+            { name: 'More Info', value: 'data' },
             { name: 'Model', value: 'training' },
             { name: 'Result', value: 'testing' },
         ]
 
         this.inputNames = {
             'CSlider': 'Misclassification cost',
-            'GammaSlider': 'Kernel width',
+            //'CSlider': <span>Misclassification cost <InlineMath math="C"/></span>,
+            'GammaSlider': 'Gamma',
+            //'GammaSlider': <span><InlineMath math="\gamma = \frac{1}{2\sigma^2}"/></span>,
             'KernelCheckbox': 'Enable rbf kernel'
         } 
 
@@ -63,6 +70,11 @@ class SvmView extends Model {
     continueComponentDidMount = () => {
         this.props.loadData(this.props.taskId, this.props.index)  // let the backend load the data  // TODO
         this.setState({ loading: false })
+        this.setState( prev => {
+            const newSliderVisibilities = {...prev.sliderVisibilities}; 
+            newSliderVisibilities['GammaSlider'] = false; 
+            return {sliderVisibilities: newSliderVisibilities}; 
+        }); 
     }
 
     componentWillUnmount() {
@@ -130,6 +142,13 @@ class SvmView extends Model {
     }
 
     handleCheckboxChange = () => {
+        if (this.props.sliderVisibilities['GammaSlider']) {
+            this.setState( prev => {
+                const newSliderVisibilities = {...prev.sliderVisibilities}; 
+                newSliderVisibilities['GammaSlider'] = !prev.sliderVisibilities['GammaSlider']; 
+                return {sliderVisibilities: newSliderVisibilities}; 
+            }) 
+        };
         this.setState( prev => {
             const newCheckboxValues = {...prev.checkboxValues};
             newCheckboxValues['KernelCheckbox'] = !prev.checkboxValues['KernelCheckbox'];
@@ -182,7 +201,7 @@ class SvmView extends Model {
     handleGammaChange = (value) => {
         this.setState( prev => {
             const newSliderValues = {...prev.sliderValues};
-            newSliderValues['GammaSlider'] = (Math.abs(value[0] % 1) + 0.5) * 10**(-Math.round(value[0]));
+            newSliderValues['GammaSlider'] = (Math.abs(value[0] % 1) + 0.5) * 10**(Math.floor(value[0]));
             return {sliderValues: newSliderValues};
         });
     };
@@ -224,11 +243,14 @@ class SvmView extends Model {
         )
     }
 
-    additionalComponents = () => {
+    additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
+        const extraMarginNeeded = [...Object.entries(dropdownVisibilities), ...Object.entries(checkboxVisibilities)]
+          .reduce((margin, [_, isVisible]) => isVisible ? margin + 40 : margin, 0);
+
         return (
-        <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
+        <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
             <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-                {this.shortDescription}
+            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
             </div>
         </Box>
     )}

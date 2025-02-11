@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Heading } from '@radix-ui/themes';
+import { Box } from '@radix-ui/themes';
 import backgroundImage from '../images/MontyPython404.jpg';
 
 

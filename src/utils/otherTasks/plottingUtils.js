@@ -18,15 +18,6 @@ function throttle(func, limit) {
     };
 }
 
-function debounce(func, delay) {
-    let debounceTimer;
-    return function(...args) {
-      const context = this;
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func.apply(context, args), delay);
-    };
-}
-
 const handleChangeWrapper = (value, processingFunction, plottingFunction, state, all_states, stateSetter, delay=50) => {
     const handleChange = throttle((value, processingFunction, plottingFunction, state, all_states) => {  // TODO: switch to throttle while user is dragging the slider, but somehow take value the user lands on
         if (processingFunction) {value = processingFunction(value)}
@@ -338,11 +329,11 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
     );  
 
     return (
-        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
+        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px', fontFamily:'monospace' }}>
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <div>Weight: {states['weight']}</div>
+                <div>Weight: <b>{states['weight']}</b></div>
                 {weightSlider}
-                <div style={{ marginTop:10 }}>Bias: {states['bias']}</div>
+                <div style={{ marginTop:10 }}>Bias: <b>{states['bias']}</b></div>
                 {biasSlider}
                 
                 {chartRef ? 
@@ -365,6 +356,11 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
 export function RenderPolyReg({ width, height, states, stateSetter }) {
     const chartRef = React.createRef();
     const limits = [0, 6.28];  // 2π
+
+    if (states.degree === undefined) {
+        states.degree = 1;
+        stateSetter('degree', 1);
+    }
 
     if (!(states['x'] && states['y'])) {
         const x = Array.from({ length: 10 }, () => Math.random() * (limits[1] - limits[0]) + limits[0]);
@@ -484,9 +480,9 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
     );
 
     return (
-        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px' }}>
+        <Box style={{ flex:1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: window.innerHeight-52, padding:'30px 50px', fontFamily:'monospace' }}>
             <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <div>Polynomial Degree: {states['degree']}</div>
+                <div>Polynomial Degree: <b>{states['degree']}</b></div>
                 {degreeSlider}     
                 
                 {chartRef ? 

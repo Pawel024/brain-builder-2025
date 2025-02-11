@@ -56,13 +56,12 @@ export function generateCytoElements(list, apiData, isTraining, weights, biases)
         const target = cumulativeSums[i] + k;
         if (target <= cElements.length) {
           let weight = 5;
-          if (apiData && weights.length > 0 && isTraining !== 0) { 
+          if (apiData && weights.length > 0 && isTraining >= 0) { 
             try {
               weight = parseFloat(weights[i][k][j])/absMax;
-              console.log(`CytoElements weight: ${weight}`)  // weights logging
             }
             catch (error) {
-              console.error(error);
+              weight = 5;
             }
           }
           cElements.push({ data: { source, target, weight } });
@@ -92,7 +91,6 @@ export function generateCytoStyle(list = []) {
       selector: 'edge',
       style: {
         'line-color': ele => {
-          console.log(`Edge weight: ${ele.data('weight')}`)
           return ele.data('weight') !== 5 ? colorScale(ele.data('weight')).toString() : '#666';
         },
         'width': ele => ele.data('weight') !== 5 ? Math.abs(ele.data('weight'))*2 : 1,

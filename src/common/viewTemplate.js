@@ -3,7 +3,7 @@ import '../css/App.css';
 import { Theme, Flex, Box, Tabs, Heading, IconButton, Separator, Checkbox, Text } from '@radix-ui/themes';
 import * as SliderSlider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
-import { PlayIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
+import { PlayIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
 import CodePreview from '../code_preview/codePreview';
 import SvmCodePreview from '../code_preview/svmCodePreview';
 import Header from '../common/header';
@@ -12,7 +12,12 @@ import Slider from 'react-animated-slider';
 import * as Form from '@radix-ui/react-form';
 import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
-import axios from 'axios';
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import ReactMarkdown from 'react-markdown';
+import { safeGet } from '../utils/axiosUtils';
+import { SlideButton } from './floatingButtons';
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -35,6 +40,10 @@ class Model extends React.Component {
         showCode: false,
         code: '',
         description: [],
+        sliderVisibilities: [], 
+        inputFieldVisibilities: [], 
+        dropdownVisibilities: [], 
+        checkboxVisibilities: [], 
         // TODO: add all your states here
         sliderValues: {'dummySlider': 50},
       };
@@ -130,15 +139,23 @@ class Model extends React.Component {
     };
 
     componentDidMount() {
-        axios.get(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
+        safeGet(window.location.origin + '/api/tasks/?task_id=' + this.props.taskId)
         .then(response => {
           // hide the preloader when page loads
           const preloader = document.getElementById("preloader");
           if (preloader) {
             preloader.style.display = "none";
           }
+
+          this.setState({
+            sliderVisibilities: this.props.sliderVisibilities, 
+            inputFieldVisibilities: this.props.inputFieldVisibilities, 
+            dropdownVisibilities: this.props.dropdownVisibilities, 
+            checkboxVisibilities: this.props.checkboxVisibilities, 
+          })
           
           this.shortDescription = response.data.short_description;
+
           if (response.data.description[0] === '[') {
             this.setState({ description: JSON.parse(response.data.description) });
           } else {
@@ -214,16 +231,16 @@ class Model extends React.Component {
     continueComponentDidMount = () => {
         let loglist = [...
             Object.entries(this.sliders).map(([name, slider], index) => (
-                { type: 'slider', name, visible: this.props.sliderVisibilities[name] }
+                { type: 'slider', name, visible: this.state.sliderVisibilities[name] }
             )),
             Object.entries(this.inputFields).map(([name, inputField], index) => (
-                { type: 'inputField', name, visible: this.props.inputFieldVisibilities[name] }
+                { type: 'inputField', name, visible: this.state.inputFieldVisibilities[name] }
             )),
             Object.entries(this.dropdowns).map(([name, dropdown], index) => (
-                { type: 'dropdown', name, visible: this.props.dropdownVisibilities[name] }
+                { type: 'dropdown', name, visible: this.state.dropdownVisibilities[name] }
             )),
             Object.entries(this.checkboxes).map(([name, checkbox], index) => (
-                { type: 'checkbox', name, visible: this.props.checkboxVisibilities[name] }
+                { type: 'checkbox', name, visible: this.state.checkboxVisibilities[name] }
             ))];
         console.log(loglist);
         // TODO: add any additional code that should run after the description is loaded
@@ -231,7 +248,7 @@ class Model extends React.Component {
     }
 
     valuesUndefined = () => {
-        return Object.values(this.props.sliderVisibilities).includes(null) || Object.values(this.state.sliderValues).includes(null);
+        return Object.values(this.state.sliderVisibilities).includes(null) || Object.values(this.state.sliderValues).includes(null);
     }
     
     handleStartClick = (() => {
@@ -286,27 +303,38 @@ class Model extends React.Component {
     // TODO: delete the functions you don't change
 
     // TODO: tune the vertical positioning here
+    sliderBottomMargin = 60
     textHeight = 40
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
     sliderPosition = (index) => {
-        return Math.round((0.14 + 0.12*index) * (window.innerHeight-140))
+      // Position sliders at the top
+      const keys = Object.keys(this.sliders);
+      const visibleKeys = keys.filter(key => this.state.sliderVisibilities[key]);
+      const visibleIndex = visibleKeys.indexOf(keys[index]);
+      console.log("visibleIndex: ", visibleIndex);
+      return Math.round((0.14 + 0.12 * visibleIndex) * (window.innerHeight - 140));
     }
 
     inputFieldPosition = (index) => {
-        // const n = Object.values(this.props.sliderVisibilities).filter(value => value !== false).length;
-        const n = Object.keys(this.sliders).length;
-        return Math.round(this.sliderPosition(n) + this.textHeight*index)  // (0.14 + 0.12*Object.keys(this.sliders).length)*(window.innerHeight-140) + this.textHeight*index
+      // Position input fields below the sliders
+      const visibleSliderCount = Object.keys(this.sliders).filter(key => this.state.sliderVisibilities[key]).length;
+      console.log("visibleSliderCount: ", visibleSliderCount);
+      return Math.round(this.sliderPosition(visibleSliderCount-1) + this.textHeight * index + this.sliderBottomMargin);
     }
 
     dropdownPosition = (index) => {
-        const n = Object.values(this.props.inputFieldVisibilities).filter(value => value !== false).length;  // Object.keys(this.inputFields).length
-        return Math.round(this.inputFieldPosition(n) + this.textHeight*index)
+      // Position dropdowns below the input fields
+      const visibleInputCount = Object.keys(this.inputFields).filter(key => this.state.inputFieldVisibilities[key]).length;
+      console.log("visibleInputCount: ", visibleInputCount);
+      return Math.round(this.inputFieldPosition(visibleInputCount) + this.textHeight * index);
     }
 
     checkboxPosition = (index) => {
-        const n = Object.values(this.props.dropdownVisibilities).filter(value => value !== false).length;
-        return Math.round(this.dropdownPosition(n) + 1.2*this.textHeight*index)
+      // Position checkboxes below the dropdowns
+      const visibleDropdownCount = Object.keys(this.dropdowns).filter(key => this.state.dropdownVisibilities[key]).length;
+      console.log("visibleDropdownCount: ", visibleDropdownCount);
+      return Math.round(this.dropdownPosition(visibleDropdownCount) + 1.2 * this.textHeight * index);
     }
 
     renderModel = () => {
@@ -318,12 +346,12 @@ class Model extends React.Component {
         </Box>)
     }
 
-    additionalComponents = () => {
+    additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
         // TODO: use this to add any additional components like charts or text
         return (
         <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
         <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-            {this.shortDescription}
+          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
         </div>
         </Box>
     )}
@@ -343,7 +371,7 @@ class Model extends React.Component {
             
                   <Header showHomeButton={true} />
             
-                  <Tabs.Root defaultValue="training" style={{ fontFamily:'monospace' }}>
+                  <Tabs.Root defaultValue="training">
             
                     <Tabs.List size="2">
                         {this.tabs.map(tab => (   // cycle through all possible tabs and include the ones specified in this.props.tab
@@ -362,7 +390,7 @@ class Model extends React.Component {
 
                     <Tabs.Content value="data">
                       {this.props.taskId !== 0 && (    // a taskId of 0 is used for tutorials
-                        <Flex direction="row" gap="2" style={{ overflow: 'hidden', fontFamily:'monospace', width: '100%', height: window.innerHeight-116 }}>
+                        <Flex direction="row" gap="2" style={{ overflow: 'hidden', width: '100%', height: window.innerHeight-116 }}>
                             
                             {/* slides with descriptions loaded from the database */}
                             <Box style={{ flexBasis: '50%' }}>   
@@ -371,30 +399,37 @@ class Model extends React.Component {
                                 <Flex style={{ flexbasis:'100%', marginBottom: 0, width:'100%' }}>
                                 <Slider key={this.state.currentSlide} classNames={horizontalCss} infinite={false} slideIndex={this.state.currentSlide}
                                   previousButton={
-                                    <ChevronLeftIcon
-                                      style={{ color: 'var(--slate-9)', width:64, height:64 }}
+                                    <SlideButton 
                                       onClick={() => {
                                         const prevSlide = this.state.currentSlide - 1;
                                         if (prevSlide >= 0) {
                                           this.setState({ currentSlide: prevSlide });
                                         }
-                                    }}/>}
+                                      }}
+                                      disabled={this.state.currentSlide <= 0}
+                                      rightPointing={false}
+                                    />
+                                  }
                                   nextButton={
-                                    <ChevronRightIcon
-                                      style={{ color: 'var(--slate-9)', width:64, height:64 }}
+                                    <SlideButton
                                       onClick={() => {
                                         const nextSlide = this.state.currentSlide + 1;
                                         if (nextSlide < this.state.description.length) {
                                           this.setState({ currentSlide: nextSlide });
                                         }
-                                    }}/>}
+                                      }}
+                                      disabled={this.state.currentSlide >= this.state.description.length - 1}
+                                      rightPointing={true}
+                                    />
+                                  }
                                 >
                                   {this.state.description.map(([subtitle, ...paragraphs], index) => (
                                     <div key={index} className="slide-container">
                                       <div className="slide-content">
                                         <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
                                         {paragraphs.map((paragraph, pIndex) => (
-                                          <p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
+                                          //<p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
+                                          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{paragraph}</ReactMarkdown>
                                         ))}
                                       </div>
                                     </div>
@@ -417,7 +452,7 @@ class Model extends React.Component {
 
                     {/* THE TRAINING TAB - this tab contains the training interface */} 
 
-                    <Tabs.Content value="training">   
+                    <Tabs.Content value="training" style={{ fontFamily:'monospace' }}>   
                         
                         {this.renderModel()}
                         
@@ -425,10 +460,13 @@ class Model extends React.Component {
 
                         <Box style={{ flex: 1 }}>
                             {Object.entries(this.sliders).map(([name, slider], index) => (
-                                this.props.sliderVisibilities[name] ?
+                                this.state.sliderVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.sliderPosition(index), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div style={{ position:"absolute", zIndex: 9999, top: -30, left: 0.095 * (window.innerWidth * 0.97), transform: 'translateX(-50%)', fontSize: '14px', color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
-                                        {this.inputNames[name]}: {this.state.sliderValues[name]}
+                                      {typeof this.inputNames[name] === 'string' ? 
+                                          <label>{this.inputNames[name]}</label> :
+                                          this.inputNames[name]
+                                      }: <b>{this.state.sliderValues[name]}</b>
                                     </div>
                                     <div className={name}>
                                         {slider}
@@ -437,35 +475,44 @@ class Model extends React.Component {
                             ))}
 
                             {Object.entries(this.inputFields).map(([name, inputField], index) => (
-                                this.props.inputFieldVisibilities[name] ?
+                                this.state.inputFieldVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.inputFieldPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
-                                    {this.inputNames[name]}: {inputField}
+                                      {typeof this.inputNames[name] === 'string' ? 
+                                          <label>{this.inputNames[name]}</label> :
+                                          this.inputNames[name]
+                                      }: {inputField}
                                     </div>
                                 </Box>) : (<div></div>)
                             ))}
 
                             {Object.entries(this.dropdowns).map(([name, dropdown], index) => (
-                                this.props.dropdownVisibilities[name] ?
+                                this.state.dropdownVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.dropdownPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
-                                    {this.inputNames[name]}: {dropdown}
+                                      {typeof this.inputNames[name] === 'string' ? 
+                                          <label>{this.inputNames[name]}</label> :
+                                          this.inputNames[name]
+                                      }: {dropdown}
                                     </div>
                                 </Box>) : (<div></div>)
                             ))}
                             
                             {Object.entries(this.checkboxes).map(([name, checkbox], index) => (
-                                this.props.checkboxVisibilities[name] ?
+                                this.state.checkboxVisibilities[name] ?
                                 (<Text className={name} as = "label" size="2">
                                     <Flex style={{ position:"absolute", top: this.checkboxPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), width: Math.round(0.27 * (window.innerWidth * 0.97)), justifyContent:"flex-start", alignItems:"flex-start"}} gap="2">          
-                                    {this.inputNames[name]}: {React.cloneElement(checkbox, {checked: this.state.checkboxValues[name]})}
+                                      {typeof this.inputNames[name] === 'string' ? 
+                                          <label>{this.inputNames[name]}</label> :
+                                          this.inputNames[name]
+                                      }: {React.cloneElement(checkbox, {checked: this.state.checkboxValues[name]})}
                                     </Flex>
                                 </Text>) : (<div></div>)
                             ))}
 
-                            {this.additionalComponents()}
+                            {this.additionalComponents(this.state.dropdownVisibilities, this.state.checkboxVisibilities)}
 
-                            <Flex direction="row" gap="3" style={{ position: 'absolute', transform: 'translateX(-50%)', top: this.buttonPosition, left: Math.round(0.835 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
+                            <Flex direction="row" gap="3" style={{ position: 'absolute', transform: 'translateX(-50%)', top: this.buttonPosition, left: Math.round(0.835 * (window.innerWidth * 0.97)) }}>
                                 <IconButton onClick={this.handleStartClick} variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }} 
                                 disabled = { this.props.isTraining < 0 || this.valuesUndefined() } >
                                     <Flex direction="horizontal" gap="2" style={{alignItems: "center", fontFamily:'monospace' }}>
@@ -483,7 +530,7 @@ class Model extends React.Component {
                         </Box>
                         {this.state.showCode && (
                             this.props.taskId < 30 ? 
-                            <SvmCodePreview code={this.state.code} /> : 
+                            <SvmCodePreview code={this.state.code} sliderVisibilities={this.state.sliderVisibilities} /> :
                             <CodePreview code={this.state.code} typ={this.props.typ} />
                         )}
                     </Tabs.Content>
@@ -499,7 +546,7 @@ class Model extends React.Component {
                       <Flex direction="column" gap="2" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                       
                       {/* This will render the form with the feature names received from the backend, if it exists */}
-                      <Form.Root className="FormRoot" onSubmit={this.props.taskId !== 0 ? (event) => this.props.handleSubmit(event, this.props.setIsResponding, this.props.setApiData, this.props.taskId, this.props.index) : () => {}} style={{ fontFamily:'monospace' }}>
+                      <Form.Root className="FormRoot" onSubmit={this.props.taskId !== 0 ? (event) => this.props.handleSubmit(event, this.props.setIsResponding, this.props.setApiData, this.props.taskId, this.props.index) : () => {}}>
                           {this.props.featureNames.length > 0 && this.props.featureNames.map((featureName, index) => (
                           <Form.Field className="FormField" name={featureName} key={index}>
                               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -523,7 +570,7 @@ class Model extends React.Component {
                           </button>
                           </Form.Submit>}
                       </Form.Root>
-                      <div id="query-response" style={{ fontFamily:'monospace' }}>
+                      <div id="query-response">
                           {this.props.isResponding===2 ? (
                               <div>Output: {this.props.apiData["in_out"]}</div>
                           ) : (this.props.isResponding===1 ? (

@@ -39,6 +39,8 @@ urlpatterns = [
     re_path(r'^api/intros$', views.intro_description_detail),
     re_path(r'^api/intros/$', views.intro_description_detail),
     re_path(r'^api/feedback$', views.feedback),
+    re_path(r'^api/pageview$', views.analytics_view),
+    re_path(r'^api/pageview/$', views.analytics_view),
 
     # serve .lottie files directly
     re_path(r'^(?P<filename>.+\.lottie)$', views.serve_lottie_file),

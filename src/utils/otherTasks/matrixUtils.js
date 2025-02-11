@@ -5,10 +5,10 @@ import { Flex, Box, Text, Checkbox } from '@radix-ui/themes';
 export function RenderDataMatrix({ width, height, states, stateSetter }) {
     let inputOptions = ["Aircraft Type", "Origin", "Destination", "Distance (km)"];  // "Airline", "Number of Passengers", ...
     let allInputData = [
-        ['A220', '787', '737'], // 'E190'
-        ['Milan', 'Amsterdam', 'Eindhoven'], // 'London' 
-        ['Amsterdam', 'New York', 'Malaga'], // 'Rotterdam'
-        [820, 5860, 1820] // 300
+        ['A220', 'Milan', 'Amsterdam', 820], 
+        ['787', 'Amsterdam', 'Eindhoven', 5860], 
+        ['737', 'Eindhoven', 'Malaga', 1820], 
+        // ['E190', 'London', 'Rotterdam', 300]
     ];
     if (states['inputData']) {
     } else {
@@ -21,10 +21,23 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
         stateSetter('features', []);
     }
 
-    let outputOptions = ["Manufacturer", "Flight Time (mins)"];
+    let outputOptions = ["Manufacturer", "Time (mins)"];
+    let allTargetData = [
+        ['Airbus', 110], 
+        ['Airbus', 500], 
+        ['Boeing', 175], 
+        // ['Embraer', 55], 
+    ];
+    if (states['targetData']) {
+    } else {
+        states['targetData'] = [[]]
+        stateSetter('targetData', [[]]);
+    }
     let allOutputData = [
-        ['Airbus', 'Boeing', 'Boeing'], // 'Embraer'
-        [110, 500, 175] // 55
+        ['Airbus', 109], 
+        ['Airbus', 517], 
+        ['Boeing', 178], 
+        // ['Embraer', 51], 
     ];
     if (states['outputData']) {
     } else {
@@ -58,37 +71,40 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
         const selection = Object.keys(states['checkboxValues']).filter(key => states['checkboxValues'][key]);
         let indices = new Set(selection.map(name => [...inputOptions, ...outputOptions].indexOf(name)));
         
-        const newInputData = allInputData.filter((_, index) => indices.has(index));
+        const newInputData = allInputData.map((sublist, rowIndex) => {
+            return [
+            ...sublist.filter((_, index) => indices.has(index)),
+            ...allTargetData[rowIndex].filter((_, index) => indices.has(index + allInputData[0].length))
+        ]});
         states['inputData'] = newInputData; 
         stateSetter('inputData', newInputData);
         const newFeatures = inputOptions.filter((_, index) => indices.has(index));
         states['features'] = newFeatures; 
         stateSetter('features', newFeatures);
 
-        const newOutputData = allOutputData.filter((_, index) => indices.has(index + allInputData.length));
+        // const newOutputData = allOutputData.filter((_, index) => indices.has(index + allInputData.length));  // datapoints horizontally
+        const newOutputData = allOutputData.map(sublist => sublist.filter((_, index) => indices.has(index + allInputData[0].length)));  // datapoints vertically
         states['outputData'] = newOutputData; 
         stateSetter('outputData', newOutputData);
         const newTargets = outputOptions.filter((_, index) => indices.has(index + inputOptions.length));
         states['targets'] = newTargets; 
         stateSetter('targets', newTargets);
-
-        console.log(states['features'].length, states['features'], states['targets'])  // TODO remove
     }
 
-    function displayMatrix(data, rowNames) {
+    function displayMatrix(data, columnNames) {
         return (
             <tbody>
                 {data[0] && 
                     <tr key={0}>
                         <td key={0}/>
                         {data[0].map((_, j) => (
-                            <td key={j+1} style={{ border: '1px solid black', padding: '5px' }}><i>{'Object '+String(j+1)}</i></td>
+                            <td key={j+1} style={{ border: '1px solid black', padding: '5px' }}><i>{columnNames[j]}</i></td>
                         ))}
                     </tr>
                 }
                 {data[0] && data[0][0] && data.map((row, i) => (
                     <tr key={i+1}>
-                        <td key={0} style={{ border: '1px solid black', padding: '5px' }}><i>{rowNames[i]}</i></td>
+                        <td key={0} style={{ border: '1px solid black', padding: '5px' }}><i>{'Object '+String(i+1)}</i></td>
                         {row.map((cell, j) => (
                             <td key={j+1} style={{ border: '1px solid black', padding: '5px' }}>{cell}</td>
                         ))}
@@ -100,7 +116,7 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
 
     function checkboxPosition(index) {
         const textHeight = 20
-        return Math.round(0.12*height + 2.0*textHeight*index)
+        return Math.round(0.10*height + 2.0*textHeight*index)
     }
 
     return (
@@ -133,15 +149,15 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
                 </Flex>
                 
                 {/* Display the matrices */}
-                <Flex direction='column' style={{ position:'absolute', top: 0.40*height }}>
-                    <div style={{textAlign: 'center'}} >Input matrix</div>
+                <Flex direction='column' style={{ position:'absolute', top: 0.31*height }}>
+                    <div style={{textAlign: 'center'}} >Data</div>
                     <table style={{ borderCollapse: 'collapse', textAlign: 'center' }}>
-                        {displayMatrix(states['inputData'], states['features'])}
+                        {displayMatrix(states['inputData'], [...states['features'], ...states['targets']])}
                     </table>
                 </Flex>
 
-                <Flex direction='column' style={{ position:'absolute', top: 0.75*height }}>
-                <div style={{textAlign: 'center'}} >Output matrix</div>
+                <Flex direction='column' style={{ position:'absolute', top: 0.62*height }}>
+                <div style={{textAlign: 'center'}} >Predictions</div>
                     <table style={{ borderCollapse: 'collapse', textAlign: 'center' }}>
                         {displayMatrix(states['outputData'], states['targets'])}
                     </table>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './common/header'; // Reusing the Header component from the provided example
+import Header from '../common/header'; // Reusing the Header component from the provided example
 
 class JupyterLite extends React.Component {
     render() {

@@ -24,6 +24,10 @@ import {
   Legend 
 } from 'chart.js';
 import { Model } from './common/viewTemplate';
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import ReactMarkdown from 'react-markdown';
 
 
 const Dropdown = ({ label, options, onChange, placeholder, disabled }) => (
@@ -64,41 +68,40 @@ class Building extends Model {
         super(props);
 
         this.state = {
-        loading: true,
-        currentSlide: 0,
-        activeTab: 'training',
-        showCode: false,
-        code: '',
-        description: '',
-
-        sliderValues: {'EpochSlider': 50, 'LRSlider': 0.01},
-        dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
-        checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
-        runTutorial: false,
-        steps: [
-            {
-              target: '.buildBody',
-              content: 'Welcome to the Building View! This is where you can build and test your own neural networks.',
-              placement: 'center',
-            },
-            {
-              target: '.cytoscape',
-              content: 'This is the neural network you will be building. You can add and remove layers with the buttons on the right. You can also use the + and - buttons below the network to add or remove nodes.',
-            },
-            {
-              target: '.iterationsSlider',
-              content: 'This is the slider to adjust the number of epochs. Put simply: the more epochs, the more your network will learn. But be careful, too many epochs can lead to overfitting!',
-            },
-            {
-              target: '.learningRateSlider',
-              content: 'This is the slider to adjust the learning rate. Put simply: the lower the learning rate, the less the network will adjust itself at every step.',
-            }]
+          loading: true,
+          currentSlide: 0,
+          activeTab: 'training',
+          showCode: false,
+          code: '',
+          description: '',
+          sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': 0.01},  
+          dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
+          checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
+          runTutorial: false,
+          steps: [
+              {
+                target: '.buildBody',
+                content: 'Welcome to the Building View! This is where you can build and test your own neural networks.',
+                placement: 'center',
+              },
+              {
+                target: '.cytoscape',
+                content: 'This is the neural network you will be building. You can add and remove layers with the buttons on the right. You can also use the + and - buttons below the network to add or remove nodes.',
+              },
+              {
+                target: '.iterationsSlider',
+                content: 'This is the slider to adjust the number of epochs. Put simply: the more epochs, the more your network will learn. But be careful, too many epochs can lead to overfitting!',
+              },
+              {
+                target: '.learningRateSlider',
+                content: 'This is the slider to adjust the learning rate. Put simply: the lower the learning rate, the less the network will adjust itself at every step.',
+              }]
         };
 
         this.useCodePreview = true;
 
         this.tabs = [
-            { name: 'Data', value: 'data' },
+            { name: 'More Info', value: 'data' },
             { name: 'Model', value: 'training' },
             { name: 'Result', value: 'testing' },
         ]
@@ -199,7 +202,7 @@ class Building extends Model {
                 data: this.props.errorList[0],
                 borderColor: 'rgba(7, 151, 185, 1)',
                 backgroundColor: 'rgba(7, 151, 185, 0.2)',
-                tension: 0.8,
+                tension: 0,
                 segment: {
                   animation: {
                     draw: (ctx) => {
@@ -402,50 +405,52 @@ class Building extends Model {
           <img src={color_scale_pic} alt='Color scale from purple for negative to red for positive' width='20' height='auto' style={{ position: 'absolute', top: 15, left: 15 }}/>
 
           {((this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1) &&
-            <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.02, right: window.innerWidth*0.34 }}>
+            <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.05, right: window.innerWidth*0.34 }}>
             <img src={this.props.img} alt={`Plot of the training progress`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/} style={{ height: '200px', width: 'auto' }}/>
-            {this.props.taskId === 11 && this.props.weights[0] && this.props.biases[0] && (
-              <Flex direction="column" gap="0">
-              <p>Weight: {Number(this.props.weights[0]).toFixed(3)}</p>
-              <p>Bias: {Number(this.props.biases[0]).toFixed(3)}</p>
-              </Flex>
-            )}
             </Flex>
           )}
 
-          <GenerateFloatingButtons top={window.innerHeight - 223} left={0.1 * (window.innerWidth * 0.97) - 16.5} dist={0.4 * (window.innerWidth * 0.97)/Math.max(this.props.cytoLayers.length-1,1)} isItPlus={true} nLayers={this.props.cytoLayers.length} cytoLayers={this.props.cytoLayers} setCytoLayers={this.props.setCytoLayers} taskId={this.props.taskId} index={this.props.index} NNIndex={this.props.NNIndex} maxNodes={this.props.maxNodes} isTraining={this.props.isTraining}/>                    
-          <GenerateFloatingButtons top={window.innerHeight - 178} left={0.1 * (window.innerWidth * 0.97) - 16.5} dist={0.4 * (window.innerWidth * 0.97)/Math.max(this.props.cytoLayers.length-1,1)} isItPlus={false} nLayers={this.props.cytoLayers.length} cytoLayers={this.props.cytoLayers} setCytoLayers={this.props.setCytoLayers} taskId={this.props.taskId} index={this.props.index} NNIndex={this.props.NNIndex} maxNodes={this.props.maxNodes} isTraining={this.props.isTraining}/>
+          <GenerateFloatingButtons top={window.innerHeight - 223} left={0.1 * (window.innerWidth * 0.97) - 16.5} dist={0.4 * (window.innerWidth * 0.97)/Math.max(this.props.cytoLayers.length-1,1)} isItPlus={true} nLayers={this.props.cytoLayers.length} cytoLayers={this.props.cytoLayers} setCytoLayers={this.props.setCytoLayers} taskId={this.props.taskId} index={this.props.index} NNIndex={this.props.NNIndex} maxNodes={this.props.maxNodes} isTraining={this.props.isTraining} setWeights={this.props.setWeights}/>
+          <GenerateFloatingButtons top={window.innerHeight - 178} left={0.1 * (window.innerWidth * 0.97) - 16.5} dist={0.4 * (window.innerWidth * 0.97)/Math.max(this.props.cytoLayers.length-1,1)} isItPlus={false} nLayers={this.props.cytoLayers.length} cytoLayers={this.props.cytoLayers} setCytoLayers={this.props.setCytoLayers} taskId={this.props.taskId} index={this.props.index} NNIndex={this.props.NNIndex} maxNodes={this.props.maxNodes} isTraining={this.props.isTraining} setWeights={this.props.setWeights}/>
          
           
-          <LayerRemoveButton setCytoLayers={this.props.setCytoLayers} index={this.props.NNIndex} taskId={this.props.taskId} cytoLayers={this.props.cytoLayers} isTraining={this.props.isTraining}/>
-          <LayerAddButton setCytoLayers={this.props.setCytoLayers} index={this.props.NNIndex} taskId={this.props.taskId} cytoLayers={this.props.cytoLayers} nOfOutputs={this.props.nOfOutputs} maxLayers={this.props.maxLayers} isTraining={this.props.isTraining}/>
+          <LayerRemoveButton setCytoLayers={this.props.setCytoLayers} NNIndex={this.props.NNIndex} taskId={this.props.taskId} cytoLayers={this.props.cytoLayers} isTraining={this.props.isTraining} setWeights={this.props.setWeights}/>
+          <LayerAddButton setCytoLayers={this.props.setCytoLayers} NNIndex={this.props.NNIndex} taskId={this.props.taskId} cytoLayers={this.props.cytoLayers} nOfOutputs={this.props.nOfOutputs} maxLayers={this.props.maxLayers} isTraining={this.props.isTraining} setWeights={this.props.setWeights}/>
 
         </Flex>
         </Box>
     )}
 
-    additionalComponents = () => {
+    additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
+        // add 30 px extra margin needed for each visible checkbox or dropdown
+        const extraMarginNeeded = [...Object.entries(dropdownVisibilities), ...Object.entries(checkboxVisibilities)]
+          .reduce((margin, [_, isVisible]) => isVisible ? margin + 40 : margin, 0);
+      
         return (
-        <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
+        <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
             <div id="/api-data">
               {this.props.isTraining===2 ? (
                 <Flex direction='column' >
                   <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
                     {this.shortDescription}
                   </div>
-                  {(this.props.taskId < 30 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
+
+                  {/* regression */}
+                  {(this.props.type === 2 &&
+                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
                   )}
-                  {(this.props.taskId >= 30 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace', marginTop: 20 }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
+                  
+                  {/* classification */}
+                  {(this.props.typ === 1 &&
+                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
                   )}
+
                   <div style={{ maxWidth: Math.round(0.27 * (window.innerWidth * 0.97)), maxHeight: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>
                     <canvas ref={this.chartRef} id="myChart"/>
                   </div>
                 </Flex>
               ) : (this.props.isTraining===1 ? (
                 <Flex direction= 'column'>
-                  <div style={{ fontFamily:'monospace' }}><b>Training... </b></div>
                   <div style={{ fontFamily:'monospace', marginTop: 20 }}><b>Progress: {Math.round((parseFloat(this.props.progress))*100)}%</b></div>
                   <div style={{ display: this.state.activeTab === 'training' ? 'block' : 'none', width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>
                     <canvas ref={this.chartRef} id="myChart"/>
@@ -453,7 +458,7 @@ class Building extends Model {
                 </Flex>
               ) : (
                 <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-                  {this.shortDescription}
+                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
                 </div>
               ))}
             </div>

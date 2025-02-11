@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { safeGet } from './utils/axiosUtils';
 import ReactMarkdown from 'react-markdown';
 import './css/App.css';
 
@@ -8,7 +8,7 @@ function Readme({ file }) {
 
   useEffect(() => {
     const filePath = process.env.PUBLIC_URL + `/${file}`;
-    axios.get(filePath)
+    safeGet(filePath)
       .then(response => {
         setReadme(response.data);
       });

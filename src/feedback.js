@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Flex, Box, Button, Heading, TextField } from '@radix-ui/themes';
-import { CheckCircledIcon } from '@radix-ui/react-icons';
-import '@radix-ui/themes/styles.css';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Progress from '@radix-ui/react-progress';
+import { CheckCircledIcon } from '@radix-ui/react-icons';
+import Header from './common/header';
+import '@radix-ui/themes/styles.css';
 import './css/App.css';
-import axios from 'axios';
-
 
 const FeedbackForm = ({ questions, host, cookie }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -63,7 +63,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
   }, [isFinished]);
 
   return (
-    <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: window.innerHeight-52, fontFamily: 'monospace', backgroundImage: 'linear-gradient(330deg, rgba(7,62,185, 0.15) 0%, rgba(7,185,130, 0.15) 100%)'}}>
+    <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: window.innerHeight-52, backgroundImage: 'linear-gradient(330deg, rgba(7,62,185, 0.15) 0%, rgba(7,185,130, 0.15) 100%)'}}>
       {isFinished ? (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/3, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
           <Flex gap="1" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Heading size='2' style={{ color: 'var(--slate-12)', marginBottom:25 }}>
@@ -121,27 +121,13 @@ const FeedbackForm = ({ questions, host, cookie }) => {
   
 function FeedbackApp({ host, cookie }) {
 
-  // ------- WINDOW RESIZING -------
-
-  function getWindowSize() {
-    const {innerWidth, innerHeight} = window;
-    return {innerWidth, innerHeight};
-  }
-  
-  // eslint-disable-next-line no-unused-vars
-  const [windowSize, setWindowSize] = useState(getWindowSize());
-
-  // update window size when window is resized
+  // ------- HIDE PRELOADER -------
   useEffect(() => {
-    function handleWindowResize() {
-      setWindowSize(getWindowSize());
-    }
-
-    window.addEventListener('resize', handleWindowResize);
-    return () => {
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, []);
+      const preloader = document.getElementById("preloader");
+      if (preloader) {
+          preloader.style.display = "none";
+      }
+    }, []);
 
 
   // ------- ACTUAL FORM -------
@@ -222,7 +208,12 @@ function FeedbackApp({ host, cookie }) {
     }));
   }, [questions]);
 
-  return <FeedbackForm questions={questions} host={host} cookie={cookie} />;
+  return (
+  <div>
+    <Header showHomeButton={true}/>
+    <FeedbackForm questions={questions} host={host} cookie={cookie} />;
+  </div>
+  );
 }
 
 export default FeedbackApp;

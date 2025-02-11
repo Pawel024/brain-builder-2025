@@ -2,11 +2,11 @@ import React from 'react';
 import './css/App.css';
 import { Theme, Box, IconButton, Flex } from '@radix-ui/themes';
 import { PlayIcon } from '@radix-ui/react-icons';
-import axios from 'axios';
+import { safeGet } from '../utils/axiosUtils';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import a11yDark from './code_preview/a11y-dark';
-import Header from './common/header';
+import a11yDark from '../code_preview/a11y-dark';
+import Header from '../common/header';
 
 class NotebookView extends React.Component {
     constructor(props) {
@@ -23,7 +23,7 @@ class NotebookView extends React.Component {
     componentDidMount() {
         let notebookUrl = `/api/notebooks/${this.props.notebookPath}/`;
 
-        axios.get(notebookUrl)
+        safeGet(notebookUrl)
             .then(response => {
                 this.setState({ notebook: response.data });
                 this.setState({ cellContents: response.data.cells.map(cell => cell.source.join('')) });

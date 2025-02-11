@@ -332,13 +332,13 @@ function AppContent() {
   const [introIds, setIntroIds] = useState([]);
   const [introData, setIntroData] = useState([]);
 
-  const [otherTasks, setOtherTasks] = useState( (checkIfRunningLocally) ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
-  const [otherDescriptions, setOtherDescriptions] = useState( (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
+  const [otherTasks, setOtherTasks] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
+  const [otherDescriptions, setOtherDescriptions] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
   const [constructionTaskIds, setConstructionTaskIds] = useState([23]);
 
   // for local testing 
   function localSetup() {
-      if (checkIfRunningLocally) {
+      if (checkIfRunningLocally()) {
       setProgressData({ challenges: {1: {0: 'open', 1: 'open', 2: 'open'}, 2: {0: 'open', 1: 'open'}}, quizzes: {}, intros: {} })
 
       setSVMTaskIds( [21] )
@@ -1081,7 +1081,7 @@ function AppContent() {
                 <div>
                 <SvmView 
                 isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
-                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
+                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{ 'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
                 />
                 </div>
               }

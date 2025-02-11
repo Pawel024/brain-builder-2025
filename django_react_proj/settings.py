@@ -140,25 +140,20 @@ ASGI_APPLICATION = "django_react_proj.asgi.application"
 
 # Database configuration optimized for PgBouncer with 20 connection limit
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')),
-        conn_max_age=0,  # Must be 0 with PgBouncer in transaction mode
-        OPTIONS={
+    'default': {
+        **dj_database_url.config(
+            default=os.environ.get('DATABASE_URL', 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')),
+            conn_max_age=0,  # Must be 0 with PgBouncer in transaction mode
+        ),
+        'OPTIONS': {
             'statement_timeout': 30000,  # 30 seconds - increased for slower queries
             'connect_timeout': 10,
-            'max_connections': 15,  # Match PGBOUNCER_MAX_CLIENT_CONN
         }
-    )
+    }
 }
 
 # Disable persistent connections
 CONN_MAX_AGE = 0
-
-# Add default timeout for database operations
-DATABASE_OPTIONS = {
-    'connect_timeout': 10,
-    'statement_timeout': 10000,  # 10 seconds in milliseconds
-}
 
 # Cache setup -> we're using redis-cloud for this as well
 # Currently cache is only used in the backend to store the data and neural networks, so they don't have to be retrained every time

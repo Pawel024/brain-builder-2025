@@ -122,7 +122,7 @@ class Model extends React.Component {
         }
 
         this.dropdowns = {
-            'dummyDropdown': <Dropdown options={["Option A", "Option B", "Option C"]} onChange={(selectedOption) => this.handleDropdownChange(selectedOption)} placeholder={"Please select an option"} disabled={this.props.isTraining===1} />
+            'dummyDropdown': <Dropdown options={["Option A", "Option B", "Option C"]} onChange={(selectedOption) => this.handleDropdownChange(selectedOption)} placeholder={"Select..."} disabled={this.props.isTraining===1} />
         }
 
         this.checkboxes = {

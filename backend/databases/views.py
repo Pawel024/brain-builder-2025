@@ -20,7 +20,7 @@ import os
 import requests
 
 from rest_framework import viewsets
-from .models import Analytics
+from .models import Pageview
 from .serializers import AnalyticsSerializer
 
 
@@ -267,5 +267,5 @@ def analytics_view(request):
 
 
 class AnalyticsViewSet(viewsets.ModelViewSet):
-    queryset = Analytics.objects.all()
+    queryset = Pageview.objects.all()
     serializer_class = AnalyticsSerializer

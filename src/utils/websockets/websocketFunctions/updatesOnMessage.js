@@ -1,7 +1,12 @@
+/**
+ * Updates the progress state if it has changed
+ * 
+ * @param {object} data - The data received from websocket
+ * @param {object} params - The parameters including state setters
+ * 
+ * @returns {void}
+ */
 function updateProgress(data, params) {
-
-    /*update the progress if it changed*/
-
     params.setProgress(prevProgress => {
         const newProgress = [...prevProgress];
         newProgress[params.index] = data.progress;
@@ -9,10 +14,16 @@ function updateProgress(data, params) {
     });
 }
 
+/**
+ * Checks if training is complete and closes the websocket if criteria are met
+ * 
+ * @param {object} data - The data received from websocket
+ * @param {object} params - The parameters including training config
+ * @param {WebSocket} ws - The websocket connection
+ * 
+ * @returns {void}
+ */
 function checkTrainingComplete(data, params, ws) {
-
-    /*check if training is complete and close the websocket if it is*/
-
     if (data?.progress !== undefined && params?.iterations !== undefined) {
       if (data.progress >= 0.98 || (params.iterations <=30 && data.progress >= 0.95) || (params.iterations <=20 && data.progress*params.iterations >= (params.iterations - 1))) {
         endTraining(ws, params);
@@ -20,6 +31,14 @@ function checkTrainingComplete(data, params, ws) {
     }
 }
 
+/**
+ * Ends the training process by closing websocket and updating state
+ * 
+ * @param {WebSocket} ws - The websocket connection
+ * @param {object} params - The parameters including state setters
+ * 
+ * @returns {void}
+ */
 function endTraining(ws, params) {
   ws.close();
   clearTimeout(params.timeoutId);
@@ -30,10 +49,15 @@ function endTraining(ws, params) {
   });
 }
 
+/**
+ * Updates the error list state if new errors are different from current
+ * 
+ * @param {object} data - The data received from websocket
+ * @param {object} params - The parameters including state setters
+ * 
+ * @returns {void}
+ */
 function updateErrorListIfNeeded(data, params) {
-
-    /*update the error list if it changed*/
-    
     if (data?.error_list?.[0] !== undefined && data?.error_list?.[1] !== undefined && params?.errorList?.[0] !== undefined && params?.errorList?.[1] !== undefined) { 
       if (data.error_list[0].length !== params.errorList[0].length || data.error_list[1] !== params.errorList[1]) {
         params.setErrorList(prevErrorList => {
@@ -45,12 +69,28 @@ function updateErrorListIfNeeded(data, params) {
     }
 }
 
+/**
+ * Updates the F1 score if available in the data
+ * 
+ * @param {object} data - The data received from websocket
+ * @param {object} params - The parameters including state setters
+ * 
+ * @returns {void}
+ */
 function updateF1ScoreIfNeeded(data, params) {
   if(data.f1score !== undefined && params.setF1Score !== undefined) {
     params.setF1Score(data.f1score);
   }
 }
 
+/**
+ * Updates the network weights if they have changed
+ * 
+ * @param {object} data - The data received from websocket
+ * @param {object} params - The parameters including state setters
+ * 
+ * @returns {void}
+ */
 function updateWeightsIfNeeded(data, params) {
   if (!data?.network_weights || !params?.setWeights) {
     return;
@@ -68,10 +108,15 @@ function updateWeightsIfNeeded(data, params) {
   }
 }
 
+/**
+ * Updates the network biases if they have changed
+ * 
+ * @param {object} data - The data received from websocket
+ * @param {object} params - The parameters including state setters
+ * 
+ * @returns {void}
+ */
 function updateBiasesIfNeeded(data, params) {
-
-    /*update the biases if they changed*/
-
     if (params?.biases?.length !== undefined && data?.network_biases?.[0] !== undefined && params?.biases?.[0] !== undefined) {
       if (params.biases.length !== 0 || data.network_biases[0] !== params.biases[0]) {
           params.setBiases(prevBiases => {
@@ -83,10 +128,15 @@ function updateBiasesIfNeeded(data, params) {
     }
 }
 
+/**
+ * Updates the images by decompressing and parsing base64 encoded plot data
+ * 
+ * @param {object} data - The data received from websocket containing base64 encoded plot
+ * @param {object} params - The parameters including state setters
+ * 
+ * @returns {void}
+ */
 function updateImagesIfNeeded(data, params) {
-
-    /*decompress and parse the images in 'plots', but only if it's not empty or the same as the current params.imgs*/
-
     if (data?.plot) {
         params.setImgs(prevImgs => {
           const newImgs = [...prevImgs];

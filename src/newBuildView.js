@@ -96,6 +96,8 @@ class Building extends Model {
                 target: '.learningRateSlider',
                 content: 'This is the slider to adjust the learning rate. Put simply: the lower the learning rate, the less the network will adjust itself at every step.',
               }]
+          ,
+          lastTrainingState: this.props.isTraining,
         };
 
         this.useCodePreview = true;
@@ -244,6 +246,16 @@ class Building extends Model {
             }
           });
         }
+      }
+
+      // Check if training just completed
+      if (prevProps.isTraining === 1 && this.props.isTraining === 2) {
+          this.setState({ activeTab: 'testing' });
+      }
+      
+      // Update lastTrainingState
+      if (prevProps.isTraining !== this.props.isTraining) {
+          this.setState({ lastTrainingState: prevProps.isTraining });
       }
     }
   

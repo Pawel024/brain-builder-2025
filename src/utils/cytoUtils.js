@@ -3,9 +3,17 @@ import chroma from 'chroma-js';
 const colorScale = chroma.scale(['#49329b', '#5e5cc2', '#8386d8', '#afb0e1', '#dddddd', '#e3a692', '#d37254', '#b64124', '#8f0500']).domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.52, 0.75, 1]);
 
 
-// ------- CYTOSCAPE FUNCTIONS -------
-
-// function to generate cytoscape elements
+/**
+ * Generates the elements for the cytoscape graph
+ * 
+ * @param {number[]} list - The list of nodes per layer
+ * @param {object} apiData - The data from the API
+ * @param {number} isTraining - The training status
+ * @param {number[][][]} weights - The weights of the neural network
+ * @param {number[][]} biases - The biases of the neural network
+ * 
+ * @returns {object[]} The elements for the cytoscape graph
+ */
 export function generateCytoElements(list, apiData, isTraining, weights, biases) {
   const cElements = [];
 
@@ -73,7 +81,14 @@ export function generateCytoElements(list, apiData, isTraining, weights, biases)
   return cElements;
 }
 
-// function to generate cytoscape style
+
+/**
+ * Generates the style for the cytoscape graph
+ * 
+ * @param {number[]} list - The list of nodes per layer
+ * 
+ * @returns {object[]} The style for the cytoscape graph
+ */
 export function generateCytoStyle(list = []) {
   const nodeSize = 180/Math.max(...list) < 90 ? 180/Math.max(...list) : 90;
 

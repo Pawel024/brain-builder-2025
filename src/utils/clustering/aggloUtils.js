@@ -1,6 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import * as d3 from 'd3';
 
+
+/**
+ * Initializes agglomerative clustering algorithm
+ * 
+ * @param {number} numPoints - Number of points to generate
+ * @param {Function} setGroups - Function to update groups state
+ * @param {Function} setDots - Function to update dots state
+ * @param {number} width - Canvas width
+ * @param {number} height - Canvas height
+ * @returns {object} Object containing new groups and dots
+ */
 function initAgglo(numPoints, setGroups, setDots, width, height) {
   const N = numPoints;
 
@@ -38,6 +49,20 @@ function initAgglo(numPoints, setGroups, setDots, width, height) {
   return { newGroups, newDots };
 }
 
+
+/**
+ * Performs one step of agglomerative clustering
+ * 
+ * @param {Function} setIsStepDisabled - Function to disable step button
+ * @param {Function} draw - Function to redraw visualization
+ * @param {object} linegRef - Reference to lines canvas
+ * @param {object} dotgRef - Reference to dots canvas
+ * @param {object} centergRef - Reference to centers canvas
+ * @param {Array} groups - Current groups
+ * @param {Function} setGroups - Function to update groups
+ * @param {Array} dots - Current dots
+ * @param {Function} setDots - Function to update dots
+ */
 function stepAgglo(setIsStepDisabled, draw, linegRef, dotgRef, centergRef, groups, setGroups, dots, setDots) {
   if (groups.length <= 2) {
     setIsStepDisabled(true);
@@ -126,6 +151,15 @@ function stepAgglo(setIsStepDisabled, draw, linegRef, dotgRef, centergRef, group
   );
 }
 
+
+/**
+ * Resets agglomerative clustering to initial state
+ * 
+ * @param {Function} setGroups - Function to update groups
+ * @param {Array} dots - Current dots
+ * @param {Function} setDots - Function to update dots
+ * @returns {object} Object containing reset groups and dots
+ */
 function restartAgglo(setGroups, dots, setDots) {
   // Create new groups and map dots to the new groups
   const updatedGroups = [];
@@ -158,6 +192,14 @@ function restartAgglo(setGroups, dots, setDots) {
   return { newGroups: updatedGroups, newDots: updatedDots };
 }
 
+
+/**
+ * Calculates average color between two colors with random variation
+ * 
+ * @param {string} color1 - First color in HSL format
+ * @param {string} color2 - Second color in HSL format
+ * @returns {string} New color in HSL format
+ */
 function averageColor(color1, color2) {
   const hsl1 = d3.hsl(color1);
   const hsl2 = d3.hsl(color2);

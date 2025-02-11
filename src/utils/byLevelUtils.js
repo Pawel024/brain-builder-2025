@@ -1,3 +1,10 @@
+/**
+ * Group ids by level
+ * 
+ * @param {number[]} ids
+ * 
+ * @returns {object} An object with the ids grouped by level
+ */
 function groupByIds(ids) {
     return ids.reduce((acc, id) => {
         const level = Math.floor(id / 10);
@@ -10,6 +17,16 @@ function groupByIds(ids) {
     }, {});
 }
 
+
+/**
+ * Group vars by index
+ * 
+ * @param {object[]} vars
+ * @param {number[]} ids
+ * @param {object} groupedIds
+ * 
+ * @returns {object} An object with the vars grouped by level
+ */
 function groupByIndex(vars, ids, groupedIds = null) {
     if (!groupedIds) {
         groupedIds = groupByIds(ids);

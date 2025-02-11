@@ -10,7 +10,17 @@ const T = 0.35/60/60;  // h/word, time for chatGPT to generate a word (source: s
 const AIP = 400;  // W, power consumption of an A100 GPU in an Azure datacenter (source: see below)
 const AIM = 1.84+0.03; // gCO2e/query, the share of emissions from training the model + operating the server (source: https://www.nature.com/articles/s41598-024-54271-x)
 const GE = 0.2; // gCO2e/Wh, carbon intensity of a Google search (source: https://googleblog.blogspot.com/2009/01/powering-google-search.html)
-function calculateWritingEmissions( n_words, own_time_mins, proofread_time_mins ) {
+
+
+/**
+ * Calculates carbon emissions for writing text with and without AI assistance
+ * 
+ * @param {number} n_words - Number of words in the text
+ * @param {number} own_time_mins - Time spent writing in minutes
+ * @param {number} proofread_time_mins - Time spent proofreading in minutes
+ * @returns {[number, number]} Array containing [human emissions, AI emissions] in gCO2e
+ */
+function calculateWritingEmissions(n_words, own_time_mins, proofread_time_mins) {
     let own_emissions = (own_time_mins+proofread_time_mins)/60*CP*EI;  // in gCO2e
     let AI_emissions = AIM + n_words*T*AIP*EI + proofread_time_mins/60*CP*EI;  // in gCO2e
     return [own_emissions, AI_emissions]; 
@@ -33,7 +43,15 @@ function calculateSearchingEmissions( n_searches, n_pages, mins_per_page, short=
 // note: in general, this is a rough estimate, but at least it gives people an idea
 // for more details on emissions calculation, see this blog post: https://medium.com/@chrispointon/the-carbon-footprint-of-chatgpt-e1bc14e4cc2a
 
-function renderText( textList, inputFields ) {
+
+/**
+ * Renders text with input fields interspersed
+ * 
+ * @param {string[]} textList - Array of text segments
+ * @param {JSX.Element[]} inputFields - Array of input field components
+ * @returns {JSX.Element} Combined text and input fields
+ */
+function renderText(textList, inputFields) {
     return (
         <div>
             {textList.map((text, index) => (
@@ -43,6 +61,17 @@ function renderText( textList, inputFields ) {
     );
 }
 
+
+/**
+ * Renders the emissions calculator component
+ * 
+ * @param {object} props - Component properties
+ * @param {number} props.width - Component width
+ * @param {number} props.height - Component height
+ * @param {[any, Function]} props.states - State array [result, setResult]
+ * @param {[any, Function, Function]} props.stateSetter - State setters [ins, updateTime, updateWords]
+ * @returns {JSX.Element} Emissions calculator component
+ */
 export function RenderEmissions({ width, height, states, stateSetter }) {
     
     const [result, setResult] = states;

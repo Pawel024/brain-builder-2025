@@ -56,7 +56,7 @@ function draw(lineg, dotg, centerg, groups, dots) {
 }
 
 function ClusteringVisualization({clusteringId}) {
-    const [clusteringMethod, setClusteringMethod] = useState(clusteringId===71 ? "agglo" : "kmeans"); // TODO handle this through a property in the database
+    const [clusteringMethod, setClusteringMethod] = useState(clusteringId===61 ? "agglo" : "kmeans"); // TODO handle this through a property in the database
     const [numPoints, setNumPoints] = useState(clusteringId===71 ? 10 : 200);
     const [numClusters, setNumClusters] = useState(2);
     const [isRestartDisabled, setIsRestartDisabled] = useState(true);

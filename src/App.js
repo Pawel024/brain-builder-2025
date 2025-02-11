@@ -18,7 +18,7 @@ import { safeGet } from './utils/axiosUtils';
 import { generateCytoElements, generateCytoStyle } from './utils/cytoUtils';
 import getCookie from './utils/cookieUtils';
 import putRequest from './utils/websockets/websocketUtils';
-import { useAnalytics } from './utils/hooks/useAnalytics';
+import useAnonymizedUserCount from './utils/hooks/useAnonymizedUserCount';
 
 // ------- LAZY LOADING OF ROUTED VIEWS -------
 const Introduction = lazy(() => import('./introduction'));
@@ -26,7 +26,7 @@ const QuizApp = lazy(() => import('./quiz'));
 const OtherTask = lazy(() => import('./otherTasks'))
 const SvmView = lazy(() => import('./svmView'));
 const BuildView = lazy(() => import('./newBuildView'));
-const ClusteringTest = lazy(() => import('./clustering'));
+const ClusteringView = lazy(() => import('./clustering'));
 const FeedbackApp = lazy(() => import('./feedback'));
 const NotFound = lazy(() => import('./common/notFound'));
 const ConstructionView = lazy(() => import('./common/constructionView'));
@@ -57,7 +57,7 @@ export default function App() {
 // ------- APP CONTENT -------
 
 function AppContent() {
-  useAnalytics();
+  useAnonymizedUserCount();
 
   function checkIfRunningLocally() {
     return (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -1022,7 +1022,7 @@ function AppContent() {
           return (
             <Route key={taskId} path={`/exercise${level}-${task}`} element={
               <div className="App">
-                <ClusteringTest clusteringId={taskId} />
+                <ClusteringView clusteringId={taskId} />
               </div>
             } />
           );

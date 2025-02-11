@@ -1,6 +1,15 @@
 import { prepareNNTrainingData, prepareSVMTrainingData } from './websocketFunctions/prepareTrainingData';
 import initializeWebSocket from './websocketFunctions/initializeWebsocket';
 
+/**
+ * Function to send a PUT request to the server
+ * 
+ * @param {Event} e - The event that triggered the function
+ * @param {object} params - The parameters for the training process
+ * @param {string} type - The type of model to train
+ * 
+ * @returns {void}
+ */
 const putRequest = (e, params, type) => {
 
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {

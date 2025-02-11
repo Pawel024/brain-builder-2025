@@ -186,10 +186,11 @@ class LevelState(models.Model):
     def __str__(self):
         return "Level " + str(self.level) + " - " + str(self.active)
 
-class Analytics(models.Model):
+class Pageview(models.Model):
     user_id = models.CharField(max_length=100)
     page_path = models.CharField(max_length=200)
     timestamp = models.DateTimeField(auto_now_add=True)
+    referrer = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user_id} - {self.page_path} - {self.timestamp}"

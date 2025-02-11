@@ -1,6 +1,15 @@
 import handleMessage from "./handleMessage";
 import cancelRequest from "./cancelRequest";
 
+
+/**
+ * Initializes the websocket connection.
+ * 
+ * @param {object} trainingData - the training data
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 export default function initializeWebSocket(trainingData, params) {
 
     /*initialize the websocket connection*/
@@ -12,6 +21,15 @@ export default function initializeWebSocket(trainingData, params) {
 
 }
 
+
+/**
+ * Sets up the websocket connection.
+ * 
+ * @param {object} trainingData - the training data
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {WebSocket} - the websocket connection
+ */
 function setupWebSocket(trainingData, params) {
 
     /*setup the websocket connection*/
@@ -21,6 +39,14 @@ function setupWebSocket(trainingData, params) {
     return ws;
 }
 
+
+/**
+ * Creates the websocket connection.
+ * 
+ * @param {string} userId - the user id
+ * 
+ * @returns {WebSocket} - the websocket connection
+ */
 function createWebSocket(userId) {
 
     /*create the websocket connection*/
@@ -28,6 +54,16 @@ function createWebSocket(userId) {
     return new WebSocket(`wss://${window.location.host}/ws/${userId}/`);
 }
 
+
+/**
+ * Sets up the websocket event handlers.
+ * 
+ * @param {WebSocket} ws - the websocket connection
+ * @param {object} trainingData - the training data
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 function setupEventHandlers(ws, trainingData, params) {
 
     /*setup the websocket event handlers*/
@@ -38,6 +74,16 @@ function setupEventHandlers(ws, trainingData, params) {
     ws.onclose = () => handleClose(params);
 }
 
+
+/**
+ * Handles the websocket opening.
+ * 
+ * @param {WebSocket} ws - the websocket connection
+ * @param {object} trainingData - the training data
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 function handleOpen(ws, trainingData, params) {
 
     /*handle websocket opening*/
@@ -58,6 +104,15 @@ function handleOpen(ws, trainingData, params) {
     }, params.intervalTimeout); // stop after n milliseconds
 }
 
+
+/**
+ * Handles the websocket error.
+ * 
+ * @param {Event} event - the event
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 function handleError(event, params) {
 
     /*handle websocket errors*/
@@ -69,6 +124,14 @@ function handleError(event, params) {
     alert("A websocket error occurred. Please try again. If the problem persists, please contact us.");
 }
 
+
+/**
+ * Handles the websocket closure.
+ * 
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 function handleClose(params) {
 
     /*handle websocket closure*/

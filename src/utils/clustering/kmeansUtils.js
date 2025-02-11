@@ -1,3 +1,16 @@
+/**
+ * Initializes the k-means clustering algorithm
+ * 
+ * @param {number} numPoints - Number of points to generate
+ * @param {number} numClusters - Number of clusters to create
+ * @param {Function} setGroups - Function to update groups state
+ * @param {Function} setFlag - Function to update flag state
+ * @param {Function} setDots - Function to update dots state
+ * @param {number} width - Canvas width
+ * @param {number} height - Canvas height
+ * 
+ * @returns {object} Object containing new groups and dots
+ */
 function initKMeans(numPoints, numClusters, setGroups, setFlag, setDots, width, height) {
   const N = numPoints;
   const K = numClusters;
@@ -45,6 +58,22 @@ function initKMeans(numPoints, numClusters, setGroups, setFlag, setDots, width, 
   return { newGroups, newDots };
 }
 
+
+/**
+ * Performs one step of the k-means algorithm
+ * 
+ * @param {Function} setIsStepDisabled - Function to disable step button
+ * @param {boolean} flag - Current algorithm phase flag
+ * @param {Function} setFlag - Function to update flag
+ * @param {Function} draw - Function to redraw visualization
+ * @param {object} linegRef - Reference to lines canvas
+ * @param {object} dotgRef - Reference to dots canvas
+ * @param {object} centergRef - Reference to centers canvas
+ * @param {Array} groups - Current groups
+ * @param {Function} setGroups - Function to update groups
+ * @param {Array} dots - Current dots
+ * @param {Function} setDots - Function to update dots
+ */
 function stepKMeans(setIsStepDisabled, flag, setFlag, draw, linegRef, dotgRef, centergRef, groups, setGroups, dots, setDots) {
   let newGroups = null;
   let newDots = null;
@@ -72,6 +101,17 @@ function stepKMeans(setIsStepDisabled, flag, setFlag, draw, linegRef, dotgRef, c
   }
 }
 
+
+/**
+ * Resets k-means algorithm to initial state
+ * 
+ * @param {Array} groups - Current groups
+ * @param {Function} setGroups - Function to update groups
+ * @param {Array} dots - Current dots
+ * @param {Function} setDots - Function to update dots
+ * @param {Function} setFlag - Function to update flag
+ * @returns {object} Object containing reset groups and dots
+ */
 function restartKMeans(groups, setGroups, dots, setDots, setFlag) {
     setFlag(false);
   
@@ -95,6 +135,14 @@ function restartKMeans(groups, setGroups, dots, setDots, setFlag) {
     return { newGroups: updatedGroups, newDots: updatedDots };
 }
 
+
+/**
+ * Updates cluster centers based on assigned points
+ * 
+ * @param {Array} groups - Current groups
+ * @param {Function} setGroups - Function to update groups
+ * @returns {object} Object containing new groups and convergence status
+ */
 function moveCenter(groups, setGroups) {
   let converged = true;
   const newGroups = groups.map(group => {
@@ -126,6 +174,16 @@ function moveCenter(groups, setGroups) {
   return { newGroups, converged };
 }
 
+
+/**
+ * Assigns points to nearest cluster centers
+ * 
+ * @param {Array} dots - Current dots
+ * @param {Function} setDots - Function to update dots
+ * @param {Array} groups - Current groups
+ * @param {Function} setGroups - Function to update groups
+ * @returns {object} Object containing updated groups and dots
+ */
 function updateGroups(dots, setDots, groups, setGroups) {
   // Step 1: Reset the dots array in groups
   const resetGroups = groups.map(g => ({ ...g, dots: [] }));

@@ -1,12 +1,27 @@
 import getCookie from '../../cookieUtils';
 
-// Extracted task-specific configurations for better separation of concerns
+/**
+ * Extracted task-specific configurations for better separation of concerns
+ * 
+ * @param {number} taskId - The task ID.
+ * 
+ * @returns {Object} The task configuration.
+ */
 const getTaskConfiguration = (taskId) => ({
   11: { learningRate: 0.0005, normalization: false, activationFunctionsEnabled: false },
   12: { normalization: false, activationFunctionsEnabled: false }
 }[taskId] || {});
 
-// State update function that doesn't directly manipulate the state
+
+/**
+ * Updates the state of a component without mutating the original state.
+ * 
+ * @param {function} setter - The setter function.
+ * @param {any} newValue - The new value.
+ * @param {number} index - The index.
+ * 
+ * @returns {void}
+ */
 const updateState = (setter, newValue, index) => {
   setter(prev => {
     const updated = Array.isArray(prev) ? [...prev] : {};
@@ -15,6 +30,37 @@ const updateState = (setter, newValue, index) => {
   });
 };
 
+
+/**
+ * Prepares the training data for the neural network model.
+ * 
+ * @param {Object} params - The parameters object.
+ * @param {number} params.learningRate - The learning rate.
+ * @param {number} params.iterations - The number of iterations.
+ * @param {string} params.af - The activation function.
+ * @param {string} params.optimizer - The optimizer.
+ * @param {string} params.taskId - The task ID.
+ * @param {function} params.setProgress - The setProgress function.
+ * @param {function} params.setErrorList - The setErrorList function.
+ * @param {function} params.setWeights - The setWeights function.
+ * @param {function} params.setBiases - The setBiases function.
+ * @param {function} params.setImgs - The setImgs function.
+ * @param {function} params.setApiData - The setApiData function.
+ * @param {function} params.setAccuracy - The setAccuracy function.
+ * @param {function} params.setIsTraining - The setIsTraining function.
+ * @param {Array} params.cytoLayers - The cytoLayers.
+ * @param {number} params.nOfInputs - The number of inputs.
+ * @param {number} params.nOfOutputs - The number of outputs.
+ * @param {Object} params.img - The image.
+ * @param {string} params.typ - The type.
+ * @param {string} params.dataset - The dataset.
+ * @param {string} params.fileName - The file name.
+ * @param {string} params.functionName - The function name.
+ * @param {number} params.index - The index.
+ * @param {number} params.globalIndex - The global index.
+ * 
+ * @returns {Object} The training data.
+ */
 const prepareNNTrainingData = ({
   learningRate = 0.01,
   iterations = 50,
@@ -84,6 +130,29 @@ const prepareNNTrainingData = ({
 }
 
 
+/**
+ * Prepares the training data for the SVM model.
+ * 
+ * @param {Object} params - The parameters object.
+ * @param {string} params.taskId - The task ID.
+ * @param {string} params.fileName - The file name.
+ * @param {string} params.functionName - The function name.
+ * @param {string} params.dataset - The dataset.
+ * @param {boolean} params.normalization - The normalization.
+ * @param {number} params.cValue - The C value.
+ * @param {number} params.gammaValue - The gamma value.
+ * @param {string} params.kernelValue - The kernel value.
+ * @param {boolean} params.linearlySeparable - Whether the data is linearly separable.
+ * @param {Object} params.img - The image.
+ * @param {function} params.setImgs - The setImgs function.
+ * @param {function} params.setF1Score - The setF1Score function.
+ * @param {function} params.setApiData - The setApiData function.
+ * @param {function} params.setIsTraining - The setIsTraining function.
+ * @param {number} params.index - The index.
+ * @param {number} params.globalIndex - The global index.
+ * 
+ * @returns {Object} The training data.
+ */
 const prepareSVMTrainingData = ({
   taskId,
   fileName,

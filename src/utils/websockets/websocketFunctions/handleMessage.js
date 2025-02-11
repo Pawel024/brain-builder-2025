@@ -1,5 +1,14 @@
 import { updateProgress, checkTrainingComplete, endTraining, updateErrorListIfNeeded, updateF1ScoreIfNeeded, updateWeightsIfNeeded, updateBiasesIfNeeded, updateImagesIfNeeded } from './updatesOnMessage';
 
+/**
+ * Handles incoming messages from the websocket.
+ * 
+ * @param {Event} event - the event object
+ * @param {WebSocket} ws - the websocket connection
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 export default function handleMessage(event, ws, params) {
 
     /*handle incoming messages from the websocket*/
@@ -38,6 +47,15 @@ export default function handleMessage(event, ws, params) {
     }
 }
 
+
+/**
+ * Resets the timeout for the websocket connection.
+ * 
+ * @param {WebSocket} ws - the websocket connection
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 function resetTimeout(ws, params) {
 
     /*reset the timeout to close the websocket if no message is received for a certain amount of time*/

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Row, Progress, TaskDescription, ExternalLink, NeuralNetworkDescription, ClusteringDescription, BasicsDescription, SVMDescription, Quiz, Intro, Feedback, LevelState, Analytics
+from .models import Row, Progress, TaskDescription, ExternalLink, NeuralNetworkDescription, ClusteringDescription, BasicsDescription, SVMDescription, Quiz, Intro, Feedback, LevelState, Pageview
 
 class RowSerializer(serializers.ModelSerializer):
     class Meta:
@@ -77,5 +77,5 @@ class LevelStateSerializer(serializers.Serializer):
 
 class AnalyticsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Analytics
-        fields = ('user_id', 'page_path', 'timestamp')
+        model = Pageview
+        fields = ('user_id', 'page_path', 'timestamp', 'referrer')

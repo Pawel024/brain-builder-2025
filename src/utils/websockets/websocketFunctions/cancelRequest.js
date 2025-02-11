@@ -1,3 +1,14 @@
+/**
+ * Cancels the training process and closes the websocket connection
+ * 
+ * @param {number} NNIndex - the index of the neural network in the list of neural networks
+ * @param {number} index - the index of the neural network in the list of neural networks
+ * @param {WebSocket} ws - the websocket connection
+ * @param {number} timeoutId - the timeout id
+ * @param {object} params - the parameters for the training process
+ * 
+ * @returns {void}
+ */
 export default function cancelRequest(NNIndex, index, ws, timeoutId, params) {
 
     /*cancel the training process*/

@@ -96,6 +96,8 @@ class Building extends Model {
                 target: '.learningRateSlider',
                 content: 'This is the slider to adjust the learning rate. Put simply: the lower the learning rate, the less the network will adjust itself at every step.',
               }]
+          ,
+          lastTrainingState: this.props.isTraining,
         };
 
         this.useCodePreview = true;
@@ -129,9 +131,9 @@ class Building extends Model {
     };
 
     dropdowns = {
-      'AFDropdown': <Dropdown options={this.props.dropdownOptions['AFDropdown']} onChange={(selectedOption) => this.handleDropdownChange('AFDropdown', selectedOption)} placeholder={"Please select an option"} disabled={this.props.isTraining===1} />,
+      'AFDropdown': <Dropdown options={this.props.dropdownOptions['AFDropdown']} onChange={(selectedOption) => this.handleDropdownChange('AFDropdown', selectedOption)} placeholder={"Select..."} disabled={this.props.isTraining===1} />,
       // preferred options: ["ReLU", "Sigmoid", "TanH", "Swish"]
-      'OptimizerDropdown': <Dropdown options={this.props.dropdownOptions['OptimizerDropdown']} onChange={(selectedOption) => this.handleDropdownChange('OptimizerDropdown', selectedOption)} placeholder={"Please select an option"} disabled={this.props.isTraining===1} />
+      'OptimizerDropdown': <Dropdown options={this.props.dropdownOptions['OptimizerDropdown']} onChange={(selectedOption) => this.handleDropdownChange('OptimizerDropdown', selectedOption)} placeholder={"Select..."} disabled={this.props.isTraining===1} />
       // preferred options: ["SGD", "Adam"]
     }
 
@@ -244,6 +246,16 @@ class Building extends Model {
             }
           });
         }
+      }
+
+      // Check if training just completed
+      if (prevProps.isTraining === 1 && this.props.isTraining === 2) {
+          this.setState({ activeTab: 'testing' });
+      }
+      
+      // Update lastTrainingState
+      if (prevProps.isTraining !== this.props.isTraining) {
+          this.setState({ lastTrainingState: prevProps.isTraining });
       }
     }
   
@@ -423,8 +435,9 @@ class Building extends Model {
 
     additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
         // add 30 px extra margin needed for each visible checkbox or dropdown
-        const extraMarginNeeded = [...Object.entries(dropdownVisibilities), ...Object.entries(checkboxVisibilities)]
-          .reduce((margin, [_, isVisible]) => isVisible ? margin + 40 : margin, 0);
+        const extraMarginNeeded =
+          Object.entries(dropdownVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 80 : margin, 0)
+          + Object.entries(checkboxVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 60 : margin, 0);
       
         return (
         <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>

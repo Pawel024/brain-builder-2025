@@ -2,6 +2,18 @@ import '../../css/App.css';
 import React, {  } from 'react';
 import { Flex, Box, Text, Checkbox } from '@radix-ui/themes';
 
+
+/**
+ * Renders a matrix with data and checkboxes to select which columns to display
+ * 
+ * @param {object} props - The properties of the component
+ * @param {number} props.width - The width of the component
+ * @param {number} props.height - The height of the component
+ * @param {object} props.states - The states of the component
+ * @param {function} props.stateSetter - The function to set the states of the component
+ * 
+ * @returns {JSX.Element} The rendered matrix component
+ */
 export function RenderDataMatrix({ width, height, states, stateSetter }) {
     let inputOptions = ["Aircraft Type", "Origin", "Destination", "Distance (km)"];  // "Airline", "Number of Passengers", ...
     let allInputData = [
@@ -62,6 +74,14 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
 
     //const [convertToNumbers, setConvertToNumbers] = useState(false);
 
+
+    /**
+     * Generates a new matrix based on checkbox selections
+     * 
+     * @param {string} name - Name of the checkbox that was clicked
+     * 
+     * @returns {void}
+     */
     function generateMatrix(name) {
         let newCheckboxValues = {...states['checkboxValues']};
         newCheckboxValues[name] = !states['checkboxValues'][name];
@@ -91,6 +111,15 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
         stateSetter('targets', newTargets);
     }
 
+
+    /**
+     * Creates a table display for a matrix with column names
+     * 
+     * @param {Array<Array>} data - Matrix data to display
+     * @param {Array<string>} columnNames - Names for each column
+     * 
+     * @returns {JSX.Element} Table body element
+     */
     function displayMatrix(data, columnNames) {
         return (
             <tbody>
@@ -114,6 +143,14 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
         )
     }
 
+    
+    /**
+     * Calculates the position of a checkbox based on its index
+     * 
+     * @param {number} index - Index of the checkbox
+     * 
+     * @returns {number} The position of the checkbox
+     */
     function checkboxPosition(index) {
         const textHeight = 20
         return Math.round(0.10*height + 2.0*textHeight*index)

@@ -7,7 +7,7 @@ import * as Progress from '@radix-ui/react-progress';
 import '@radix-ui/themes/styles.css';
 import '../css/App.css';
 import getCookie from '../utils/cookieUtils';
-import isValidUUID from '../utils/userIdUtils';
+import { isValidUUID } from '../utils/userIdUtils';
 
 function ChallengeButton({ link, label, Icon, active }) {
   const buttonStyle = {

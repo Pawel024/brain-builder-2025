@@ -18,7 +18,7 @@ import { safeGet } from './utils/axiosUtils';
 import { generateCytoElements, generateCytoStyle } from './utils/cytoUtils';
 import getCookie from './utils/cookieUtils';
 import putRequest from './utils/websockets/websocketUtils';
-import { useAnalytics } from './utils/hooks/useAnalytics';
+import useAnonymizedUserCount from './utils/hooks/useAnonymizedUserCount';
 
 // ------- LAZY LOADING OF ROUTED VIEWS -------
 const Introduction = lazy(() => import('./introduction'));
@@ -26,7 +26,7 @@ const QuizApp = lazy(() => import('./quiz'));
 const OtherTask = lazy(() => import('./otherTasks'))
 const SvmView = lazy(() => import('./svmView'));
 const BuildView = lazy(() => import('./newBuildView'));
-const ClusteringTest = lazy(() => import('./clustering'));
+const ClusteringView = lazy(() => import('./clustering'));
 const FeedbackApp = lazy(() => import('./feedback'));
 const NotFound = lazy(() => import('./common/notFound'));
 const ConstructionView = lazy(() => import('./common/constructionView'));
@@ -57,7 +57,11 @@ export default function App() {
 // ------- APP CONTENT -------
 
 function AppContent() {
-  useAnalytics();
+  useAnonymizedUserCount();
+
+  function checkIfRunningLocally() {
+    return (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  }
 
   // Setting the interval- and timing-related states
   const intervalTimeout = 20000;  // in milliseconds, the time to wait before ending the interval
@@ -225,8 +229,7 @@ function AppContent() {
         setTimeout(checkGamesData, 500); // Check again after 0.5 second
       }
     };
-
-    checkGamesData();
+    if (!checkIfRunningLocally()) {checkGamesData()};
   };
 
   const fetchQueryResponse = (setApiData, setIsResponding, taskId, index) => {  // updates the apiData state with the response from the backend
@@ -259,7 +262,7 @@ function AppContent() {
   let accuracyColor = 'var(--slate-11)';
 
   // this is for all the tasks
-  const defaultTaskIds = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? [11, 12, 13] : [];
+  const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22] : [];
   const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
@@ -304,7 +307,7 @@ function AppContent() {
   const [imgs, setImgs] = useState(defaultTaskIds.map(() => null));
 
   // this is for the SVM tasks
-  const [SVMTaskIds, setSVMTaskIds] = useState([21]);
+  const [SVMTaskIds, setSVMTaskIds] = useState([]);
   const [cSliderVisibility, setCSliderVisibility] = useState([]);
   const [gammaSliderVisibility, setGammaSliderVisibility] = useState([]);
   const [rbfVisibility, setRbfVisibility] = useState([]);
@@ -329,10 +332,27 @@ function AppContent() {
   const [introIds, setIntroIds] = useState([]);
   const [introData, setIntroData] = useState([]);
 
-  const [otherTasks, setOtherTasks] = useState( (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
-  const [otherDescriptions, setOtherDescriptions] = useState( (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
+  const [otherTasks, setOtherTasks] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
+  const [otherDescriptions, setOtherDescriptions] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
   const [constructionTaskIds, setConstructionTaskIds] = useState([23]);
 
+  // for local testing 
+  function localSetup() {
+      if (checkIfRunningLocally()) {
+      setProgressData({ challenges: {1: {0: 'open', 1: 'open', 2: 'open'}, 2: {0: 'open', 1: 'open'}}, quizzes: {}, intros: {} })
+
+      setSVMTaskIds( [21] )
+      setGammaSliderVisibility( [true] )
+      setCSliderVisibility( [false] )
+      setRbfVisibility( [true] )
+
+      setNNTaskIds( [22] )
+      setIterationsSliderVisibility( [true] )
+      setLRSliderVisibility( [true] )
+      setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
+      setOptimOptions( [['SGD', 'Adam']] )
+    }
+  }
 
 
   // ------- FETCHING TASK DATA -------
@@ -535,6 +555,7 @@ function AppContent() {
     safeGet('/api/all_tasks/')
       .then(response => {
         if (response.data === null) {
+          localSetup()
           throw new Error('running locally');
         } else {
           const currentTaskData = response.data;
@@ -1001,7 +1022,7 @@ function AppContent() {
           return (
             <Route key={taskId} path={`/exercise${level}-${task}`} element={
               <div className="App">
-                <ClusteringTest clusteringId={taskId} />
+                <ClusteringView clusteringId={taskId} />
               </div>
             } />
           );
@@ -1011,7 +1032,7 @@ function AppContent() {
           const type = "challenges";
           const level = Math.floor(taskId / 10);
           const task = taskId % 10;
-          const isOpen = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? progressData[type]?.[level]?.[task-1] === "open" : true;
+          const isOpen = progressData[type]?.[level]?.[task-1] === "open";
         
           if (!isOpen) {
             return (
@@ -1060,7 +1081,7 @@ function AppContent() {
                 <div>
                 <SvmView 
                 isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
-                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
+                fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{ 'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
                 />
                 </div>
               }

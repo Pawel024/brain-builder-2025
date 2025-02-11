@@ -122,7 +122,7 @@ class Model extends React.Component {
         }
 
         this.dropdowns = {
-            'dummyDropdown': <Dropdown options={["Option A", "Option B", "Option C"]} onChange={(selectedOption) => this.handleDropdownChange(selectedOption)} placeholder={"Please select an option"} disabled={this.props.isTraining===1} />
+            'dummyDropdown': <Dropdown options={["Option A", "Option B", "Option C"]} onChange={(selectedOption) => this.handleDropdownChange(selectedOption)} placeholder={"Select..."} disabled={this.props.isTraining===1} />
         }
 
         this.checkboxes = {
@@ -303,36 +303,32 @@ class Model extends React.Component {
     // TODO: delete the functions you don't change
 
     // TODO: tune the vertical positioning here
-    sliderBottomMargin = 60
+    sliderBottomMargin = -20
     textHeight = 40
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
     sliderPosition = (index) => {
       // Position sliders at the top
-      const keys = Object.keys(this.sliders);
-      const visibleKeys = keys.filter(key => this.state.sliderVisibilities[key]);
-      const visibleIndex = visibleKeys.indexOf(keys[index]);
-      console.log("visibleIndex: ", visibleIndex);
-      return Math.round((0.14 + 0.12 * visibleIndex) * (window.innerHeight - 140));
+      return Math.round((0.14 + 0.12 * index) * (window.innerHeight - 140));
     }
 
     inputFieldPosition = (index) => {
       // Position input fields below the sliders
-      const visibleSliderCount = Object.keys(this.sliders).filter(key => this.state.sliderVisibilities[key]).length;
+      const visibleSliderCount = Object.keys(this.sliders).filter(key => this.props.sliderVisibilities[key]).length;
       console.log("visibleSliderCount: ", visibleSliderCount);
-      return Math.round(this.sliderPosition(visibleSliderCount-1) + this.textHeight * index + this.sliderBottomMargin);
+      return Math.round(this.sliderPosition(visibleSliderCount) + 1.2 * this.textHeight * index + this.sliderBottomMargin);
     }
 
     dropdownPosition = (index) => {
       // Position dropdowns below the input fields
-      const visibleInputCount = Object.keys(this.inputFields).filter(key => this.state.inputFieldVisibilities[key]).length;
+      const visibleInputCount = Object.keys(this.inputFields).filter(key => this.props.inputFieldVisibilities[key]).length;
       console.log("visibleInputCount: ", visibleInputCount);
-      return Math.round(this.inputFieldPosition(visibleInputCount) + this.textHeight * index);
+      return Math.round(this.inputFieldPosition(visibleInputCount) + 1.2 * this.textHeight * index);
     }
 
     checkboxPosition = (index) => {
       // Position checkboxes below the dropdowns
-      const visibleDropdownCount = Object.keys(this.dropdowns).filter(key => this.state.dropdownVisibilities[key]).length;
+      const visibleDropdownCount = Object.keys(this.dropdowns).filter(key => this.props.dropdownVisibilities[key]).length;
       console.log("visibleDropdownCount: ", visibleDropdownCount);
       return Math.round(this.dropdownPosition(visibleDropdownCount) + 1.2 * this.textHeight * index);
     }
@@ -459,7 +455,7 @@ class Model extends React.Component {
                         <Separator orientation='vertical' style = {{ position:"absolute", top: Math.round(0.03 * (window.innerHeight-140)), left: Math.round(0.67 * (window.innerWidth * 0.97)), height: 0.96 * (window.innerHeight-140) }}/>
 
                         <Box style={{ flex: 1 }}>
-                            {Object.entries(this.sliders).map(([name, slider], index) => (
+                            {Object.keys(this.props.sliderVisibilities).filter(key => this.props.sliderVisibilities[key]).map((name, index) => (
                                 this.state.sliderVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.sliderPosition(index), left: Math.round(0.74 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div style={{ position:"absolute", zIndex: 9999, top: -30, left: 0.095 * (window.innerWidth * 0.97), transform: 'translateX(-50%)', fontSize: '14px', color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
@@ -469,43 +465,43 @@ class Model extends React.Component {
                                       }: <b>{this.state.sliderValues[name]}</b>
                                     </div>
                                     <div className={name}>
-                                        {slider}
+                                        {this.sliders[name]}
                                     </div>
                                 </Box>) : (<div></div>)
                             ))}
 
-                            {Object.entries(this.inputFields).map(([name, inputField], index) => (
+                            {Object.keys(this.props.inputFieldVisibilities).filter(key => this.props.inputFieldVisibilities[key]).map(([name, inputField], index) => (
                                 this.state.inputFieldVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.inputFieldPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
                                       {typeof this.inputNames[name] === 'string' ? 
                                           <label>{this.inputNames[name]}</label> :
                                           this.inputNames[name]
-                                      }: {inputField}
+                                      }: {this.inputFields[name]}
                                     </div>
                                 </Box>) : (<div></div>)
                             ))}
 
-                            {Object.entries(this.dropdowns).map(([name, dropdown], index) => (
+                            {Object.keys(this.props.dropdownVisibilities).filter(key => this.props.dropdownVisibilities[key]).map((name, index) => (
                                 this.state.dropdownVisibilities[name] ?
                                 (<Box style={{ position:"absolute", top: this.dropdownPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'start', justifyContent: 'end', fontFamily:'monospace'  }}>
                                     <div className={name}>
                                       {typeof this.inputNames[name] === 'string' ? 
                                           <label>{this.inputNames[name]}</label> :
                                           this.inputNames[name]
-                                      }: {dropdown}
+                                      }: {this.dropdowns[name]}
                                     </div>
                                 </Box>) : (<div></div>)
                             ))}
                             
-                            {Object.entries(this.checkboxes).map(([name, checkbox], index) => (
+                            {Object.keys(this.props.checkboxVisibilities).filter(key => this.props.checkboxVisibilities[key]).map((name, index) => (
                                 this.state.checkboxVisibilities[name] ?
                                 (<Text className={name} as = "label" size="2">
                                     <Flex style={{ position:"absolute", top: this.checkboxPosition(index), left: Math.round(0.7 * (window.innerWidth * 0.97)), width: Math.round(0.27 * (window.innerWidth * 0.97)), justifyContent:"flex-start", alignItems:"flex-start"}} gap="2">          
                                       {typeof this.inputNames[name] === 'string' ? 
                                           <label>{this.inputNames[name]}</label> :
                                           this.inputNames[name]
-                                      }: {React.cloneElement(checkbox, {checked: this.state.checkboxValues[name]})}
+                                      }: {React.cloneElement(this.checkboxes[name], {checked: this.state.checkboxValues[name]})}
                                     </Flex>
                                 </Text>) : (<div></div>)
                             ))}

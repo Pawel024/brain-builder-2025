@@ -7,6 +7,15 @@ import { Chart, registerables } from 'chart.js';
 Chart.defaults.color = '#333';
 Chart.defaults.font.family = 'sans-serif';
 
+
+/**
+ * Throttles a function to limit how often it can be called
+ * 
+ * @param {Function} func - The function to throttle
+ * @param {number} limit - Time limit in milliseconds
+ * 
+ * @returns {Function} Throttled function
+ */
 function throttle(func, limit) {
     let inThrottle;
     return function(...args) {
@@ -18,6 +27,20 @@ function throttle(func, limit) {
     };
 }
 
+
+/**
+ * Wrapper function to handle changes in slider values
+ * 
+ * @param {number} value - The new slider value
+ * @param {Function} processingFunction - Function to process the value
+ * @param {Function} plottingFunction - Function to update the plot
+ * @param {string} state - The state key to update
+ * @param {object} all_states - All current states
+ * @param {Function} stateSetter - Function to update state
+ * @param {number} delay - Throttle delay in milliseconds
+ * 
+ * @returns {void}
+ */
 const handleChangeWrapper = (value, processingFunction, plottingFunction, state, all_states, stateSetter, delay=50) => {
     const handleChange = throttle((value, processingFunction, plottingFunction, state, all_states) => {  // TODO: switch to throttle while user is dragging the slider, but somehow take value the user lands on
         if (processingFunction) {value = processingFunction(value)}
@@ -33,6 +56,17 @@ const handleChangeWrapper = (value, processingFunction, plottingFunction, state,
     handleChange(value, processingFunction, plottingFunction, state, all_states)
 }
 
+
+/**
+ * Calculates mean squared error between predicted and actual values
+ * 
+ * @param {number} a - Slope parameter
+ * @param {Array<number>} x - Input values
+ * @param {number} b - Bias parameter
+ * @param {Array<number>} y - Target values
+ * 
+ * @returns {number} Mean squared error
+ */
 function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it works
     let sum = 0;
     for (let i = 0; i < x.length; i++) {
@@ -41,6 +75,15 @@ function meanSquaredError(a, x, b, y) {  // TODO: Copilot-generated, check if it
     return sum / x.length;
 }
 
+
+/**
+ * Calculates binomial coefficient
+ * 
+ * @param {number} n - Total number of items
+ * @param {number} k - Number of items to choose
+ * 
+ * @returns {number} Binomial coefficient
+ */
 function binomial(n, k) {
     // Simple binomial coefficient for small n
     let result = 1;
@@ -50,6 +93,16 @@ function binomial(n, k) {
     return result;
 }
 
+
+/**
+ * Expands polynomial coefficients from normalized to original coordinates
+ * 
+ * @param {Array<number>} cPrime - Normalized coefficients
+ * @param {number} mean - Mean of x values
+ * @param {number} scale - Scale factor
+ * 
+ * @returns {Array<number>} Expanded coefficients
+ */
 function expandCoeffs(cPrime, mean, scale) {
     // Convert normalized polynomial back to original coordinates
     const n = cPrime.length;
@@ -66,6 +119,16 @@ function expandCoeffs(cPrime, mean, scale) {
     return finalCoeffs;
 }
 
+
+/**
+ * Fits a polynomial to the given data points
+ * 
+ * @param {Array<number>} x - Input values
+ * @param {Array<number>} y - Target values
+ * @param {number} degree - Polynomial degree
+ * 
+ * @returns {Array<number>|null} Array of coefficients or null if error
+ */
 function polyfit(x, y, degree) {
     try {
         const n = degree + 1;
@@ -159,6 +222,13 @@ function polyfit(x, y, degree) {
     }
 }
 
+/**
+ * Evaluates a polynomial at given x values
+ * 
+ * @param {Array<number>} coefficients - Polynomial coefficients
+ * @param {number} x - Input value
+ * @returns {number} Polynomial value at x
+ */
 function polyval(coefficients, x) {
     return coefficients.reduce((sum, coef, i) => sum + coef * Math.pow(x, i), 0);
 }

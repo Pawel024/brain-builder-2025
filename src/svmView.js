@@ -244,8 +244,9 @@ class SvmView extends Model {
     }
 
     additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
-        const extraMarginNeeded = [...Object.entries(dropdownVisibilities), ...Object.entries(checkboxVisibilities)]
-          .reduce((margin, [_, isVisible]) => isVisible ? margin + 40 : margin, 0);
+        const extraMarginNeeded =
+          Object.entries(dropdownVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 80 : margin, 0)
+          + Object.entries(checkboxVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 60 : margin, 0);
 
         return (
         <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
@@ -254,6 +255,8 @@ class SvmView extends Model {
             </div>
         </Box>
     )}
+
+    sliderBottomMargin = -10
 
 }
 

@@ -78,54 +78,54 @@ export function RenderEmissions({ width, height, states, stateSetter }) {
     const [ins, updateTime, updateWords, writing=true] = stateSetter;
     
     if (writing) {
-    if (ins[1] === null) {ins[1] = [null, null]};
-    
-    const options = ['a sentence (~30 words)', 'a paragraph (~100 words)', 'a page (~400 words)'];
+        const timeValues = ins[1] === null ? [null, null] : ins[1];
+        
+        const options = ['a sentence (~30 words)', 'a paragraph (~100 words)', 'a page (~400 words)'];
 
-    const inputs = [
-        <RadioGroup.Root className="RadioGroupRoot" defaultValue="1" aria-label="Length of text" onValueChange={(value) => updateWords(options[parseInt(value, 10)-1])}>
-              {options.map((option, index) => (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <RadioGroup.Item className="RadioGroupItem" value={index.toString()} key={index}>
-                    <RadioGroup.Indicator className="RadioGroupIndicator" />
-                  </RadioGroup.Item>
-                  <label className="Label" htmlFor="r1">
-                    {option}
-                  </label>
-                </div>
-              ))}
-        </RadioGroup.Root>,
-        <TextField
-            label="Minutes"
-            type="number"
-            size="2"
-            onValueChange={(newValue) => updateTime(newValue, ins[1][1])}
-        />,
-        <TextField
-            label="Minutes"
-            type="number"
-            size="2"
-            onValueChange={(newValue) => updateTime(ins[1][0], newValue)}
-        />,
-    ]
-    const texts = [
-        "Writing an initial draft of ", "takes me about ", " minutes, and proofreading it takes me about ", " minutes. ",
-    ]
-    return (
-        <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
-            {renderText( texts, inputs )}
-            <IconButton onClick={
-                () => setResult(calculateWritingEmissions(ins[0], parseInt(ins[1][0]), parseInt(ins[1][1])))
-            } variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: 70, height: 35, fontSize: 'var(--font-size-2)', fontWeight: "500" }} >
-                <PlayIcon />
-            </IconButton>
-            {(result[0] !== null  && result[1] !== null) ?
-            <div style={{ marginTop:20 }}>
-            <p> Emissions from writing yourself: {Math.round(result[0], 0.1)} g CO2e </p>
-            <p> Emissions from writing with ChatGPT: {Math.round(result[1], 0.1)} g CO2e </p>
-            </div> : null}
-        </Flex>
-    );
+        const inputs = [
+            <RadioGroup.Root className="RadioGroupRoot" defaultValue="1" aria-label="Length of text" onValueChange={(value) => updateWords(options[parseInt(value, 10)-1])}>
+                {options.map((option, index) => (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <RadioGroup.Item className="RadioGroupItem" value={index.toString()} key={index}>
+                        <RadioGroup.Indicator className="RadioGroupIndicator" />
+                    </RadioGroup.Item>
+                    <label className="Label" htmlFor="r1">
+                        {option}
+                    </label>
+                    </div>
+                ))}
+            </RadioGroup.Root>,
+            <TextField
+                label="Minutes"
+                type="number"
+                size="2"
+                onValueChange={(newValue) => updateTime(newValue, timeValues[1])}
+            />,
+            <TextField
+                label="Minutes"
+                type="number"
+                size="2"
+                onValueChange={(newValue) => updateTime(timeValues[0], newValue)}
+            />,
+        ]
+        const texts = [
+            "Writing an initial draft of ", "takes me about ", " minutes, and proofreading it takes me about ", " minutes. ",
+        ]
+        return (
+            <Flex direction='column' gap="0" style={{ alignItems: 'center', justifyContent: 'center' }}>
+                {renderText( texts, inputs )}
+                <IconButton onClick={
+                    () => setResult(calculateWritingEmissions(ins[0], parseInt(timeValues[0]), parseInt(timeValues[1])))
+                } variant="solid" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: 70, height: 35, fontSize: 'var(--font-size-2)', fontWeight: "500" }} >
+                    <PlayIcon />
+                </IconButton>
+                {(result[0] !== null  && result[1] !== null) ?
+                <div style={{ marginTop:20 }}>
+                <p> Emissions from writing yourself: {Math.round(result[0], 0.1)} g CO2e </p>
+                <p> Emissions from writing with ChatGPT: {Math.round(result[1], 0.1)} g CO2e </p>
+                </div> : null}
+            </Flex>
+        );
     }
 
 }

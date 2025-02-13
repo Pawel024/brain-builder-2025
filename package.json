@@ -32,6 +32,7 @@
     "react": "^18.2.0",
     "react-animated-slider": "^2.0.0",
     "react-app-rewired": "^2.2.1",
+    "react-compiler-runtime": "^19.0.0-beta-30d8a17-20250209",
     "react-cytoscapejs": "^2.0.0",
     "react-dom": "^18.2.0",
     "react-joyride": "^2.7.2",
@@ -46,11 +47,12 @@
     "url-template": "^3.1.1",
     "uuid": "^11.0.3",
     "web-vitals": "^4.2.4",
-    "whatwg-fetch": "^3.6.20",
-    "lodash": "^4.17.21"
+    "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "babel-plugin-react-compiler": "^19.0.0-beta-30d8a17-20250209",
+    "eslint-plugin-react-compiler": "^19.0.0-beta-30d8a17-20250209"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -61,7 +63,8 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:react-compiler/recommended"
     ]
   },
   "browserslist": {

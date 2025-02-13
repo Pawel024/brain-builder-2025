@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { lazy, Suspense, useState, useEffect } from 'react'
 import '../css/App.css';
-import { Theme, Flex, Box, Tabs, Heading, IconButton, Separator, Checkbox, Text } from '@radix-ui/themes';
+import { Theme, Flex, Box, Tabs, IconButton, Separator, Checkbox, Text } from '@radix-ui/themes';
 import * as SliderSlider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
 import { PlayIcon, ChevronDownIcon, ChevronUpIcon, CodeIcon } from '@radix-ui/react-icons';
@@ -8,16 +8,14 @@ import CodePreview from '../code_preview/codePreview';
 import SvmCodePreview from '../code_preview/svmCodePreview';
 import Header from '../common/header';
 import { useNavigate } from 'react-router-dom';
-import Slider from 'react-animated-slider';
-import * as Form from '@radix-ui/react-form';
-import horizontalCss from '../css/horizontalSlides.css';
 import '@radix-ui/themes/styles.css';
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
 import { safeGet } from '../utils/axiosUtils';
-import { SlideButton } from './floatingButtons';
+const DataTab = lazy(() => import('./dataTab'));
+const TestingTab = lazy(() => import('./testingTab'));
 
 // This is a template for creating a new view in the application, similar to buildView. 
 // To implement a new view, simply copy this file and address all the TODOs (search for "TODO" in the file).
@@ -352,7 +350,6 @@ class Model extends React.Component {
         </Box>
     )}
 
-    // TODO: remove the render function in your copy
     render() {
       const preloader = document.getElementById("preloader");
       
@@ -360,6 +357,17 @@ class Model extends React.Component {
         if (preloader) { preloader.style.display = "flex"; };
       } else {
         if (preloader) { preloader.style.display = "none"; };
+
+      const DelayedFallback = () => {
+        const [show, setShow] = useState(false);
+        
+        useEffect(() => {
+          const timer = setTimeout(() => setShow(true), 500); // Only show loading after 500ms
+          return () => clearTimeout(timer);
+        }, []);
+        
+        return show ? <div>Loading...</div> : null;
+      };
 
         return(
                 <div className='buildBody'>
@@ -386,63 +394,15 @@ class Model extends React.Component {
 
                     <Tabs.Content value="data">
                       {this.props.taskId !== 0 && (    // a taskId of 0 is used for tutorials
-                        <Flex direction="row" gap="2" style={{ overflow: 'hidden', width: '100%', height: window.innerHeight-116 }}>
-                            
-                            {/* slides with descriptions loaded from the database */}
-                            <Box style={{ flexBasis: '50%' }}>   
-                            {this.state.description.length > 0 ? (           
-                            <Flex direction='column' gap='2' style={{ padding: '20px 10px', display: 'flex', justifyContent:"center", alignItems:"center" }}>
-                                <Flex style={{ flexbasis:'100%', marginBottom: 0, width:'100%' }}>
-                                <Slider key={this.state.currentSlide} classNames={horizontalCss} infinite={false} slideIndex={this.state.currentSlide}
-                                  previousButton={
-                                    <SlideButton 
-                                      onClick={() => {
-                                        const prevSlide = this.state.currentSlide - 1;
-                                        if (prevSlide >= 0) {
-                                          this.setState({ currentSlide: prevSlide });
-                                        }
-                                      }}
-                                      disabled={this.state.currentSlide <= 0}
-                                      rightPointing={false}
-                                    />
-                                  }
-                                  nextButton={
-                                    <SlideButton
-                                      onClick={() => {
-                                        const nextSlide = this.state.currentSlide + 1;
-                                        if (nextSlide < this.state.description.length) {
-                                          this.setState({ currentSlide: nextSlide });
-                                        }
-                                      }}
-                                      disabled={this.state.currentSlide >= this.state.description.length - 1}
-                                      rightPointing={true}
-                                    />
-                                  }
-                                >
-                                  {this.state.description.map(([subtitle, ...paragraphs], index) => (
-                                    <div key={index} className="slide-container">
-                                      <div className="slide-content">
-                                        <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
-                                        {paragraphs.map((paragraph, pIndex) => (
-                                          //<p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
-                                          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{paragraph}</ReactMarkdown>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </Slider>
-                                </Flex>
-                            </Flex>
-                            ):(<div/>)}
-                            </Box>
-
-                            <Separator orientation='vertical' style = {{ height: window.innerHeight-152, position: 'fixed', left: window.innerWidth * 0.5, bottom: (window.innerHeight-92) * 0.5, transform: `translateY(${(window.innerHeight - 152) / 2}px)` }}/>
-
-                          {/* plot of the data */}
-                          <Box style={{ flexBasis: '50%', display: 'flex', justifyContent:"center", alignItems:"center", padding: "0px 30px" }}>
-                              <img src={this.props.initPlot} alt='Plot of the data' width='auto' height='auto' style={{ maxWidth: '100%', maxHeight: '100%' }} onLoad={() => {}}/>
-                          </Box>
-                      </Flex>)}
+                        <Suspense fallback={<DelayedFallback />}>
+                          <DataTab 
+                              description={this.state.description}
+                              currentSlide={this.state.currentSlide}
+                              setCurrentSlide={(slide) => this.setState({ currentSlide: slide })}
+                              initPlot={this.props.initPlot}
+                          />
+                        </Suspense>
+                      )}
                   </Tabs.Content>
               
 
@@ -536,61 +496,19 @@ class Model extends React.Component {
                   {/* TODO: this was copied from the previous buildView and hence needs thorough testing */}
                   <Tabs.Content value="testing">
                   {this.props.taskId !== 0 && (
-                  
-                  <Flex direction="row" gap = "3" style={{ display: 'flex' }}>
-                      <Box style={{ flexBasis: '50%', justifyContent: 'center', alignItems: 'center', padding: '30px 0px' }}>
-                      <Flex direction="column" gap="2" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                      
-                      {/* This will render the form with the feature names received from the backend, if it exists */}
-                      <Form.Root className="FormRoot" onSubmit={this.props.taskId !== 0 ? (event) => this.props.handleSubmit(event, this.props.setIsResponding, this.props.setApiData, this.props.taskId, this.props.index) : () => {}}>
-                          {this.props.featureNames.length > 0 && this.props.featureNames.map((featureName, index) => (
-                          <Form.Field className="FormField" name={featureName} key={index}>
-                              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                              <Form.Label className="FormLabel">{featureName}</Form.Label>
-                              <Form.Message className="FormMessage" match="valueMissing">
-                                  Please enter the {featureName}
-                              </Form.Message>
-                              <Form.Message className="FormMessage" match="typeMismatch">
-                                  Please provide a valid number.
-                              </Form.Message>
-                              </div>
-                              <Form.Control asChild>
-                              <input className="FormInput" type="text" pattern="^-?[0-9]*[.,]?[0-9]+" required />
-                              </Form.Control>
-                          </Form.Field>
-                          ))}
-                          {this.props.featureNames.length > 0 &&
-                          <Form.Submit asChild>
-                          <button className="FormButton" style={{ marginTop: 10, width: window.innerWidth * 0.3 - 30 }}>
-                              Predict!
-                          </button>
-                          </Form.Submit>}
-                      </Form.Root>
-                      <div id="query-response">
-                          {this.props.isResponding===2 ? (
-                              <div>Output: {this.props.apiData["in_out"]}</div>
-                          ) : (this.props.isResponding===1 ? (
-                              <div>Getting your reply...</div>
-                          ) : (
-                              <div></div>
-                          )
-                          )}
-                          </div>
-                      </Flex>
-                      </Box>
-                      <Separator orientation='vertical' style = {{ height: window.innerHeight-152, position: 'fixed', left: window.innerWidth * 0.5, bottom: (window.innerHeight-92) * 0.5, transform: `translateY(${(window.innerHeight - 152) / 2}px)` }}/>
-                      <Box style={{ flexBasis: '50%', justifyContent: 'center', alignItems: 'center' }}>
-                      {/* This will render the images, if they exist */}
-                      <Flex direction="column" gap="2" style={{ justifyContent: 'center', alignItems: 'center', padding: '30px 30px' }}>
-                          {this.props.img ? (
-                          <img src={this.props.img} alt={`Plot of the data`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/}/>
-                          ) : (
-                          <div>No plots available yet... have you already trained a model?</div>
-                          )}
-                      {/* TODO: Turn this into a pretty animation */}
-                      </Flex>
-                      </Box>
-                  </Flex>
+                    <Suspense fallback={<DelayedFallback />}>
+                      <TestingTab 
+                          taskId={this.props.taskId}
+                          featureNames={this.props.featureNames}
+                          handleSubmit={this.props.handleSubmit}
+                          setIsResponding={this.props.setIsResponding}
+                          setApiData={this.props.setApiData}
+                          index={this.props.index}
+                          isResponding={this.props.isResponding}
+                          apiData={this.props.apiData}
+                          img={this.props.img}
+                      />
+                    </Suspense>
                   )}
                   </Tabs.Content>
 

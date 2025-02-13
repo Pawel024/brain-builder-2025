@@ -22,14 +22,10 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
         ['737', 'Eindhoven', 'Malaga', 1820], 
         // ['E190', 'London', 'Rotterdam', 300]
     ];
-    if (states['inputData']) {
-    } else {
-        states['inputData'] = [[]]
+    if (!states['inputData']) {
         stateSetter('inputData', [[]]);
     }
-    if (states['features']) {
-    } else {
-        states['features'] = []
+    if (!states['features']) {
         stateSetter('features', []);
     }
 
@@ -40,25 +36,21 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
         ['Boeing', 175], 
         // ['Embraer', 55], 
     ];
-    if (states['targetData']) {
-    } else {
-        states['targetData'] = [[]]
-        stateSetter('targetData', [[]]);
-    }
+
     let allOutputData = [
         ['Airbus', 109], 
         ['Airbus', 517], 
         ['Boeing', 178], 
         // ['Embraer', 51], 
     ];
-    if (states['outputData']) {
-    } else {
-        states['outputData'] = [[]]
+
+    if (!states['targetData']) {
+        stateSetter('targetData', [[]]);
+    }
+    if (!states['outputData']) {
         stateSetter('outputData', [[]]);
     }
-    if (states['targets']) {
-    } else {
-        states['targets'] = []
+    if (!states['targets']) {
         stateSetter('targets', []);
     }
 
@@ -66,9 +58,7 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
         acc[key] = false;  // initialize all as false
         return acc;
       }, {});
-    if (states['checkboxValues']) {
-    } else {
-        states['checkboxValues'] = initialCheckboxValues
+    if (!states['checkboxValues']) {
         stateSetter('checkboxValues', initialCheckboxValues);
     }
 
@@ -83,31 +73,32 @@ export function RenderDataMatrix({ width, height, states, stateSetter }) {
      * @returns {void}
      */
     function generateMatrix(name) {
-        let newCheckboxValues = {...states['checkboxValues']};
-        newCheckboxValues[name] = !states['checkboxValues'][name];
-        states['checkboxValues'] = newCheckboxValues; 
+        const newCheckboxValues = {
+            ...states['checkboxValues'],
+            [name]: !states['checkboxValues'][name]
+        };
         stateSetter('checkboxValues', newCheckboxValues);
 
-        const selection = Object.keys(states['checkboxValues']).filter(key => states['checkboxValues'][key]);
+        const selection = Object.keys(newCheckboxValues).filter(key => newCheckboxValues[key]);
         let indices = new Set(selection.map(name => [...inputOptions, ...outputOptions].indexOf(name)));
         
         const newInputData = allInputData.map((sublist, rowIndex) => {
             return [
-            ...sublist.filter((_, index) => indices.has(index)),
-            ...allTargetData[rowIndex].filter((_, index) => indices.has(index + allInputData[0].length))
-        ]});
-        states['inputData'] = newInputData; 
+                ...sublist.filter((_, index) => indices.has(index)),
+                ...allTargetData[rowIndex].filter((_, index) => indices.has(index + allInputData[0].length))
+            ]
+        });
         stateSetter('inputData', newInputData);
+
         const newFeatures = inputOptions.filter((_, index) => indices.has(index));
-        states['features'] = newFeatures; 
         stateSetter('features', newFeatures);
 
-        // const newOutputData = allOutputData.filter((_, index) => indices.has(index + allInputData.length));  // datapoints horizontally
-        const newOutputData = allOutputData.map(sublist => sublist.filter((_, index) => indices.has(index + allInputData[0].length)));  // datapoints vertically
-        states['outputData'] = newOutputData; 
+        const newOutputData = allOutputData.map(sublist => 
+            sublist.filter((_, index) => indices.has(index + allInputData[0].length))
+        );
         stateSetter('outputData', newOutputData);
+
         const newTargets = outputOptions.filter((_, index) => indices.has(index + inputOptions.length));
-        states['targets'] = newTargets; 
         stateSetter('targets', newTargets);
     }
 

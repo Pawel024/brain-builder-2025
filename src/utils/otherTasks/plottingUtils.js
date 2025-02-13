@@ -42,15 +42,14 @@ function throttle(func, limit) {
  * @returns {void}
  */
 const handleChangeWrapper = (value, processingFunction, plottingFunction, state, all_states, stateSetter, delay=50) => {
-    const handleChange = throttle((value, processingFunction, plottingFunction, state, all_states) => {  // TODO: switch to throttle while user is dragging the slider, but somehow take value the user lands on
+    const handleChange = throttle((value, processingFunction, plottingFunction, state, all_states) => {
         if (processingFunction) {value = processingFunction(value)}
         
+        const newStates = { ...all_states, [state]: value };
         stateSetter(state, value);  
-        all_states[state] = value
-    
         plottingFunction(value)
     
-        return all_states
+        return newStates
     }, delay);
 
     handleChange(value, processingFunction, plottingFunction, state, all_states)
@@ -234,7 +233,6 @@ function polyval(coefficients, x) {
 }
 
 Chart.register(...registerables);
-let chartInstance = null;
 
 function getMinMaxY(y) {
   const dataMax = Math.max(...y);
@@ -250,10 +248,7 @@ function getMedianY(y) {
     return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
 }
 
-let maxY = null;
-let minY = null;
-
-function makeScatterChart(ctx, x, y) {
+function makeScatterChart(ctx, x, y, minY, maxY, chartInstanceRef) {
   const scatterData = {
     datasets: [{
       label: 'Scatter Dataset',
@@ -279,47 +274,44 @@ function makeScatterChart(ctx, x, y) {
     }
   };
 
-  if (chartInstance) chartInstance.destroy();
+  if (chartInstanceRef.current) chartInstanceRef.current.destroy();
 
-  chartInstance = new Chart(ctx, {
+  chartInstanceRef.current = new Chart(ctx, {
     type: 'scatter',
     data: scatterData,
     options: scatterOptions
   });
 
-  return chartInstance;
+  return chartInstanceRef.current;
 }
 
 export function RenderLinReg({ width, height, states, stateSetter }) {  // width & height are for the bounding box of the animation (the right side of the vertical separator)
     // TODO: actually use the width and height or get rid of the parameters
 
-    if (states.weight === undefined) {
-        states.weight = 1;
-        stateSetter('weight', 1);
-    }
-    if (states.bias === undefined) {
-        states.bias = 0;
-        stateSetter('bias', 0);
-    }
-
     const chartRef = React.createRef();
+    const chartInstanceRef = React.useRef(null);
 
-    if (!(states['x'] && states['y'])) {  // TODO: check if this works
-        const target_a = Math.tan((Math.random()/3)*Math.PI).toFixed(3);
-        const target_b = Math.floor(Math.random() * 12 - 5).toFixed(3);
-        const x = Array.from({ length: 100 }, () => Math.floor(Math.random() * 20) - 10);
-        const y = x.map(xi => target_a * xi + parseFloat(target_b) + (Math.random() * 2.82 - 1.41));  // approximate noise as a normal distribution
+    useEffect(() => {
+        if (states.weight === undefined) {
+            stateSetter('weight', 1);
+        }
+        if (states.bias === undefined) {
+            stateSetter('bias', 0);
+        }
         
-        stateSetter('x', x);
-        stateSetter('y', y);
-
-        states['x'] = x;
-        states['y'] = y;
-
-        const minMaxY = getMinMaxY(y);
-        minY = minMaxY.min;
-        maxY = minMaxY.max;
-    }
+        if (!(states['x'] && states['y'])) {
+            const target_a = Math.tan((Math.random()/3)*Math.PI).toFixed(3);
+            const target_b = Math.floor(Math.random() * 12 - 5).toFixed(3);
+            const x = Array.from({ length: 100 }, () => Math.floor(Math.random() * 20) - 10);
+            const y = x.map(xi => target_a * xi + parseFloat(target_b) + (Math.random() * 2.82 - 1.41));
+            
+            const minMaxY = getMinMaxY(y);
+            stateSetter('minY', minMaxY.min);
+            stateSetter('maxY', minMaxY.max);
+            stateSetter('x', x);
+            stateSetter('y', y);
+        }
+    }, []);
 
     useEffect(() => {
         if (states.x && states.y) {
@@ -328,7 +320,14 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
     }, [states.x, states.y]);
 
     const plotData = (weight, bias) => {
-        const scatterChart = makeScatterChart(chartRef.current, states.x, states.y);
+        const scatterChart = makeScatterChart(
+            chartRef.current, 
+            states.x, 
+            states.y, 
+            states.minY, 
+            states.maxY,
+            chartInstanceRef
+        );
 
         if (weight !== null && bias !== null) {
             const lineData = {
@@ -425,25 +424,24 @@ export function RenderLinReg({ width, height, states, stateSetter }) {  // width
 
 export function RenderPolyReg({ width, height, states, stateSetter }) {
     const chartRef = React.createRef();
+    const chartInstanceRef = React.useRef(null);
     const limits = [0, 6.28];  // 2π
 
-    if (states.degree === undefined) {
-        states.degree = 1;
-        stateSetter('degree', 1);
-    }
+    useEffect(() => {
+        if (states.degree === undefined) {
+            stateSetter('degree', 1);
+        }
 
-    if (!(states['x'] && states['y'])) {
-        const x = Array.from({ length: 10 }, () => Math.random() * (limits[1] - limits[0]) + limits[0]);
-        const y = x.map(xi => Math.sin(xi) + (Math.random() * 0.2 - 0.1));
-        
-        stateSetter('x', x);
-        stateSetter('y', y);
-        states['x'] = x;
-        states['y'] = y;
-
-        minY = -2;
-        maxY = 2;
-    }
+        if (!(states['x'] && states['y'])) {
+            const x = Array.from({ length: 10 }, () => Math.random() * (limits[1] - limits[0]) + limits[0]);
+            const y = x.map(xi => Math.sin(xi) + (Math.random() * 0.2 - 0.1));
+            
+            stateSetter('minY', -2);
+            stateSetter('maxY', 2);
+            stateSetter('x', x);
+            stateSetter('y', y);
+        }
+    }, []);
 
     useEffect(() => {
         if (states.x && states.y) {
@@ -460,7 +458,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
         );
         const y_s = x_s.map(x => Math.sin(x));
 
-        if (chartInstance) chartInstance.destroy();
+        if (chartInstanceRef.current) chartInstanceRef.current.destroy();
 
         const datasets = [
             {
@@ -500,7 +498,7 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
             }
         }
 
-        chartInstance = new Chart(chartRef.current, {
+        chartInstanceRef.current = new Chart(chartRef.current, {
             type: 'scatter',                  // Make the base type scatter
             data: { datasets },
             options: {
@@ -516,8 +514,8 @@ export function RenderPolyReg({ width, height, states, stateSetter }) {
                     },
                     y: {
                         type: 'linear',
-                        min: minY,
-                        max: maxY
+                        min: states.minY,
+                        max: states.maxY
                     }
                 },
                 plugins: {

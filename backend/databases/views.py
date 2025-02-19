@@ -10,7 +10,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 
 import uuid
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from urllib.parse import urlparse
 
@@ -24,6 +24,7 @@ from .models import Pageview
 from .serializers import AnalyticsSerializer
 
 
+@ensure_csrf_cookie
 def index(request, path=''):
     user_id = request.GET.get('user_id')
 

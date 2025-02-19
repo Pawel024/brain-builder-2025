@@ -32,13 +32,6 @@ export const useAnonymizedUserCount = () => {
           }
         }
 
-        // CSRF TOKEN
-        const csrftoken = getCookie('csrftoken');
-        if (!csrftoken) {
-          console.warn('No CSRF token found');
-          return;
-        }
-
         // ANALYTICS DATA
         const analyticsData = {
           user_id: userId,
@@ -69,7 +62,6 @@ export const useAnonymizedUserCount = () => {
 
         await axios.post('/api/pageview', analyticsData, {
           headers: {
-            'X-CSRFToken': csrftoken,
             'Content-Type': 'application/json',
           }
         });

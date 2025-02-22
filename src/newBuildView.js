@@ -182,11 +182,13 @@ class Building extends Model {
           this.chartInstance.data.labels = this.props.errorList[0].map((_, i) => i + 1);
           this.chartInstance.data.datasets[0].data = this.props.errorList[0];
           this.chartInstance.update();
+          console.log("Updated chart")  // TODO remove
         } else {
           // Destroy the old chart if a different error list was received and a chart exists
           if (JSON.stringify(this.props.errorList[0].slice(0, prevProps.errorList[0].length)) !== JSON.stringify(prevProps.errorList[0])) {
             // If an old chart exists, destroy it
             if (this.chartInstance) {
+              console.log("Destroying chart")  // TODO remove
               this.chartInstance.destroy();
               this.chartInstance = null;
             }
@@ -195,6 +197,7 @@ class Building extends Model {
 
         // Create a new chart if there is no chart
         if (this.chartInstance === null) {
+          console.log("Creating new chart")  // TODO remove
           this.chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -250,7 +253,11 @@ class Building extends Model {
 
       // Check if training just completed
       if (prevProps.isTraining === 1 && this.props.isTraining === 2) {
-          this.setState({ activeTab: 'testing' });
+          console.log("Training done, switching to testing tab")  // TODO remove
+          console.log("Current tab: ", this.state.activeTab)  // TODO remove
+          //this.setState({ activeTab: 'testing' });
+          this.handleTabChange("testing")  // should do the same 
+          console.log("New tab: ", this.state.activeTab)  // TODO remove
       }
       
       // Update lastTrainingState
@@ -352,6 +359,8 @@ class Building extends Model {
             return {dropdownValues: newDropdownValues};
         });
     }
+
+
 
 
     // FINALLY, THE RENDER

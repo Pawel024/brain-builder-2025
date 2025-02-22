@@ -255,17 +255,7 @@ class Building extends Model {
 
       // Check if training just completed
       if (prevProps.isTraining === 1 && this.props.isTraining === 2) {
-          console.log("Training done, switching to testing tab")  // TODO remove
-          console.log("Current tab: ", this.state.activeTab)  // TODO remove
-          this.handleTabChange("testing")  // should do the same 
-          console.log("New tab: ", this.state.activeTab)  // TODO remove
-
-          // // try setting isTraining back to 0 to see if that makes a difference
-          // this.props.setIsTraining(prevIsTraining => {
-          //   const newIsTraining = [...prevIsTraining];
-          //   newIsTraining[this.props.index] = 0;
-          //   return newIsTraining;
-          // });
+          this.handleTabChange("testing") 
       }
       
       // Update lastTrainingState

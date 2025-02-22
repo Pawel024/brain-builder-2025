@@ -50,6 +50,10 @@ async def process(req):
                 print(f"Task ID {tag} not found in games data index.")
                 raise KeyError(f"Task ID {tag} not found in games data index.")
             
+            typ = gd.loc[tag, 'type']
+            print(f"Type: {typ}")
+            req['typ'] = typ
+            
             dataset = gd.loc[tag, 'dataset']
             print(f"Dataset: {dataset}")
             
@@ -96,8 +100,8 @@ async def process(req):
                 print("Wrong Network")
                 output_value = "Wrong Network"
             else:
-                tag = int(req['task_id'])
-                output_value = building.predict(input_vector, nn, tag, data, normalization=bool(inputs['normalization']), name=True)
+                typ = req['typ']
+                output_value = building.predict(input_vector, nn, typ, data, normalization=bool(inputs['normalization']), name=True)
         else:
             print("No Network (or no data)")
             output_value = "No Network"

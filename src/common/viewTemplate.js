@@ -375,12 +375,12 @@ class Model extends React.Component {
             
                   <Header showHomeButton={true} />
             
-                  <Tabs.Root defaultValue="training">
+                  <Tabs.Root value={this.state.activeTab} onValueChange={this.handleTabChange} >
             
                     <Tabs.List size="2">
                         {this.tabs.map(tab => (   // cycle through all possible tabs and include the ones specified in this.props.tab
                         this.props.tabs.includes(tab.value) && (
-                        <Tabs.Trigger key={tab.value} value={tab.value} onValueChange={this.handleTabChange}>
+                        <Tabs.Trigger key={tab.value} value={tab.value}>
                         {tab.name}
                         </Tabs.Trigger>
                         )

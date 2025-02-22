@@ -173,6 +173,8 @@ class Building extends Model {
     chartInstance = null;
   
     componentDidUpdate(prevProps) {
+      console.log("isTraining value: ", this.props.isTraining)  // TODO remove
+
       if (this.cy) {this.cy.resize();} // this seems to do nothing
       if (this.props.taskId !== 0 && this.chartRef.current) {
         const ctx = this.chartRef.current.getContext('2d');
@@ -255,9 +257,15 @@ class Building extends Model {
       if (prevProps.isTraining === 1 && this.props.isTraining === 2) {
           console.log("Training done, switching to testing tab")  // TODO remove
           console.log("Current tab: ", this.state.activeTab)  // TODO remove
-          //this.setState({ activeTab: 'testing' });
           this.handleTabChange("testing")  // should do the same 
           console.log("New tab: ", this.state.activeTab)  // TODO remove
+
+          // // try setting isTraining back to 0 to see if that makes a difference
+          // this.props.setIsTraining(prevIsTraining => {
+          //   const newIsTraining = [...prevIsTraining];
+          //   newIsTraining[this.props.index] = 0;
+          //   return newIsTraining;
+          // });
       }
       
       // Update lastTrainingState

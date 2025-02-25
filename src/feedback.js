@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Flex, Box, Button, Heading, TextField } from '@radix-ui/themes';
+import { Flex, Box, Button, Heading, TextArea } from '@radix-ui/themes';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Progress from '@radix-ui/react-progress';
 import { CheckCircledIcon } from '@radix-ui/react-icons';
@@ -91,7 +91,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
         </Flex>
         <form >
           <Flex gap="2" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
-          {questions[currentQuestion].question_type === "text" ? (<TextField.Root color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.75 }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
+          {questions[currentQuestion].question_type === "text" ? (<TextArea color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.7, minHeight: '100px', resize: 'vertical' }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
             if (event.key === 'Enter') {
               handleOptionClick(event);
             }}}/>

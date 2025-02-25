@@ -91,11 +91,10 @@ const FeedbackForm = ({ questions, host, cookie }) => {
         </Flex>
         <form >
           <Flex gap="2" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
-          {questions[currentQuestion].question_type === "text" ? (<TextField.Root> <input color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.75 }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
+          {questions[currentQuestion].question_type === "text" ? (<TextField.Root color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.75 }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
             if (event.key === 'Enter') {
               handleOptionClick(event);
             }}}/>
-            </TextField.Root>
           ) : (
             <RadioGroup.Root className="RadioGroupRoot" defaultValue="default" aria-label="Multiple choice question" value={selectedOption !== null ? selectedOption.toString() : ''} onValueChange={setSelectedOption}>
               {questions[currentQuestion].options.map((option, index) => (

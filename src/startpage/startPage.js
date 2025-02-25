@@ -6,6 +6,7 @@ import '@radix-ui/themes/styles.css';
 import Level from './level';
 import { ReadmeBox, FeedbackButton } from './levelComponents';
 import { groupByIds, groupByIndex } from '../utils/byLevelUtils';
+import { TextField } from '@radix-ui/themes';
 
 class StartPage extends React.Component {
     constructor(props) {
@@ -37,7 +38,8 @@ class StartPage extends React.Component {
             iconsByLevel,
             quizzesByLevel,
             introsByLevel,
-            progressData
+            progressData,
+            textInputValue: "" // for testing
         });
 
     }
@@ -92,8 +94,18 @@ class StartPage extends React.Component {
                     <Flex direction='column' gap='3' style={{ flex: 1 }}>
                         <ReadmeBox />
                     </Flex>
-
                 </div>
+
+                {(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (
+                    <>
+                    <TextField.Root style={{ position: 'absolute', top: `250px`, left: `${gap}px` }} onChange={event => this.setState({ textInputValue: event.target.value })}/>
+
+                    <label style={{ position: 'absolute', top: `220px`, left: `${gap}px` }}>
+                        {this.state.textInputValue}
+                    </label>
+                    </>
+                )}
+
                 <Box style={{ position: 'absolute', bottom: `${gap}px`, right: `${gap}px` }}>
                     <FeedbackButton/>
                 </Box>

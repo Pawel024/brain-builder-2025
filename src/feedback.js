@@ -45,6 +45,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
   
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < questions.length) {
+      setTextInputValue("");
       setCurrentQuestion(nextQuestion);
     } else {
       setIsFinished(true);

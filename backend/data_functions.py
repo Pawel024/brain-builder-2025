@@ -399,6 +399,7 @@ class DataFromSklearn1(Dataset):  # this one is for load_wine(), etc.
         self.training_set, self.testing_set, self.validation_set = None, None, None
         self.data = dataset.data
         self.targets = dataset.target
+        self.data_type = 1
         self.normalization = normalize
 
         self.target_names = dataset.target_names
@@ -865,6 +866,8 @@ class DataFromSklearn2(Dataset):  # this one is for make_moons(n_samples, noise)
 
 class DataFromFunction(Dataset):  # this one is for one to one regression on simple functions
     def __init__(self, inp, normalize=False):  # works for up to 10 features and 10 targets
+        self.data_type = 2
+
         self.training_set, self.testing_set, self.validation_set = None, None, None
         self.n_features, self.n_targets = 1, 1
         self.function, self.n_objects, lower, upper, noise = inp

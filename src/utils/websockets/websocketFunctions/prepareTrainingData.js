@@ -50,7 +50,7 @@ const updateState = (setter, newValue, index) => {
  * @returns {Object} The training data.
  */
 const prepareNNTrainingData = ({
-  learningRate = 0.01,  // this default will be used for ex3.1, 0.005 also works
+  learningRate = 0.005,  // this default will be used for ex3.1, 0.005 also works
   iterations = 50,
   normalization,
   af,

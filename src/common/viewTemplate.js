@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import '@radix-ui/themes/styles.css';
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
+import rehypeRaw from 'rehype-raw'
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
 import { safeGet } from '../utils/axiosUtils';
@@ -345,7 +346,7 @@ class Model extends React.Component {
         return (
         <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
         <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex, rehypeRaw]}>{this.shortDescription}</ReactMarkdown>
         </div>
         </Box>
     )}

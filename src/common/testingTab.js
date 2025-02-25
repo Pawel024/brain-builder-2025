@@ -4,10 +4,12 @@ import * as Form from '@radix-ui/react-form';
 import '@radix-ui/themes/styles.css';
 
 function FormatOutput(val) {
+    console.log("Output check: val =", val, "typeof val = ", typeof val)
+    return val
     if (typeof val === 'number') {
         // val is a number
         return val.toFixed(3)
-    } else if (val.length && val.length === 1) {
+    } else if (val?.length && val?.length === 1) {
         // val is a list with single numbers
         return Number(val[0]).toFixed(3);
     } else if (Array.isArray(val)) {
@@ -50,7 +52,7 @@ const TestingTab = ({ taskId, featureNames, handleSubmit, setIsResponding, setAp
                     </Form.Root>
                     <div id="query-response">
                         {isResponding === 2 ? (
-                            <div>Output: {FormatOutput(apiData)["in_out"]}</div>
+                            <div>Output: {FormatOutput(apiData["in_out"])}</div>
                         ) : (isResponding === 1 ? (
                             <div>Getting your reply...</div>
                         ) : (

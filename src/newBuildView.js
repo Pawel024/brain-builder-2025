@@ -26,6 +26,7 @@ import {
 import { Model } from './common/viewTemplate';
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
+import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
 
@@ -74,7 +75,7 @@ class Building extends Model {
           showCode: false,
           code: '',
           description: '',
-          sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': this.props.taskId === 31 ? 0.005 : 0.1}, // TODO: avoid hardcoding
+          sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': this.props.sliderVisibilities['LRSlider'] ? 0.01 : 0.0005},  // results in nice smooth curve for 3.1  
           dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
           checkboxValues: {'NormCheckbox': this.props.normalization, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
           runTutorial: false,
@@ -279,7 +280,7 @@ class Building extends Model {
         } else { 
             let trainingParams = {
                 cytoLayers: this.props.cytoLayers,
-                learningRate: this.state.sliderValues['LRSlider'],
+                learningRate: this.state.sliderValues['LRSlider'], 
                 iterations: this.state.sliderValues['EpochSlider'],
                 normalization: this.state.checkboxValues['NormCheckbox'],
                 taskId: this.props.taskId,
@@ -420,7 +421,9 @@ class Building extends Model {
           
           <img src={color_scale_pic} alt='Color scale from purple for negative to red for positive' width='20' height='auto' style={{ position: 'absolute', top: 15, left: 15 }}/>
 
-          {/*console.log("Check for db plot (imageVisibility, img, isTraining): ", this.props.imageVisibility, this.props.img, this.props.isTraining)*/  /* TODO remove */}
+          {console.log("Check for db plot (imageVisibility, img, isTraining): ", this.props.imageVisibility, this.props.img, this.props.isTraining)  /* TODO remove */}
+          {console.log("Showing db plot: ", (this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1))}
+          {((this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1) && console.log("Conditional check for db plot")  /* TODO remove */)}
           {((this.props.imageVisibility && this.props.img && this.props.img !== '' && this.props.isTraining>=1) &&
             <Flex direction="column" gap="1" style={{ position: 'absolute', bottom: window.innerHeight*0.05, right: window.innerWidth*0.34 }}>
             <img src={this.props.img} alt={`Plot of the training progress`} onLoad={() => {}/*URL.revokeObjectURL(this.props.img)*/} style={{ height: '200px', width: 'auto' }}/>
@@ -476,7 +479,7 @@ class Building extends Model {
                 </Flex>
               ) : (
                 <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex, rehypeRaw]}>{this.shortDescription}</ReactMarkdown>
                 </div>
               ))}
             </div>

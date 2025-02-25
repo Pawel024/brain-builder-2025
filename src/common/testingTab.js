@@ -50,7 +50,7 @@ const TestingTab = ({ taskId, featureNames, handleSubmit, setIsResponding, setAp
                     </Form.Root>
                     <div id="query-response">
                         {isResponding === 2 ? (
-                            <div>Output: {FormatOutput(apiData["in_out"])}</div>
+                            <div>Output: {FormatOutput(apiData)["in_out"]}</div>
                         ) : (isResponding === 1 ? (
                             <div>Getting your reply...</div>
                         ) : (

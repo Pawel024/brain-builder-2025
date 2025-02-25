@@ -1,17 +1,5 @@
 import getCookie from '../../cookieUtils';
 
-/**
- * Extracted task-specific configurations for better separation of concerns
- * 
- * @param {number} taskId - The task ID.
- * 
- * @returns {Object} The task configuration.
- */
-const getTaskConfiguration = (taskId) => ({
-  11: { learningRate: 0.0005, normalization: false, activationFunctionsEnabled: false },
-  12: { normalization: false, activationFunctionsEnabled: false }
-}[taskId] || {});
-
 
 /**
  * Updates the state of a component without mutating the original state.
@@ -62,8 +50,9 @@ const updateState = (setter, newValue, index) => {
  * @returns {Object} The training data.
  */
 const prepareNNTrainingData = ({
-  learningRate = 0.01,
+  learningRate = 0.01,  // this default will be used for ex3.1, 0.005 also works
   iterations = 50,
+  normalization,
   af,
   optimizer,
   taskId,
@@ -89,10 +78,6 @@ const prepareNNTrainingData = ({
 
   /*prepare the training data to be sent to the server*/
 
-  const taskConfig = getTaskConfiguration(taskId);
-  const finalLearningRate = taskConfig.learningRate || learningRate;
-  const normalization = taskConfig.normalization ?? true;
-
   let userId = getCookie('user_id');
 
   // Simplified state updates
@@ -110,9 +95,9 @@ const prepareNNTrainingData = ({
     function_name: functionName,
     user_id: userId,
     task_id: taskId,
-    learning_rate: parseFloat(finalLearningRate),
+    learning_rate: parseFloat(learningRate),
     epochs: iterations,
-    normalization,
+    normalization: normalization,
     af: af,
     optimizer: optimizer,
     nodes: updatedCytoLayers,

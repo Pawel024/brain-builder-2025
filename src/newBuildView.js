@@ -76,7 +76,7 @@ class Building extends Model {
           description: '',
           sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': 0.01},  
           dropdownValues: {'AFDropdown': 'ReLU', 'OptimizerDropdown': 'SGD'},
-          checkboxValues: {'NormCheckbox': false, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
+          checkboxValues: {'NormCheckbox': this.props.normalization, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
           runTutorial: false,
           steps: [
               {
@@ -173,7 +173,6 @@ class Building extends Model {
     chartInstance = null;
   
     componentDidUpdate(prevProps) {
-      console.log("isTraining value: ", this.props.isTraining)  // TODO remove
 
       if (this.cy) {this.cy.resize();} // this seems to do nothing
       if (this.props.taskId !== 0 && this.chartRef.current) {
@@ -184,13 +183,11 @@ class Building extends Model {
           this.chartInstance.data.labels = this.props.errorList[0].map((_, i) => i + 1);
           this.chartInstance.data.datasets[0].data = this.props.errorList[0];
           this.chartInstance.update();
-          console.log("Updated chart")  // TODO remove
         } else {
           // Destroy the old chart if a different error list was received and a chart exists
           if (JSON.stringify(this.props.errorList[0].slice(0, prevProps.errorList[0].length)) !== JSON.stringify(prevProps.errorList[0])) {
             // If an old chart exists, destroy it
             if (this.chartInstance) {
-              console.log("Destroying chart")  // TODO remove
               this.chartInstance.destroy();
               this.chartInstance = null;
             }
@@ -199,7 +196,6 @@ class Building extends Model {
 
         // Create a new chart if there is no chart
         if (this.chartInstance === null) {
-          console.log("Creating new chart")  // TODO remove
           this.chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -285,6 +281,7 @@ class Building extends Model {
                 cytoLayers: this.props.cytoLayers,
                 learningRate: this.state.sliderValues['LRSlider'],
                 iterations: this.state.sliderValues['EpochSlider'],
+                normalization: this.state.checkboxValues['NormCheckbox'],
                 taskId: this.props.taskId,
                 nOfInputs: this.props.nOfInputs,
                 nOfOutputs: this.props.nOfOutputs,

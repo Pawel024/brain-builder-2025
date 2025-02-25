@@ -4,6 +4,7 @@ import Slider from 'react-animated-slider';
 import { SlideButton } from './floatingButtons';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
+import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
 import horizontalCss from '../css/horizontalSlides.css';
 
@@ -48,7 +49,7 @@ const DataTab = ({ description, currentSlide, setCurrentSlide, initPlot }) => {
                         <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
                         {paragraphs.map((paragraph, pIndex) => (
                             //<p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
-                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{paragraph}</ReactMarkdown>
+                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeRaw, rehypeKatex]}>{paragraph}</ReactMarkdown>
                         ))}
                         </div>
                     </div>

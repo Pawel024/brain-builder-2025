@@ -232,9 +232,7 @@ function ProgressBox({progress}) {
 
         <label style={{paddingTop: 5, fontSize: 'var(--font-size-2)'}}>Do you already have a code? Enter it below!</label>
         <Box maxWidth="15vw">
-          <TextField.Root size="1">
-            <input placeholder="Paste and click Enter..." onChange={handleCodeChange} onKeyDown={handleSubmit} />
-          </TextField.Root>
+          <TextField size="1" placeholder="Paste and click Enter..." onChange={handleCodeChange} onKeyDown={handleSubmit} />
         </Box>
       </Flex>
     </Box>

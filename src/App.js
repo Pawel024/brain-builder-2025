@@ -7,7 +7,6 @@ import axios from 'axios';
 // ------- COMPONENTS -------
 import { Link2Icon } from '@radix-ui/react-icons'; // for external links
 // startpage is the only view that is not lazy loaded because it's very likely to be loaded
-import StartPage from './startpage/startPage';
 
 // ------- STYLES -------
 import './css/App.css';
@@ -21,6 +20,7 @@ import putRequest from './utils/websockets/websocketUtils';
 import useAnonymizedUserCount from './utils/hooks/useAnonymizedUserCount';
 
 // ------- LAZY LOADING OF ROUTED VIEWS -------
+const StartPage = lazy(() => import('./startpage/startPage'));
 const Introduction = lazy(() => import('./introduction'));
 const QuizApp = lazy(() => import('./quiz'));
 const OtherTask = lazy(() => import('./otherTasks'))
@@ -58,6 +58,25 @@ export default function App() {
 
 function AppContent() {
   useAnonymizedUserCount();
+
+  // Add preloading effect
+  useEffect(() => {
+    if (window.location.pathname === '/') {
+      // Preload viewTemplate when on startpage
+      const preloadViewTemplate = async () => {
+        await import('./common/viewTemplate');
+        console.log('ViewTemplate preloaded');
+      };
+      preloadViewTemplate();
+    } else {
+      // Preload startpage when on other pages
+      const preloadStartPage = async () => {
+        await import('./startpage/startPage');
+        console.log('StartPage preloaded');
+      };
+      preloadStartPage();
+    }
+  }, []);
 
   function checkIfRunningLocally() {
     return (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')

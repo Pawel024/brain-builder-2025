@@ -31,6 +31,7 @@ export function generateCytoElements(list, apiData, isTraining, weights, biases)
     }
   });
 
+
   // Generate lines between nodes
   // let weights;
   let max;

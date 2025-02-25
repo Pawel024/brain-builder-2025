@@ -25,11 +25,16 @@ export const useAnonymizedUserCount = () => {
         // Check excluded users from environment - continue if not configured
         const excludeUsersStr = process.env.EXCLUDE_USERS;
         if (excludeUsersStr) {
+          console.debug('Found EXCLUDE_USERS in env:', excludeUsersStr);
           const excludeUsers = excludeUsersStr.split(',');
+          console.debug('Parsed exclude users:', excludeUsers);
           if (shouldExcludeUser(userId, excludeUsers)) {
             console.debug('Analytics: User ID excluded from tracking');
             return;
           }
+          console.debug('User not excluded, continuing...');
+        } else {
+          console.debug('No EXCLUDE_USERS configuration found');
         }
 
         // CSRF TOKEN
@@ -64,11 +69,16 @@ export const useAnonymizedUserCount = () => {
             /// Check excluded IPs from environment - continue if not configured
             const excludeIPsStr = process.env.EXCLUDE_IPS;
             if (excludeIPsStr) {
+              console.debug('Found EXCLUDE_IPS in env:', excludeIPsStr);
               const excludeIPs = excludeIPsStr.split(',');
+              console.debug('Parsed exclude IPs:', excludeIPs);
               if (shouldExcludeIP(clientIP, excludeIPs)) {
                 console.debug('Analytics: IP excluded from tracking');
                 return;
               }
+              console.debug('IP not excluded, continuing...');
+            } else {
+              console.debug('No EXCLUDE_IPS configuration found');
             }
           }
         } catch (ipError) {

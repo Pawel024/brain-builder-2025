@@ -40,9 +40,18 @@ export const useAnonymizedUserCount = () => {
         // CSRF TOKEN
         const csrftoken = getCookie('csrftoken');
         if (!csrftoken) {
-          console.warn('No CSRF token found');
+          console.error('CSRF token missing. This may prevent analytics from working.');
+          // Try to refresh the page once to get a new CSRF token
+          if (!localStorage.getItem('csrfRetry')) {
+            localStorage.setItem('csrfRetry', 'true');
+            window.location.reload();
+            return;
+          }
           return;
         }
+
+        // Clear retry flag if we successfully got the token
+        localStorage.removeItem('csrfRetry');
 
         // ANALYTICS DATA
         const analyticsData = {

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Flex, Box, Button, Heading, TextField } from '@radix-ui/themes';
+import { Flex, Box, Button, Heading, TextArea } from '@radix-ui/themes';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Progress from '@radix-ui/react-progress';
 import { CheckCircledIcon } from '@radix-ui/react-icons';
 import Header from './common/header';
+import Stars from './common/Stars';
 import '@radix-ui/themes/styles.css';
 import './css/App.css';
 
@@ -44,9 +45,17 @@ const FeedbackForm = ({ questions, host, cookie }) => {
   
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < questions.length) {
+      setTextInputValue("");
       setCurrentQuestion(nextQuestion);
     } else {
       setIsFinished(true);
+    }
+  };
+
+  const handleBackClick = (event) => {
+    event.preventDefault();
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
     }
   };
 
@@ -64,7 +73,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: window.innerHeight-52, backgroundImage: 'linear-gradient(330deg, rgba(7,62,185, 0.15) 0%, rgba(7,185,130, 0.15) 100%)'}}>
-      {isFinished ? (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/3, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
+      {isFinished ? (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/2.75, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
           <Flex gap="1" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Heading size='2' style={{ color: 'var(--slate-12)', marginBottom:25 }}>
               Thank you for your feedback!
@@ -72,7 +81,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
             <CheckCircledIcon color="green" width="30" height="30" />
           </Flex>
         </Box>
-      ) : (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/3, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
+      ) : (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/2.75, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
         <Flex gap="1" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
           <Progress.Root className="ProgressRoot" value={progress} style={{ marginBottom:5 }}>
             <Progress.Indicator
@@ -91,26 +100,28 @@ const FeedbackForm = ({ questions, host, cookie }) => {
         </Flex>
         <form >
           <Flex gap="2" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
-          {questions[currentQuestion].question_type === "text" ? (<TextField.Root> <input color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.75 }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
+          {questions[currentQuestion].question_type === "text" ? (<TextArea color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.6, minHeight: '100px', resize: 'vertical' }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
             if (event.key === 'Enter') {
               handleOptionClick(event);
             }}}/>
-            </TextField.Root>
           ) : (
             <RadioGroup.Root className="RadioGroupRoot" defaultValue="default" aria-label="Multiple choice question" value={selectedOption !== null ? selectedOption.toString() : ''} onValueChange={setSelectedOption}>
               {questions[currentQuestion].options.map((option, index) => (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <RadioGroup.Item className="RadioGroupItem" value={index.toString()} key={index}>
-                    <RadioGroup.Indicator className="RadioGroupIndicator" />
+                <div style={{ display: 'flex', alignItems: 'center' }} key={`radio_div_${index}`}>
+                  <RadioGroup.Item className="RadioGroupItem" value={index.toString()} key={`radio_group_${index}`}>
+                    <RadioGroup.Indicator className="RadioGroupIndicator" key={`radio_indicator_${index}`} />
                   </RadioGroup.Item>
-                  <label className="Label" htmlFor="r1">
+                  <label className="Label" htmlFor="r1" key={`radio_label_${index}`}>
                     {option.optionText}
                   </label>
                 </div>
               ))}
             </RadioGroup.Root>
           )}
-          <Button onClick={(event) => handleOptionClick(event)} style={{marginTop:20}}>Next</Button>
+          <Flex gap="3" style={{marginTop:20}}>
+            {currentQuestion > 0 && <Button onClick={handleBackClick}>Back</Button>}
+            <Button onClick={(event) => handleOptionClick(event)}>Next</Button>
+          </Flex>
           </Flex>
         </form>
       </Box>
@@ -134,13 +145,13 @@ function FeedbackApp({ host, cookie }) {
 
   const [questions, setQuestions] = useState([
     {
-      question: 'What overall score would you give this webtool?',
+      question: 'What overall score would you give our app?',
       options: [
-        { optionText: '1', isCorrect: false },
-        { optionText: '2', isCorrect: false },
-        { optionText: '3', isCorrect: false },
-        { optionText: '4', isCorrect: false },
-        { optionText: '5', isCorrect: true },
+        { optionText: <Stars rating={5} />, isCorrect: false },
+        { optionText: <Stars rating={4} />, isCorrect: false },
+        { optionText: <Stars rating={3} />, isCorrect: false },
+        { optionText: <Stars rating={2} />, isCorrect: false },
+        { optionText: <Stars rating={1} />, isCorrect: false },
       ],
       question_type: "rating",
     },
@@ -157,10 +168,10 @@ function FeedbackApp({ host, cookie }) {
     {
       question: 'Did you experience any technical issues?',
       options: [
-        { optionText: 'Yes, many, it was very frustrating', isCorrect: false },
-        { optionText: 'Yes, some, but they were annoying', isCorrect: false },
-        { optionText: 'Yes, some, but it did not bother me', isCorrect: true },
         { optionText: 'No, everything ran smoothly', isCorrect: false },
+        { optionText: 'Yes, some, but it did not bother me', isCorrect: true },
+        { optionText: 'Yes, some, but they were annoying', isCorrect: false },
+        { optionText: 'Yes, many, it was very frustrating', isCorrect: false },
       ],
       question_type: "rating",
     },
@@ -170,13 +181,13 @@ function FeedbackApp({ host, cookie }) {
       question_type: "text",
     },
     {
-      question: 'Do you think this tool would be a useful addition to the AI course?',
+      question: 'Do you think this tool is a useful addition to the course?',
       options: [
-        { optionText: "Yes, the course could really use this", isCorrect: false },
+        { optionText: "Yes, this is really helpful!", isCorrect: false },
         { optionText: 'Yes, but with some modifications', isCorrect: false },
         { optionText: 'It could be helpful, but is not necessary', isCorrect: true },
         { optionText: 'The existing course material is enough for me', isCorrect: false },
-        { optionText: 'I am not taking the course', isCorrect: false}
+        { optionText: 'I\'m not taking the course', isCorrect: false}
       ],
       question_type: "rating",
     },
@@ -188,10 +199,10 @@ function FeedbackApp({ host, cookie }) {
     {
       question: 'Do you want to see more dedicated tools like this one in other TU Delft courses?',
       options: [
-        { optionText: 'Yes, that would be very helpful', isCorrect: true },
-        { optionText: 'Maybe', isCorrect: false },
-        { optionText: 'No, I do not think I would use them', isCorrect: false },
-        { optionText: 'I am not studying at TU Delft', isCorrect: false}
+        { optionText: 'Yes, that would be very helpful!', isCorrect: true },
+        { optionText: 'Maybe...', isCorrect: false },
+        { optionText: 'No, I don\'t think I \'d use them', isCorrect: false },
+        { optionText: 'I don\'t study at TU Delft', isCorrect: false}
       ],
       question_type: "rating",
     },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { safeGet } from './utils/axiosUtils';
-import { Flex, Box, Button, Heading, TextField } from '@radix-ui/themes';
+import { Flex, Box, Button, Heading, TextArea } from '@radix-ui/themes';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Progress from '@radix-ui/react-progress';
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
@@ -135,19 +135,17 @@ const Quiz = ({ questions }) => {
                 </label>
               </div>
             ))}
-          </RadioGroup.Root>): questions[currentQuestion].question_type === "text" ? (<TextField.Root> <input color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.75 }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
+          </RadioGroup.Root>): questions[currentQuestion].question_type === "text" ? (<TextArea color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.7, minHeight: '100px', resize: 'vertical' }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
             if (event.key === 'Enter') {
               handleOptionClick(event);
             }}}/>
-            </TextField.Root>
           ) : (<>
             <SyntaxHighlighter language="python" style={a11yDark} customStyle={{ width:window.innerWidth/3.75 }} wrapLongLines={true} showLineNumbers={true}>
               {questions[currentQuestion].code.trim()}
             </SyntaxHighlighter>
-            <TextField.Root style={{ marginTop:20 }} > <input 
+            <TextArea style={{ marginTop:20, width:window.innerWidth/3.7, minHeight: '100px', resize: 'vertical' }}
               color="gray" 
-              placeholder="Type your answer…" 
-              style={{ width:window.innerWidth/3.75 }} 
+              placeholder="Type your answer…"
               onChange={event => setTextInputValue(event.target.value)} 
               onKeyDown={event => {
                 if (event.key === 'Enter') {
@@ -155,7 +153,6 @@ const Quiz = ({ questions }) => {
                 }
               }}
             />
-            </TextField.Root>
           </>)}
           <Button onClick={(event) => handleOptionClick(event)} style={{marginTop:20}}>Next</Button>
           </Flex>

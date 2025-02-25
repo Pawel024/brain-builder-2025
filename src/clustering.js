@@ -182,9 +182,7 @@ function ClusteringVisualization({clusteringId}) {
                             </label>
                             
                             <Box maxWidth="15vw">
-                                <TextField.Root size="2">
-                                    <input type="number" value={numPoints} onChange={(e) => setNumPoints(Number(e.target.value))} />
-                                </TextField.Root>
+                                <TextField size="2" type="number" value={numPoints} onChange={(e) => setNumPoints(Number(e.target.value))} />
                             </Box>
                         </Flex>
 
@@ -195,9 +193,7 @@ function ClusteringVisualization({clusteringId}) {
                                 </label>
 
                                 <Box maxWidth="15vw">
-                                    <TextField.Root size="2">
-                                        <input type="number" value={numClusters} onChange={(e) => setNumClusters(Number(e.target.value))} />
-                                    </TextField.Root>
+                                    <TextField size="2" type="number" value={numClusters} onChange={(e) => setNumClusters(Number(e.target.value))} />
                                 </Box>
                             </Flex>
                         )}

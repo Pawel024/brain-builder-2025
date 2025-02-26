@@ -32,13 +32,13 @@ import time
 async def process(req):
 
     req = dict(req)
-    task_id, user_id = req['task_id'], req['user_id']
+    task_id, user_id = int(req['task_id']), req['user_id']
     inputs = json.loads(req['in_out'])
 
 
     if req['action'] == 0:  # load the data and send the feature names and images to the frontend
         d = {}
-        tag = int(req['task_id'])
+
         try:
             gd = json.loads(inputs['games_data'])
             print(f"Games data loaded: {gd}")
@@ -46,17 +46,17 @@ async def process(req):
             gd = pd.DataFrame(gd).set_index('task_id')
             print(f"Games DataFrame:\n{gd}")
             
-            if tag not in gd.index:
-                print(f"Task ID {tag} not found in games data index.")
-                raise KeyError(f"Task ID {tag} not found in games data index.")
+            if task_id not in gd.index:
+                print(f"Task ID {task_id} not found in games data index.")
+                raise KeyError(f"Task ID {task_id} not found in games data index.")
             
-            dataset = gd.loc[tag, 'dataset']
+            dataset = gd.loc[task_id, 'dataset']
             print(f"Dataset: {dataset}")
             
             normalization = bool(inputs['normalization'])
             print(f"Normalization: {normalization}")
             
-            data = df.get_data(dataset=dataset, normalization=normalization, typ=gd.loc[tag, 'type'])
+            data = df.get_data(dataset=dataset, normalization=normalization, typ=gd.loc[task_id, 'type'])
             print(f"Data loaded: {data}")
             
             cache.set(f'{user_id}_data', pickle.dumps(data), 10*60)  # cache the data for 10 minutes
@@ -96,9 +96,11 @@ async def process(req):
                 print("Wrong Network")
                 output_value = "Wrong Network"
             else:
-                tag = int(req['task_id'])
-                output_value = building.predict(input_vector, nn, tag, data, normalization=bool(inputs['normalization']), name=True)
+                typ = data.data_type
+                normalization = data.normalization
+                output_value = building.predict(input_vector, nn, typ, data, normalization=normalization, name=True)
         else:
+            # TODO: what to do in this case? 
             print("No Network (or no data)")
             output_value = "No Network"
         req['in_out'] = json.dumps(output_value)

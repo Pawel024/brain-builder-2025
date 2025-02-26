@@ -282,7 +282,7 @@ function AppContent() {
 
   // this is for all the tasks
   const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22] : [];
-  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
+  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Neural Networks for Regression", "Neural Networks for Classification", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
   const [progressData, setProgressData] = useState({challenges: {}, quizzes: {}, intros: {}});
@@ -950,8 +950,9 @@ function AppContent() {
       const formData = new FormData(event.target);
       const values = Array.from(formData.values()).map((value) => Number(value));
 
-      let newInOut = JSON.parse(networkData.in_out);
-      newInOut['model_input'] = JSON.stringify(values);
+      // let newInOut = JSON.parse(networkData.in_out);
+      // newInOut['model_input'] = JSON.stringify(values);
+      let newInOut = {'model_input': JSON.stringify(values)}
       networkData.in_out = JSON.stringify(newInOut);
 
       networkData.action = 2;
@@ -1099,7 +1100,7 @@ function AppContent() {
               element={
                 <div>
                 <SvmView 
-                isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={false} dataset={dataset[taskIds.indexOf(taskId)]}
+                isTraining={isTraining[taskIds.indexOf(taskId)]} setIsTraining={setIsTraining} userId={getCookie('user_id')} taskId={taskId} cancelRequestRef={cancelRequestRef} SVMIndex={SVMIndex} index={taskIds.indexOf(taskId)} name={taskNames[taskId]} pendingTime={pendingTime} intervalTimeout={intervalTimeout} isResponding={taskIds.indexOf(taskId)} apiData={apiData.indexOf(taskId)} setApiData={setApiData} handleSubmit={handleSubmit} featureNames={featureNames[taskIds.indexOf(taskId)]} img={imgs[taskIds.indexOf(taskId)]} setImgs={setImgs} initPlot={initPlots[taskIds.indexOf(taskId)]} typ={typ[taskIds.indexOf(taskId)]} loadData={loadData} normalization={true} dataset={dataset[taskIds.indexOf(taskId)]}
                 fileName={fileNames[taskIds.indexOf(taskId)]} functionName={functionNames[taskIds.indexOf(taskId)]} startTraining={putRequest} tabs={['data', 'training']} sliderValues={{'CSlider': 10, 'GammaSlider': 0.1}} sliderVisibilities={{ 'CSlider': cSliderVisibility[SVMIndex], 'GammaSlider': gammaSliderVisibility[SVMIndex] }} inputFieldVisibilities={{}} dropdownVisibilities={{}} checkboxVisibilities={{'KernelCheckbox': rbfVisibility[SVMIndex] }} setIsResponding={setIsResponding} 
                 />
                 </div>
@@ -1176,6 +1177,7 @@ function AppContent() {
                     intervalTimeout={intervalTimeout}
                     typ={typ[taskIds.indexOf(taskId)]}
                     dataset={dataset[taskIds.indexOf(taskId)]}
+                    normalization={(NNIndex < 2) ? false : true}
                     name={taskNames[taskId]}
                     startTraining={putRequest}
                     tabs={['data', 'training', 'testing']}

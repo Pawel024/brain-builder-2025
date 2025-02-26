@@ -7,7 +7,7 @@ function layersToCode(nodes, learningRate, epochs, taskId, af=true, optimizer='S
         throw new Error(`The 'nodes' array has length ${nodes.length}: ${nodes}. It must have at least 2 elements.`);
     }
     let activations = Array(nodes.length-1).fill('Sigmoid');
-    if (Math.floor(taskId/10) === 1) {
+    if (Math.floor(taskId/10) === 3) {
         lossFunction = 'MSELoss';
         activations[nodes.length-2] = '';
     } else {

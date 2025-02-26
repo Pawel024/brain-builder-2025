@@ -136,7 +136,7 @@ const Quiz = ({ questions }) => {
               </div>
             ))}
           </RadioGroup.Root>): questions[currentQuestion].question_type === "text" ? (<TextArea color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.7, minHeight: '100px', resize: 'vertical' }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' && !event.shiftKey) {
               handleOptionClick(event);
             }}}/>
           ) : (<>
@@ -148,7 +148,7 @@ const Quiz = ({ questions }) => {
               placeholder="Type your answer…"
               onChange={event => setTextInputValue(event.target.value)} 
               onKeyDown={event => {
-                if (event.key === 'Enter') {
+                if (event.key === 'Enter' && !event.shiftKey) {
                   handleOptionClick(event);
                 }
               }}

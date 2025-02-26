@@ -8,7 +8,7 @@ const Stars = ({ rating }) => {
         index < rating ? (
           <StarFilledIcon 
             key={`star-${index}`}
-            style={{color: 'var(--slate-11)'}} 
+            style={{color: 'var(--cyan-10)'}} 
             width={27} 
             height={27} 
           />

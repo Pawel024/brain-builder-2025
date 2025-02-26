@@ -75,7 +75,7 @@ class Building extends Model {
           code: '',
           description: '',
           sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': this.props.taskId === 31 ? 0.001 : 0.1}, // TODO: avoid hardcoding
-          dropdownValues: {'AFDropdown': this.state.checkboxVisibilities['AFCheckbox'] ? 'Sigmoid' : 'ReLU', 'OptimizerDropdown': 'SGD'},
+          dropdownValues: {'AFDropdown': this.props.taskId<40 ? 'Sigmoid' : 'ReLU', 'OptimizerDropdown': 'SGD'},
           checkboxValues: {'NormCheckbox': this.props.normalization, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
           runTutorial: false,
           steps: [

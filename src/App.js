@@ -282,7 +282,7 @@ function AppContent() {
 
   // this is for all the tasks
   const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22] : [];
-  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Introduction to Neural Networks", "Advanced Topics on Neural Networks", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
+  const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Neural Networks for Regression", "Neural Networks for Classification", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
   const [progressData, setProgressData] = useState({challenges: {}, quizzes: {}, intros: {}});
@@ -368,8 +368,8 @@ function AppContent() {
       setNNTaskIds( [22] )
       setIterationsSliderVisibility( [true] )
       setLRSliderVisibility( [true] )
-      setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
-      setOptimOptions( [['SGD', 'Adam']] )
+      //setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
+      //setOptimOptions( [['SGD', 'Adam']] )
     }
   }
 
@@ -1187,6 +1187,7 @@ function AppContent() {
                     dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
                     checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
                     gamesData={gamesData}
+                    runningLocally={checkIfRunningLocally()}
                   />
                 </div>
               }

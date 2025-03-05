@@ -5,7 +5,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Progress from '@radix-ui/react-progress';
 import { CheckCircledIcon } from '@radix-ui/react-icons';
 import Header from './common/header';
-import Stars from './common/Stars';
+import Stars from './common/stars';
 import '@radix-ui/themes/styles.css';
 import './css/App.css';
 
@@ -73,7 +73,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: window.innerHeight-52, backgroundImage: 'linear-gradient(330deg, rgba(7,62,185, 0.15) 0%, rgba(7,185,130, 0.15) 100%)'}}>
-      {isFinished ? (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/2.75, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
+      {isFinished ? (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", maxWidth:window.innerWidth/2.75, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
           <Flex gap="1" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Heading size='2' style={{ color: 'var(--slate-12)', marginBottom:25 }}>
               Thank you for your feedback!
@@ -81,7 +81,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
             <CheckCircledIcon color="green" width="30" height="30" />
           </Flex>
         </Box>
-      ) : (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", width:window.innerWidth/2.75, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
+      ) : (<Box style={{ boxShadow: '0 2px 8px var(--slate-a11)', borderRadius: "var(--radius-3)", maxWidth:window.innerWidth/2.75, padding: '30px 50px', background:"solid", backgroundColor:"white" }}>
         <Flex gap="1" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
           <Progress.Root className="ProgressRoot" value={progress} style={{ marginBottom:5 }}>
             <Progress.Indicator
@@ -101,7 +101,7 @@ const FeedbackForm = ({ questions, host, cookie }) => {
         <form >
           <Flex gap="2" direction="column" style={{ justifyContent: 'center', alignItems: 'center' }}>
           {questions[currentQuestion].question_type === "text" ? (<TextArea color="gray" placeholder="Type your answer…" style={{ width:window.innerWidth/3.6, minHeight: '100px', resize: 'vertical' }} onChange={event => setTextInputValue(event.target.value)} onKeyDown={event => {
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' && !event.shiftKey) {
               handleOptionClick(event);
             }}}/>
           ) : (

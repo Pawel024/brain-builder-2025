@@ -272,7 +272,7 @@ class Building extends Model {
     }
     
     handleStartClick = (() => {
-    this.setState({ showCode: true })  // maybe this will bring the db plot back? 
+    this.setState({ showCode: false })  // maybe this will bring the db plot back? 
     let inThrottle;
     return (event) => {
         if (!inThrottle && this.props.taskId !== 0) { 

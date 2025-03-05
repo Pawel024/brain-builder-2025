@@ -368,8 +368,8 @@ function AppContent() {
       setNNTaskIds( [22] )
       setIterationsSliderVisibility( [true] )
       setLRSliderVisibility( [true] )
-      setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
-      setOptimOptions( [['SGD', 'Adam']] )
+      //setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
+      //setOptimOptions( [['SGD', 'Adam']] )
     }
   }
 
@@ -1187,6 +1187,7 @@ function AppContent() {
                     dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
                     checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
                     gamesData={gamesData}
+                    runningLocally={checkIfRunningLocally()}
                   />
                 </div>
               }

@@ -445,9 +445,10 @@ class Building extends Model {
           + Object.entries(checkboxVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 60 : margin, 0);
       
         return (
-        <Box style={{ position:"absolute", top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
+          // top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded)
+        <Box style={{ position:"absolute", bottom: Math.round(0.15 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
             <div id="/api-data">
-              {this.props.isTraining===2 ? (
+              {(this.props.isTraining===2 || this.props.runningLocally) ? (
                 <Flex direction='column' >
                   <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
                     {this.shortDescription}

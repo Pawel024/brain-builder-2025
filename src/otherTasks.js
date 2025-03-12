@@ -4,7 +4,7 @@ import { Flex, Theme, Box, Heading, Separator } from '@radix-ui/themes';
 import Header from './common/header';
 import * as Slider from '@radix-ui/react-slider';
 
-import { RenderLinReg, RenderPolyReg } from './utils/otherTasks/plottingUtils'
+import { RenderLinReg, RenderPolyReg, RenderPCA, Render3DPCA } from './utils/otherTasks/plottingUtils'
 import { RenderDataMatrix } from './utils/otherTasks/matrixUtils';
 import { RenderEmissions } from './utils/otherTasks/emissionUtils';
 
@@ -48,6 +48,10 @@ class OtherTask extends Component {
             this.animation = RenderDataMatrix;
         } else if (this.props.type === 'ManualPolyReg') {
             this.animation = RenderPolyReg;
+        } else if (this.props.type === 'ManualPCA') {
+            this.animation = RenderPCA;
+        } else if (this.props.type === 'Manual3DPCA') {
+            this.animation = Render3DPCA;
         } else {
             alert("Function not implemented yet");
         }

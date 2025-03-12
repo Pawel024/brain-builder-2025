@@ -281,7 +281,7 @@ function AppContent() {
   let accuracyColor = 'var(--slate-11)';
 
   // this is for all the tasks
-  const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22] : [];
+  const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22, 51, 52] : [];
   const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Neural Networks for Regression", "Neural Networks for Classification", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
@@ -351,14 +351,14 @@ function AppContent() {
   const [introIds, setIntroIds] = useState([]);
   const [introData, setIntroData] = useState([]);
 
-  const [otherTasks, setOtherTasks] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 61: 'ManualEmissions'} : {} );	
-  const [otherDescriptions, setOtherDescriptions] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 61: [["ManualEmissionsDescription", null]]} : {});
+  const [otherTasks, setOtherTasks] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinReg', 12: 'ManualPolyReg', 13: 'ManualMatrix', 51: 'ManualPCA', 52: 'Manual3DPCA'} : {} );	
+  const [otherDescriptions, setOtherDescriptions] = useState( (checkIfRunningLocally()) ? {11: 'ManualLinRegDescription', 12: 'ManualPolyRegDescription', 13: 'ManualMatrixDescription', 51: 'ManualPCADescription', 52: 'Manual3DPCADescription'} : {} );
   const [constructionTaskIds, setConstructionTaskIds] = useState([23]);
 
   // for local testing 
   function localSetup() {
       if (checkIfRunningLocally()) {
-      setProgressData({ challenges: {1: {0: 'open', 1: 'open', 2: 'open'}, 2: {0: 'open', 1: 'open'}}, quizzes: {}, intros: {} })
+      setProgressData({ challenges: {1: {0: 'open', 1: 'open', 2: 'open'}, 2: {0: 'open', 1: 'open'}, 5: {0: 'open', 1: 'open'}}, quizzes: {}, intros: {} })
 
       setSVMTaskIds( [21] )
       setGammaSliderVisibility( [true] )
@@ -368,8 +368,8 @@ function AppContent() {
       setNNTaskIds( [22] )
       setIterationsSliderVisibility( [true] )
       setLRSliderVisibility( [true] )
-      setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
-      setOptimOptions( [['SGD', 'Adam']] )
+      //setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
+      //setOptimOptions( [['SGD', 'Adam']] )
     }
   }
 
@@ -1187,6 +1187,7 @@ function AppContent() {
                     dropdownOptions={{'AFDropdown': afOptions[NNIndex], 'OptimizerDropdown': optimOptions[NNIndex]}}
                     checkboxVisibilities={{'AFCheckbox': afVisibility[NNIndex], 'NormCheckbox': normalizationVisibility[NNIndex]}}
                     gamesData={gamesData}
+                    runningLocally={checkIfRunningLocally()}
                   />
                 </div>
               }

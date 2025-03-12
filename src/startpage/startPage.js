@@ -38,8 +38,7 @@ class StartPage extends React.Component {
             iconsByLevel,
             quizzesByLevel,
             introsByLevel,
-            progressData,
-            textInputValue: "" // for testing
+            progressData
         });
 
     }
@@ -95,33 +94,6 @@ class StartPage extends React.Component {
                         <ReadmeBox />
                     </Flex>
                 </div>
-
-                {(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (
-                    <>
-                    <TextArea 
-                        style={{ 
-                            position: 'absolute', 
-                            top: `250px`, 
-                            left: `${gap}px`,
-                            width: '300px',
-                            minHeight: '100px',  // Add this to give it more vertical space
-                            resize: 'vertical'   // Allows vertical resizing
-                        }} 
-                        onChange={event => this.setState({ textInputValue: event.target.value })}
-                        size="3"
-                    />
-
-                    <label style={{ 
-                        position: 'absolute', 
-                        top: `255px`, 
-                        left: `400px`,
-                        maxWidth: '300px',
-                        wordWrap: 'break-word'
-                    }}>
-                        {this.state.textInputValue}
-                    </label>
-                    </>
-                )}
 
                 <Box style={{ position: 'absolute', bottom: `${gap}px`, right: `${gap}px` }}>
                     <FeedbackButton/>

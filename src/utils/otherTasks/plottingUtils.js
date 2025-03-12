@@ -795,16 +795,16 @@ export function RenderPCA({ width, height, states, stateSetter }) {
             <div>Angle: <b>{states['angle']}°</b></div>
             {angleSlider}
                 
-            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-                <div style={{ width: '400px', height: '400px', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', marginTop: 30 }}>
+                <div style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.55 * (window.innerHeight-52)), border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
                     <canvas ref={chartRef} id="mainChart" />
                 </div>
-                <div style={{ width: '400px', height: '400px', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+                <div style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.55 * (window.innerHeight-52)), border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
                     <canvas ref={projectionChartRef} id="projectionChart" />
                 </div>
             </div>
                 
-            <div style={{ marginTop: 10 }}>
+            <div style={{ marginTop: 20 }}>
                 Explained Variance: <b>{states['explainedVar'] || '0.000'}</b>
             </div>
         </Box>
@@ -1061,16 +1061,16 @@ export function Render3DPCA({ width, height, states, stateSetter }) {
             <div>Angle: <b>{states['angle']}°</b></div>
             {angleSlider}
 
-            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-                <div style={{ width: '400px', height: '400px', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', marginTop: 30 }}>
+                <div style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.55 * (window.innerHeight-52)), border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
                     <canvas ref={mainViewRef} />
                 </div>
-                <div style={{ width: '400px', height: '400px', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+                <div style={{ width: Math.round(0.27 * (window.innerWidth * 0.97)), height: Math.round(0.55 * (window.innerHeight-52)), border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
                     <canvas ref={projectionRef} />
                 </div>
             </div>
 
-            <div style={{ marginTop: 10 }}>
+            <div style={{ marginTop: 20 }}>
                 Explained Variance: <b>{states['explainedVar'] || '0.000'}</b>
             </div>
         </Box>

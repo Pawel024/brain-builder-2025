@@ -316,7 +316,6 @@ class Model extends React.Component {
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
     sliderPosition = (index) => {
-      console.log(this.nInputElements(), this.tightLayout())
       // Position sliders at the top
       let reducedMargin = this.tightLayout() ? Math.round(-0.02 * (window.innerHeight - 140)) : 0;  // shift the sliders slightly up in tightLayout mode
       return reducedMargin + Math.round((0.14 + 0.12 * index) * (window.innerHeight - 140));
@@ -326,7 +325,7 @@ class Model extends React.Component {
       // Position input fields below the sliders
       const visibleSliderCount = Object.keys(this.sliders).filter(key => this.props.sliderVisibilities[key]).length;
       console.log("visibleSliderCount: ", visibleSliderCount);
-      return Math.round(this.sliderPosition(visibleSliderCount) + 1.2 * this.textHeight * index + this.sliderBottomMargin);
+      return Math.round(this.sliderPosition(visibleSliderCount) + 1.2 * this.textHeight * index + this.sliderBottomMargin());
     }
 
     dropdownPosition = (index) => {

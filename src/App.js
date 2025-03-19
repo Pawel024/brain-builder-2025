@@ -281,7 +281,7 @@ function AppContent() {
   let accuracyColor = 'var(--slate-11)';
 
   // this is for all the tasks
-  const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22, 51, 52] : [];
+  const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22, 51, 52, 61, 62] : [];
   const [levelNames, setLevelNames] = useState(["Introduction to AI", "Support Vector Machines", "Neural Networks for Regression", "Neural Networks for Classification", "Dimensionality Reduction", "Clustering", "Extra: Ethics & Green AI"]);
   const [whichPulled, setWhichPulled] = useState({challenges: false, quizzes: false, intros: false});
   const [taskData, setTaskData] = useState([]);
@@ -337,7 +337,7 @@ function AppContent() {
   // TODO
 
   // this is for the clustering tasks
-  const [clusteringTaskIds, setClusteringIds] = useState([]);
+  const [clusteringTaskIds, setClusteringIds] = useState( (checkIfRunningLocally()) ? [61, 62] : [])
 
   // this is for the external links
   const [linkIds, setLinkIds] = useState([]);
@@ -358,7 +358,7 @@ function AppContent() {
   // for local testing 
   function localSetup() {
       if (checkIfRunningLocally()) {
-      setProgressData({ challenges: {1: {0: 'open', 1: 'open', 2: 'open'}, 2: {0: 'open', 1: 'open'}, 5: {0: 'open', 1: 'open'}}, quizzes: {}, intros: {} })
+      setProgressData({ challenges: {1: {0: 'open', 1: 'open', 2: 'open'}, 2: {0: 'open', 1: 'open'}, 5: {0: 'open', 1: 'open'}, 6: {0: 'open', 1: 'open'}}, quizzes: {}, intros: {} })
 
       setSVMTaskIds( [21] )
       setGammaSliderVisibility( [true] )

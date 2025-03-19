@@ -14,6 +14,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
 import { safeGet } from '../utils/axiosUtils';
+import { sum } from 'lodash';
 const DataTab = lazy(() => import('./dataTab'));
 const TestingTab = lazy(() => import('./testingTab'));
 
@@ -301,13 +302,24 @@ class Model extends React.Component {
     // TODO: delete the functions you don't change
 
     // TODO: tune the vertical positioning here
-    sliderBottomMargin = -20
+    nInputElements = () => (
+         Object.keys(this.sliders).filter(key => this.props.sliderVisibilities[key]).length
+       + Object.keys(this.inputFields).filter(key => this.props.inputFieldVisibilities[key]).length
+       + Object.keys(this.dropdowns).filter(key => this.props.dropdownVisibilities[key]).length
+       + Object.keys(this.checkboxes).filter(key => this.props.checkboxVisibilities[key]).length
+    )
+    
+    tightLayout = () => Boolean(this.nInputElements() >= 4)
+
+    sliderBottomMargin = () => this.tightLayout() ? -20 : -40
     textHeight = 40
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
     sliderPosition = (index) => {
+      console.log(this.nInputElements(), this.tightLayout())
       // Position sliders at the top
-      return Math.round((0.14 + 0.12 * index) * (window.innerHeight - 140));
+      let reducedMargin = this.tightLayout() ? Math.round(-0.02 * (window.innerHeight - 140)) : 0;  // shift the sliders slightly up in tightLayout mode
+      return reducedMargin + Math.round((0.14 + 0.12 * index) * (window.innerHeight - 140));
     }
 
     inputFieldPosition = (index) => {
@@ -507,6 +519,9 @@ class Model extends React.Component {
                           isResponding={this.props.isResponding}
                           apiData={this.props.apiData}
                           img={this.props.img}
+                          typ={this.props.typ}
+                          accuracyColor={this.props.accuracyColor}
+                          accuracyValue={parseFloat(this.props.errorList[1])}
                       />
                     </Suspense>
                   )}

@@ -278,7 +278,7 @@ function AppContent() {
     console.log("Response received")
   };
 
-  let accuracyColor = 'var(--slate-11)';
+  let accuracyColor = "rgb(68, 68, 68)" // 'var(--slate-11)';
 
   // this is for all the tasks
   const defaultTaskIds = (checkIfRunningLocally()) ? [11, 12, 13, 21, 22, 51, 52, 61, 62] : [];
@@ -368,8 +368,8 @@ function AppContent() {
       setNNTaskIds( [22] )
       setIterationsSliderVisibility( [true] )
       setLRSliderVisibility( [true] )
-      //setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
-      //setOptimOptions( [['SGD', 'Adam']] )
+      setAfOptions( [['ReLU', 'Sigmoid', 'TanH']] )
+      setOptimOptions( [['SGD', 'Adam']] )
     }
   }
 

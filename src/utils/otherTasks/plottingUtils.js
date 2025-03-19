@@ -786,7 +786,7 @@ export function RenderPCA({ width, height, states, stateSetter }) {
             <Slider.Track className="SliderTrack" style={{ height: 3 }}>
                 <Slider.Range className="SliderRange" />
             </Slider.Track>
-            <Slider.Thumb className="SliderThumb" aria-label="Angle" />
+            <Slider.Thumb className="SliderThumb" aria-label="Angle wrt x-axis" />
         </Slider.Root>
     );
 
@@ -870,8 +870,13 @@ export function Render3DPCA({ width, height, states, stateSetter }) {
         
         // Calculate projection plane normal vector
         const normal = {
-            x: Math.cos(angleRad),
-            y: Math.sin(angleRad),
+            // x: Math.cos(angleRad),
+            // y: Math.sin(angleRad),
+            // z: 0
+
+            // I know the above is more correct, but this will be more intuitive
+            x: -Math.sin(angleRad),
+            y: Math.cos(angleRad), 
             z: 0
         };
 
@@ -982,8 +987,12 @@ export function Render3DPCA({ width, height, states, stateSetter }) {
 
         // Calculate 2D coordinates in the projection plane
         const basis = {
-            x: -Math.sin(angleRad),
-            y: Math.cos(angleRad)
+            // x: -Math.sin(angleRad),
+            // y: Math.cos(angleRad)
+
+            // I know the above ones are more correct, but this will be more intuitive I think
+            x: Math.cos(angleRad),
+            y: Math.sin(angleRad)
         };
 
         const projected2D = projectedPoints.map(p => ({
@@ -1014,12 +1023,12 @@ export function Render3DPCA({ width, height, states, stateSetter }) {
                 animation: false,
                 scales: {
                     x: {
-                        title: { display: true, text: '1st Principal Direction' },
+                        title: { display: true, text: '' },  // '1st Principal Direction'
                         min: limits[0],
                         max: limits[1]
                     },
                     y: {
-                        title: { display: true, text: '2nd Principal Direction' },
+                        title: { display: true, text: '' }, //'2nd Principal Direction'
                         min: limits[0],
                         max: limits[1]
                     }
@@ -1052,7 +1061,7 @@ export function Render3DPCA({ width, height, states, stateSetter }) {
             <Slider.Track className="SliderTrack" style={{ height: 3 }}>
                 <Slider.Range className="SliderRange" />
             </Slider.Track>
-            <Slider.Thumb className="SliderThumb" aria-label="Angle" />
+            <Slider.Thumb className="SliderThumb" aria-label="Angle wrt x-z plane" />
         </Slider.Root>
     );
 

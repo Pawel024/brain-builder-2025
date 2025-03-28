@@ -116,6 +116,9 @@ export default function RenderPCA({ width, height, states, stateSetter }) {
             });
         }
 
+        const scaleMin = Math.min(limits[0], states.minY);
+        const scaleMax = Math.max(limits[1], states.maxY);
+
         chartInstanceRef.current = new Chart(chartRef.current, {
             type: 'scatter',
             data: { datasets },
@@ -126,15 +129,15 @@ export default function RenderPCA({ width, height, states, stateSetter }) {
                 scales: {
                     x: {
                         type: 'linear',
-                        min: limits[0],
-                        max: limits[1],
+                        min: scaleMin,
+                        max: scaleMax,
                         ticks: { stepSize: 1 },
                         title: { display: true, text: 'X Axis' }
                     },
                     y: {
                         type: 'linear',
-                        min: states.minY,
-                        max: states.maxY,
+                        min: scaleMin,
+                        max: scaleMax,
                         title: { display: true, text: 'Y Axis' }
                     }
                 },

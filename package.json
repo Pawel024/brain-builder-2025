@@ -29,7 +29,7 @@
     "katex": "^0.16.21",
     "lodash": "^4.17.21",
     "querystringify": "^2.2.0",
-    "react": "^18.2.0",
+    "react": "^19.0.0",
     "react-animated-slider": "^2.0.0",
     "react-app-rewired": "^2.2.1",
     "react-compiler-runtime": "^19.0.0-beta-30d8a17-20250209",

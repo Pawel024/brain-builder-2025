@@ -30,10 +30,10 @@ export default function Render3DPCA({ width, height, states, stateSetter }) {
                 (i/points * 12 - 6) + (Math.random() - 0.5) * noise
             );
             const y = x.map((x, i) => 
-                Math.sin(x) * 3 + (Math.random() - 0.5) * noise
+                Math.sin(x) * 4 + (Math.random() - 0.5) * noise  // Increased amplitude from 3 to 4
             );
             const z = x.map((x, i) => 
-                Math.cos(x) * 3 + (Math.random() - 0.5) * noise
+                Math.cos(x) * 4 + (Math.random() - 0.5) * noise  // Increased amplitude from 3 to 4
             );
 
             stateSetter('x', x);
@@ -115,7 +115,7 @@ export default function Render3DPCA({ width, height, states, stateSetter }) {
                         data: states.x.map((x, i) => ({
                             x: x,
                             y: states.y[i],
-                            r: ((states.z[i] - minZ) / zRange) * 5 + 5  // Reduced from *15+5 to *8+3
+                            r: ((states.z[i] - minZ) / zRange) * 8 + 3  // Reduced from *15+5 to *8+3
                         })),
                         backgroundColor: states.z.map(z => 
                             `rgba(4, 151, 185, ${((z - minZ) / zRange) * 0.8 + 0.2})`
@@ -126,8 +126,8 @@ export default function Render3DPCA({ width, height, states, stateSetter }) {
                     {
                         label: 'Projection Plane',
                         data: plane,
-                        borderColor: 'rgba(200, 200, 200, 0.7)',
-                        borderWidth: 2,
+                        borderColor: 'rgba(200, 200, 200, 0.9)',
+                        borderWidth: 3,
                         borderDash: [5, 5],
                         type: 'line'
                     },
@@ -136,10 +136,10 @@ export default function Render3DPCA({ width, height, states, stateSetter }) {
                         data: projectedPoints.map(p => ({
                             x: p.x,
                             y: p.y,
-                            r: 4
+                            r: 6
                         })),
-                        backgroundColor: 'rgba(185, 38, 4, 0.6)',
-                        borderColor: 'rgba(185, 38, 4, 0.8)',
+                        backgroundColor: 'rgba(185, 38, 4, 0.5)',
+                        borderColor: 'rgba(185, 38, 4, 0.7)',
                         borderWidth: 1
                     }
                 ]
@@ -152,12 +152,18 @@ export default function Render3DPCA({ width, height, states, stateSetter }) {
                     x: {
                         title: { display: true, text: 'X Axis' },
                         min: limits[0],
-                        max: limits[1]
+                        max: limits[1],
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.2)',
+                        }
                     },
                     y: {
                         title: { display: true, text: 'Y Axis' },
                         min: limits[0],
-                        max: limits[1]
+                        max: limits[1],
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.2)',
+                        }
                     }
                 },
                 plugins: {
@@ -208,7 +214,7 @@ export default function Render3DPCA({ width, height, states, stateSetter }) {
                 datasets: [{
                     label: '2D Projection',
                     data: projected2D,
-                    backgroundColor: 'rgba(185, 38, 4, 0.6)',
+                    backgroundColor: 'rgba(185, 38, 4, 1)',
                     pointRadius: 6
                 }]
             },
@@ -218,14 +224,20 @@ export default function Render3DPCA({ width, height, states, stateSetter }) {
                 animation: false,
                 scales: {
                     x: {
-                        title: { display: true, text: '' },  // '1st Principal Direction'
+                        title: { display: true, text: '1st Principal Direction?' },
                         min: limits[0],
-                        max: limits[1]
+                        max: limits[1],
+                        grid: {
+                            color: 'rgba(200, 200, 200, 1)',
+                        }
                     },
                     y: {
-                        title: { display: true, text: '' }, //'2nd Principal Direction'
+                        title: { display: true, text: '2nd Principal Direction?' },
                         min: limits[0],
-                        max: limits[1]
+                        max: limits[1],
+                        grid: {
+                            color: 'rgba(200, 200, 200, 1)',
+                        }
                     }
                 },
                 plugins: {

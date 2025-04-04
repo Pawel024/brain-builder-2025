@@ -256,7 +256,7 @@ class SvmView extends Model {
         </Box>
     )}
 
-    sliderBottomMargin = -10
+    sliderBottomMargin = () => -10
 
 }
 

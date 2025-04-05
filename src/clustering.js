@@ -127,21 +127,17 @@ function ClusteringVisualization({clusteringId}) {
             fetch(window.location.origin + '/api/tasks/?task_id=' + clusteringId)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('API response data:', data);
-                    if (data && data.length > 0) {
-                        console.log('Task data:', data[0]);
-                        console.log('Short description:', data[0].short_description);
-                        console.log('Description:', data[0].description);
+                    // Handle both array response and direct object response
+                    const taskData = Array.isArray(data) ? (data.length > 0 ? data[0] : null) : data;
+                    
+                    if (taskData) {
+                        setShortDescription(taskData.short_description || "");
                         
-                        setShortDescription(data[0].short_description || "");
-                        
-                        if (data[0].description) {
-                            if (data[0].description[0] === '[') {
-                                console.log('Parsing description as JSON');
-                                setDescription(JSON.parse(data[0].description));
+                        if (taskData.description) {
+                            if (taskData.description[0] === '[') {
+                                setDescription(JSON.parse(taskData.description));
                             } else {
-                                console.log('Creating description list from text');
-                                createDescriptionList(data[0].description);
+                                createDescriptionList(taskData.description);
                             }
                         } else {
                             console.log('No description found in API response');

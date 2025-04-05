@@ -24,7 +24,7 @@ function draw(lineg, dotg, centerg, groups, dots) {
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
       .attr('r', 5);
-  
+
     if (dots[0]?.group) {
       let l = lineg.selectAll('line')
         .data(dots);
@@ -42,7 +42,7 @@ function draw(lineg, dotg, centerg, groups, dots) {
     } else {
       lineg.selectAll('line').remove();
     }
-  
+
     let c = centerg.selectAll('path')
       .data(groups, d => d.id);
     const updateCenters = function(centers) {
@@ -74,11 +74,6 @@ function ClusteringVisualization({clusteringId}) {
     const [width, setWidth] = useState(window.innerWidth * 0.32, 600);
     const [height, setHeight] = useState(window.innerWidth * 0.32, 600);
     const [description, setDescription] = useState([]);
-    const [shortDescription, setShortDescription] = useState("");
-    const [windowSize, setWindowSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
 
     // Refs for SVG and D3 groups
     const svgRef = useRef(null);
@@ -95,7 +90,7 @@ function ClusteringVisualization({clusteringId}) {
             const newSize = window.innerWidth * 0.32;
             setWidth(newSize);
             setHeight(newSize);
-            
+
             if (svgRef.current) {
                 svgRef.current
                     .attr('width', newSize)
@@ -103,7 +98,7 @@ function ClusteringVisualization({clusteringId}) {
                 handleReset();
             }
         };
-        
+
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
@@ -118,9 +113,17 @@ function ClusteringVisualization({clusteringId}) {
         // Set default description if running locally
         if (isRunningLocally) {
             if (clusteringMethod === 'kmeans') {
-                setShortDescription("**K-Means Clustering**\n\nK-means clustering is an unsupervised learning algorithm that groups similar data points together. The algorithm works by:\n\n1. Randomly initializing K cluster centers\n2. Assigning each data point to the nearest cluster center\n3. Updating the cluster centers to be the mean of all points in that cluster\n4. Repeating steps 2-3 until convergence\n\nUse the controls to adjust the number of points and clusters, then click 'Step' to see each iteration of the algorithm.");
+                setDescription([
+                    ["K-Means Clustering", "K-means clustering is an unsupervised learning algorithm that groups similar data points together."],
+                    ["Algorithm", "1. Randomly initialize K cluster centers\n2. Assign each data point to the nearest cluster center\n3. Update the cluster centers to be the mean of all points in that cluster\n4. Repeat steps 2-3 until convergence"],
+                    ["Controls", "Use the controls to adjust the number of points and clusters, then click 'Step' to see each iteration of the algorithm."]
+                ]);
             } else {
-                setShortDescription("**Agglomerative Clustering**\n\nAgglomerative clustering is a hierarchical clustering algorithm that builds clusters by merging similar data points. The algorithm works by:\n\n1. Starting with each point as its own cluster\n2. Finding the two closest clusters\n3. Merging them into a new cluster\n4. Repeating steps 2-3 until only one cluster remains\n\nUse the controls to adjust the number of points, then click 'Step' to see each merging step.");
+                setDescription([
+                    ["Agglomerative Clustering", "Agglomerative clustering is a hierarchical clustering algorithm that builds clusters by merging similar data points."],
+                    ["Algorithm", "1. Start with each point as its own cluster\n2. Find the two closest clusters\n3. Merge them into a new cluster\n4. Repeat steps 2-3 until only one cluster remains"],
+                    ["Controls", "Use the controls to adjust the number of points, then click 'Step' to see each merging step."]
+                ]);
             }
         } else {
             // Load description from API
@@ -129,10 +132,8 @@ function ClusteringVisualization({clusteringId}) {
                 .then(data => {
                     // Handle both array response and direct object response
                     const taskData = Array.isArray(data) ? (data.length > 0 ? data[0] : null) : data;
-                    
+
                     if (taskData) {
-                        setShortDescription(taskData.short_description || "");
-                        
                         if (taskData.description) {
                             if (taskData.description[0] === '[') {
                                 setDescription(JSON.parse(taskData.description));
@@ -185,7 +186,7 @@ function ClusteringVisualization({clusteringId}) {
             }
         };
     }, []); // this runs only once on mount
-    
+
     const createDescriptionList = (jsonText) => {
         try {
             const sanitizedJson = jsonText.replace(/<\/?[^>]+(>|$)/g, "")
@@ -199,7 +200,7 @@ function ClusteringVisualization({clusteringId}) {
             const splitText = sanitizedJson.split('\n ');
             const descriptionList = splitText.map(subText => {
                 const [subtitle, ...paragraphs] = subText.split('\n');
-                const formattedParagraphs = paragraphs.map(paragraph => 
+                const formattedParagraphs = paragraphs.map(paragraph =>
                     paragraph.replace(/\*([^*]+)\*/g, '<b>$1</b>')  // bold
                     .replace(/_([^_]+)_/g, '<i>$1</i>') // italic
                 );
@@ -210,7 +211,7 @@ function ClusteringVisualization({clusteringId}) {
             console.error('Error parsing JSON or formatting description:', error);
         }
     };
-    
+
     const handleReset = () => {
         setIsStepDisabled(false);
         setIsRestartDisabled(false);
@@ -238,7 +239,7 @@ function ClusteringVisualization({clusteringId}) {
             stepAgglo(setIsStepDisabled, draw, linegRef, dotgRef, centergRef, groups, setGroups, dots, setDots);
         }
     };
-    
+
     const handleRestart = () => {
         setIsRestartDisabled(true);
         setIsStepDisabled(false);
@@ -269,23 +270,23 @@ function ClusteringVisualization({clusteringId}) {
             <Box style={{ padding: '2vh', position: 'relative', width: '100%', height: 'calc(100vh - 54px)' }}>
 
                 {/* Controls section */}
-                <Card style={{ 
+                <Card style={{
                     padding: '2vh',
                     width: '27vw',
-                    position: 'absolute', 
-                    top: '3vh', 
-                    left: '2vw' 
+                    position: 'absolute',
+                    top: '3vh',
+                    left: '2vw'
                 }}>
                     <Flex direction="column" gap="3">
                         <Flex gap="2" style={{ alignItems: 'center' }}>
-                            <label style={{ 
-                                verticalAlign: 'middle', 
-                                fontSize: "var(--font-size-2)",
-                                width: '60%' 
+                            <label style={{
+                                verticalAlign: 'middle',
+                                width: '60%',
+                            fontSize: '0.9rem'
                             }}>
                                 Number of points:
                             </label>
-                            
+
                             <Box style={{ width: '40%' }}>
                                 <TextField.Root size="2" type="number" value={numPoints} onChange={(e) => setNumPoints(Number(e.target.value))} />
                             </Box>
@@ -293,10 +294,10 @@ function ClusteringVisualization({clusteringId}) {
 
                         {clusteringMethod === 'kmeans' && (
                             <Flex gap="2" style={{ alignItems: 'center' }}>
-                                <label style={{ 
-                                    verticalAlign: 'middle', 
-                                    fontSize: "var(--font-size-2)",
-                                    width: '60%'
+                                <label style={{
+                                    verticalAlign: 'middle',
+                                    width: '60%',
+                                    fontSize: '0.9rem'
                                 }}>
                                     Number of clusters:
                                 </label>
@@ -308,10 +309,10 @@ function ClusteringVisualization({clusteringId}) {
                         )}
 
                         <Flex gap="2">
-                            <Button id="run" onClick={handleReset} style={{ flex: 1}}>
+                            <Button size="2" id="run" onClick={handleReset} style={{ flex: 1, fontSize: '0.9rem' }}>
                                 New points
                             </Button>
-                            <Button id="restart" onClick={handleRestart} disabled={isRestartDisabled} style={{ flex: 1, padding: '10px 20px' }}>
+                            <Button size="2" id="restart" onClick={handleRestart} disabled={isRestartDisabled} style={{ flex: 1, padding: '10px 20px', fontSize: '0.9rem' }}>
                                 Restart
                             </Button>
                         </Flex>
@@ -319,9 +320,9 @@ function ClusteringVisualization({clusteringId}) {
                 </Card>
 
                 {/* Main visualization section */}
-                <Flex 
-                    gap="2vh" 
-                    direction="column" 
+                <Flex
+                    gap="2vh"
+                    direction="column"
                     style={{
                         width: '100%',
                         alignItems: 'center',
@@ -329,52 +330,51 @@ function ClusteringVisualization({clusteringId}) {
                         marginTop: '1vh'
                     }}
                 >
-                    <div id="kmeans" style={{ 
+                    <div id="kmeans" style={{
                         width: '32vw',
                         height: '32vw'
                     }}/>
-                    
-                    <Button 
-                        id="step" 
-                        onClick={handleStep} 
-                        disabled={isStepDisabled} 
-                        size="3" 
-                        style={{ 
+
+                    <Button
+                        id="step"
+                        onClick={handleStep}
+                        disabled={isStepDisabled}
+                        size="3"
+                        style={{
                             width: '32vw'
                         }}
                     >
                         {clusteringMethod === 'agglo' ? 'Merge clusters' : flag === true ? 'Update centers' : 'Assign to clusters'}
                     </Button>
 
-                    <Card style={{ 
-                        padding: '1.5vh', 
+                    <Card style={{
+                        padding: '1.5vh',
                         width: '32vw'
                     }}>
                         <Flex direction="column" gap="2" align="center">
-                            <Text size="2" style={{ fontWeight: 'bold' }}>Steps: {nOfSteps}</Text>
-                            <Text size="2" style={{ fontWeight: 'bold' }}>SSE (WCSS): {SSE.toFixed(3)}</Text>
+                            <Text size="2" style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Steps: {nOfSteps}</Text>
+                            <Text size="2" style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>SSE (WCSS): {SSE.toFixed(3)}</Text>
                         </Flex>
                     </Card>
                 </Flex>
 
-                {/* Description section */}
-                <Card style={{ 
-                    padding: '2vh', 
+                {/* Description section - Now with full description format */}
+                <Card style={{
+                    padding: '2vh',
                     width: '27vw',
-                    position: 'absolute', 
-                    top: '3vh', 
-                    right: '2vw'
+                    position: 'absolute',
+                    top: '3vh',
+                    right: '2vw',
+                    maxHeight: '80vh',
+                    overflowY: 'auto'
                 }}>
-                    <Flex direction="column" gap="2">
-                        <div style={{ 
-                            textAlign: 'justify', 
-                            fontFamily: 'monospace', 
-                            fontSize: 'calc(0.8rem + 0.2vw)', 
-                            color: 'var(--slate-11)',
-                            padding: '10px 20px'
-                        }}>
-                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{shortDescription}</ReactMarkdown>
-                        </div>
+                    <Flex direction="column" gap="2" style={{ fontSize: '0.9rem' }}>
+                        {Array.isArray(description) && description.map(([subtitle, text], index) => (
+                            <div key={index}>
+                                <Heading as='h2' size='4' style={{ color: 'var(--slate-12)', marginBottom: 7 }}>&gt;_{subtitle} </Heading>
+                                <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{text}</ReactMarkdown>
+                            </div>
+                        ))}
                     </Flex>
                 </Card>
             </Box>

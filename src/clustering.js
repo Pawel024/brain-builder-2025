@@ -127,16 +127,27 @@ function ClusteringVisualization({clusteringId}) {
             fetch(window.location.origin + '/api/tasks/?task_id=' + clusteringId)
                 .then(response => response.json())
                 .then(data => {
+                    console.log('API response data:', data);
                     if (data && data.length > 0) {
+                        console.log('Task data:', data[0]);
+                        console.log('Short description:', data[0].short_description);
+                        console.log('Description:', data[0].description);
+                        
                         setShortDescription(data[0].short_description || "");
                         
                         if (data[0].description) {
                             if (data[0].description[0] === '[') {
+                                console.log('Parsing description as JSON');
                                 setDescription(JSON.parse(data[0].description));
                             } else {
+                                console.log('Creating description list from text');
                                 createDescriptionList(data[0].description);
                             }
+                        } else {
+                            console.log('No description found in API response');
                         }
+                    } else {
+                        console.log('No data found for clusteringId:', clusteringId);
                     }
                 })
                 .catch(error => {

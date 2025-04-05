@@ -275,7 +275,7 @@ function ClusteringVisualization({clusteringId}) {
                     width: '27vw',
                     position: 'absolute',
                     top: '3vh',
-                    left: '2vw'
+                    right: '2vw'
                 }}>
                     <Flex direction="column" gap="3">
                         <Flex gap="2" style={{ alignItems: 'center' }}>
@@ -364,7 +364,7 @@ function ClusteringVisualization({clusteringId}) {
                     width: '27vw',
                     position: 'absolute',
                     top: '3vh',
-                    right: '2vw',
+                    left: '2vw',
                     maxHeight: '80vh',
                     overflowY: 'auto'
                 }}>

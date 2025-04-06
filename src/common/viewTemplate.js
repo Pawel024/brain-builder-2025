@@ -520,7 +520,7 @@ class Model extends React.Component {
                           img={this.props.img}
                           typ={this.props.typ}
                           accuracyColor={this.props.accuracyColor}
-                          accuracyValue={parseFloat(this.props.errorList[1])}
+                          accuracyValue={this.props.errorList ? parseFloat(this.props.errorList[1]) : -1}
                       />
                     </Suspense>
                   )}

@@ -149,7 +149,7 @@ class Building extends Model {
     // CUSTOMIZABLE FUNCTIONS
 
     continueComponentDidMount = () => {
-        if (this.props.runningLocally) {this.shortDescription = "This is a short description that I made pretty long for testing how the layout behaves when you start adding a lot of components; don't worry, it will only be used when running locally and will just be ignored otherwise."}
+        if (this.props.runningLocally) {this.shortDescription = "This is a short description that I made pretty long for testing how the layout behaves when you start adding a lot of components; don't worry, it will only be used when running locally and will just be ignored otherwise. Also, here is a test for **bold** and _italics_."}
 
         if (this.props.taskId === 0) {
           this.setState({ runTutorial: true }, () => {

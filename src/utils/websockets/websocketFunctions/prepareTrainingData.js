@@ -50,7 +50,7 @@ const updateState = (setter, newValue, index) => {
  * @returns {Object} The training data.
  */
 const prepareNNTrainingData = ({
-  learningRate, 
+  learningRate,
   iterations,
   normalization,
   af,

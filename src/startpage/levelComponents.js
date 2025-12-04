@@ -64,13 +64,7 @@ function FeedbackButton() {
   return (
     <div className="feedback-button" style={{ display: 'inline-block' }}>
       <Link to="/feedback" style={{ color: 'inherit', textDecoration: 'none' }}>
-        <IconButton variant="solid" color="cyan" style={{ 
-          borderRadius: 'var(--radius-3)', 
-          padding: '17px 30px',
-          height: 'auto', 
-          fontSize: 'var(--font-size-3)',
-          overflow: 'hidden'
-        }}>
+        <IconButton variant="solid" color="cyan">
           <Flex direction="row" gap="0" style={{
             alignItems: "center",
             whiteSpace: 'nowrap'

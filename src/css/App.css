@@ -443,19 +443,42 @@ button {
   display: inline-block;
   width: auto; /* Let the inner button dictate the width */
   /* Apply animations only when NOT hovered */
-  animation: slideIn 0.6s ease-out both 0s;
+  /* Only animate if user has not requested reduced motion */
   transition: transform 0.3s ease-in-out; /* Smooth transform for bounce */
 }
 
-.feedback-button:not(:hover) {
-  /* Apply pulse and bounce only when not hovered */
-  animation: slideIn 0.6s ease-out both 0s, 
-             feedbackBounce 5s ease-in-out infinite 1.5s;
+@media (prefers-reduced-motion: no-preference) {
+  .feedback-button {
+    animation: slideIn 0.6s ease-out both 0s;
+  }
+
+  .feedback-button:not(:hover) {
+    /* Apply pulse and bounce only when not hovered */
+    animation: slideIn 0.6s ease-out both 0s, 
+               feedbackBounce 5s ease-in-out infinite 1.5s;
+  }
+
+  /* Apply pulse animation directly to the button when container is not hovered */
+  .feedback-button:not(:hover) .rt-IconButton {
+    animation: feedbackPulse 2.5s ease-in-out infinite 1s;
+  }
 }
 
-/* Apply pulse animation directly to the button when container is not hovered */
-.feedback-button:not(:hover) .rt-IconButton {
-  animation: feedbackPulse 2.5s ease-in-out infinite 1s;
+/* For users who prefer reduced motion, set final state styles directly */
+@media (prefers-reduced-motion: reduce) {
+  .feedback-button {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    /* Remove animation */
+    animation: none !important;
+  }
+  .feedback-button:not(:hover) {
+    animation: none !important;
+  }
+  .feedback-button:not(:hover) .rt-IconButton {
+    animation: none !important;
+    box-shadow: none !important;
+  }
 }
 
 @keyframes slideIn {
@@ -465,7 +488,7 @@ button {
 
 @keyframes feedbackPulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); /* Use transparent black or remove */
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
   }
   50% {
     /* Pulse with a cyan shadow matching the button */
@@ -494,7 +517,6 @@ button {
   white-space: nowrap; /* Prevent text wrapping */
   box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Add subtle shadow */
   /* Add animation property to allow pulse animation */
-  animation: none; /* Default state */
   transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
               border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
               background 0.2s ease-out, 

@@ -4,14 +4,18 @@ import { Flex, Theme, Box, Heading, Separator } from '@radix-ui/themes';
 import Header from './common/header';
 import * as Slider from '@radix-ui/react-slider';
 
-import { RenderLinReg, RenderPolyReg } from './utils/otherTasks/plottingUtils'
-import { RenderDataMatrix } from './utils/otherTasks/matrixUtils';
-import { RenderEmissions } from './utils/otherTasks/emissionUtils';
-
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
+
+
+const RenderLinReg = React.lazy(() => import('./utils/otherTasks/renderLinReg'));
+const RenderPolyReg = React.lazy(() => import('./utils/otherTasks/renderPolyReg')); 
+const RenderPCA = React.lazy(() => import('./utils/otherTasks/render2DPCA'));
+const Render3DPCA = React.lazy(() => import('./utils/otherTasks/render3DPCA'));
+const RenderDataMatrix = React.lazy(() => import('./utils/otherTasks/matrixUtils'));
+const RenderEmissions = React.lazy(() => import('./utils/otherTasks/emissionUtils'));
 
 
 class OtherTask extends Component {
@@ -48,6 +52,10 @@ class OtherTask extends Component {
             this.animation = RenderDataMatrix;
         } else if (this.props.type === 'ManualPolyReg') {
             this.animation = RenderPolyReg;
+        } else if (this.props.type === 'ManualPCA') {
+            this.animation = RenderPCA;
+        } else if (this.props.type === 'Manual3DPCA') {
+            this.animation = Render3DPCA;
         } else {
             alert("Function not implemented yet");
         }

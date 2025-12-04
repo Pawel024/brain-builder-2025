@@ -49,7 +49,7 @@ const DataTab = ({ description, currentSlide, setCurrentSlide, initPlot }) => {
                         <Heading as='h2' size='5' style={{ color: 'var(--slate-12)', marginBottom:7, textAlign:"center" }}>&gt;_{subtitle} </Heading>
                         {paragraphs.map((paragraph, pIndex) => (
                             //<p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
-                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeRaw, rehypeKatex]}>{paragraph}</ReactMarkdown>
+                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex, rehypeRaw]}>{paragraph}</ReactMarkdown>
                         ))}
                         </div>
                     </div>

@@ -150,6 +150,8 @@ class Building extends Model {
     // CUSTOMIZABLE FUNCTIONS
 
     continueComponentDidMount = () => {
+        if (this.props.runningLocally) {this.shortDescription = "This is a short description that I made pretty long for testing how the layout behaves when you start adding a lot of components; don't worry, it will only be used when running locally and will just be ignored otherwise. Also, here is a test for **bold** and _italics_."}
+
         if (this.props.taskId === 0) {
           this.setState({ runTutorial: true }, () => {
             // Delay the click on the beacon until after the Joyride component has been rendered
@@ -440,32 +442,37 @@ class Building extends Model {
         </Box>
     )}
 
+    shortDescriptionPosition = () => {
+      let defaultPosition = Math.round(0.35 * (window.innerHeight-140));
+      let lowestInputElementPosition = Math.max(
+        this.sliderPosition(Object.keys(this.sliders).filter(key => this.props.sliderVisibilities[key]).length), 
+        this.inputFieldPosition(Object.keys(this.inputFields).filter(key => this.props.inputFieldVisibilities[key]).length), 
+        this.dropdownPosition(Object.keys(this.dropdowns).filter(key => this.props.dropdownVisibilities[key]).length), 
+        this.checkboxPosition(Object.keys(this.checkboxes).filter(key => this.props.checkboxVisibilities[key]).length)
+      );
+      return (Math.max(defaultPosition, lowestInputElementPosition))
+    }
+
     additionalComponents = (dropdownVisibilities, checkboxVisibilities) => {
-        // add 30 px extra margin needed for each visible checkbox or dropdown
-        const extraMarginNeeded =
-          Object.entries(dropdownVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 80 : margin, 0)
-          + Object.entries(checkboxVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 60 : margin, 0);
+      // // add 30 px extra margin needed for each visible checkbox or dropdown
+      // const extraMarginNeeded =
+      //   Object.entries(dropdownVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 60 : margin, 0)
+      //   + Object.entries(checkboxVisibilities).reduce((margin, [_, isVisible]) => isVisible ? margin + 60 : margin, 0);
       
-        return (
-          // top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded)
+      return (
+        // top: Math.round(0.35 * (window.innerHeight-140) + extraMarginNeeded)
+        <div>
+        {(this.props.isTraining===0 || this.props.isTraining===2 || this.props.runningLocally) ? (
+          <Box style={{ position:"absolute", top: this.shortDescriptionPosition(), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
+            <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
+              <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
+            </div>
+          </Box>
+        ) : null}
         <Box style={{ position:"absolute", bottom: Math.round(0.15 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', fontSize: '14px', color: 'var(--slate-11)' }}>
             <div id="/api-data">
               {(this.props.isTraining===2 || this.props.runningLocally) ? (
                 <Flex direction='column' >
-                  <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-                    {this.shortDescription}
-                  </div>
-
-                  {/* regression */}
-                  {(this.props.type === 2 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>R^2: {parseFloat(this.props.errorList[1]).toFixed(2)}</b></div>
-                  )}
-                  
-                  {/* classification */}
-                  {(this.props.typ === 1 &&
-                  <div style={{ color: this.props.accuracyColor, fontFamily:'monospace' }}><b>Accuracy: {(parseFloat(this.props.errorList[1])*100).toFixed(2)}%</b></div>
-                  )}
-
                   <div style={{ maxWidth: Math.round(0.27 * (window.innerWidth * 0.97)), maxHeight: Math.round(0.35 * (window.innerHeight-140)), marginTop: 20 }}>
                     <canvas ref={this.chartRef} id="myChart"/>
                   </div>
@@ -477,13 +484,10 @@ class Building extends Model {
                     <canvas ref={this.chartRef} id="myChart"/>
                   </div>
                 </Flex>
-              ) : (
-                <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex, rehypeRaw]}>{this.shortDescription}</ReactMarkdown>
-                </div>
-              ))}
+              ) : ( null ))}
             </div>
         </Box>
+      </div>
     )}
 }
     

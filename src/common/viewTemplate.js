@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import '@radix-ui/themes/styles.css';
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
+import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
 import { safeGet } from '../utils/axiosUtils';
@@ -188,8 +189,11 @@ class Model extends React.Component {
           const descriptionList = splitText.map(subText => {
             const [subtitle, ...paragraphs] = subText.split('\n');
             const formattedParagraphs = paragraphs.map(paragraph => 
-              paragraph.replace(/\*([^*]+)\*/g, '<b>$1</b>')  // bold
-              .replace(/_([^_]+)_/g, '<i>$1</i>') // italic
+              paragraph
+              //.replace(/(?:^|\s)\*([^*]+)\*(?:\s|$)/g, ' <b>$1</b> ')  // bold              
+              //.replace(/(?:^|\s)_([^_]+)_(?:\s|$)/g, ' <i>$1</i> ') // italic 
+              // -> should only work for eg ' _abc_ ' and not for eg 'a_b_c'
+              // these are taken care of by rehypeRaw, use **bold** and _italics_ or *italics*
             );
             return [subtitle, ...formattedParagraphs];
           });
@@ -301,20 +305,30 @@ class Model extends React.Component {
     // TODO: delete the functions you don't change
 
     // TODO: tune the vertical positioning here
-    sliderBottomMargin = -20
+    nInputElements = () => (
+         Object.keys(this.sliders).filter(key => this.props.sliderVisibilities[key]).length
+       + Object.keys(this.inputFields).filter(key => this.props.inputFieldVisibilities[key]).length
+       + Object.keys(this.dropdowns).filter(key => this.props.dropdownVisibilities[key]).length
+       + Object.keys(this.checkboxes).filter(key => this.props.checkboxVisibilities[key]).length
+    )
+    
+    tightLayout = () => Boolean(this.nInputElements() >= 4)
+
+    sliderBottomMargin = () => this.tightLayout() ? -20 : -40
     textHeight = 40
     buttonPosition = Math.round(0.92 * (window.innerHeight-140))
 
     sliderPosition = (index) => {
       // Position sliders at the top
-      return Math.round((0.14 + 0.12 * index) * (window.innerHeight - 140));
+      let reducedMargin = this.tightLayout() ? Math.round(-0.02 * (window.innerHeight - 140)) : 0;  // shift the sliders slightly up in tightLayout mode
+      return reducedMargin + Math.round((0.14 + 0.12 * index) * (window.innerHeight - 140));
     }
 
     inputFieldPosition = (index) => {
       // Position input fields below the sliders
       const visibleSliderCount = Object.keys(this.sliders).filter(key => this.props.sliderVisibilities[key]).length;
       console.log("visibleSliderCount: ", visibleSliderCount);
-      return Math.round(this.sliderPosition(visibleSliderCount) + 1.2 * this.textHeight * index + this.sliderBottomMargin);
+      return Math.round(this.sliderPosition(visibleSliderCount) + 1.2 * this.textHeight * index + this.sliderBottomMargin());
     }
 
     dropdownPosition = (index) => {
@@ -345,7 +359,7 @@ class Model extends React.Component {
         return (
         <Box style={{ position:"absolute", top: Math.round(0.5 * (window.innerHeight-140)), left: Math.round(0.7 * (window.innerWidth * 0.97)), alignItems: 'center', justifyContent: 'start', height: '100vh', fontSize: '14px', color: 'var(--slate-11)' }}>
         <div style={{ textAlign:'justify', width: Math.round(0.27 * (window.innerWidth * 0.97)), fontFamily:'monospace' }}>
-          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{this.shortDescription}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex, rehypeRaw]}>{this.shortDescription}</ReactMarkdown>
         </div>
         </Box>
     )}
@@ -507,6 +521,9 @@ class Model extends React.Component {
                           isResponding={this.props.isResponding}
                           apiData={this.props.apiData}
                           img={this.props.img}
+                          typ={this.props.typ}
+                          accuracyColor={this.props.accuracyColor}
+                          accuracyValue={this.props.errorList ? parseFloat(this.props.errorList[1]) : -1}
                       />
                     </Suspense>
                   )}

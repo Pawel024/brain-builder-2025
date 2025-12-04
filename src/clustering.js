@@ -1,9 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import Header from './common/header';
-import { Flex, Button, Box, Card, Text, TextField } from '@radix-ui/themes';
+import { Flex, Button, Box, Card, Text, TextField, Heading } from '@radix-ui/themes';
 import { initKMeans, stepKMeans, restartKMeans } from './utils/clustering/kmeansUtils';
 import { initAgglo, stepAgglo, restartAgglo } from './utils/clustering/aggloUtils';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 function draw(lineg, dotg, centerg, groups, dots) {
 
@@ -20,7 +24,7 @@ function draw(lineg, dotg, centerg, groups, dots) {
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
       .attr('r', 5);
-  
+
     if (dots[0]?.group) {
       let l = lineg.selectAll('line')
         .data(dots);
@@ -38,7 +42,7 @@ function draw(lineg, dotg, centerg, groups, dots) {
     } else {
       lineg.selectAll('line').remove();
     }
-  
+
     let c = centerg.selectAll('path')
       .data(groups, d => d.id);
     const updateCenters = function(centers) {
@@ -67,14 +71,37 @@ function ClusteringVisualization({clusteringId}) {
     const [groups, setGroups] = useState([]);
     const [dots, setDots] = useState([]);
     const [nOfSteps, setNOfSteps] = useState(0);
-    const [width, setWidth] = useState(window.innerHeight*0.6);
-    const [height, setHeight] = useState(window.innerHeight*0.6);
+    const [width, setWidth] = useState(window.innerWidth * 0.32, 600);
+    const [height, setHeight] = useState(window.innerWidth * 0.32, 600);
+    const [description, setDescription] = useState([]);
 
     // Refs for SVG and D3 groups
     const svgRef = useRef(null);
     const linegRef = useRef(null);
     const dotgRef = useRef(null);
     const centergRef = useRef(null);
+
+    // Check if running locally
+    const isRunningLocally = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // Handle window resize
+    useEffect(() => {
+        const handleResize = () => {
+            const newSize = window.innerWidth * 0.32;
+            setWidth(newSize);
+            setHeight(newSize);
+
+            if (svgRef.current) {
+                svgRef.current
+                    .attr('width', newSize)
+                    .attr('height', newSize);
+                handleReset();
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         // hide the preloader when page loads
@@ -83,13 +110,57 @@ function ClusteringVisualization({clusteringId}) {
             preloader.style.display = "none";
         }
 
+        // Set default description if running locally
+        if (isRunningLocally) {
+            if (clusteringMethod === 'kmeans') {
+                setDescription([
+                    ["K-Means Clustering", "K-means clustering is an unsupervised learning algorithm that groups similar data points together."],
+                    ["Algorithm", "1. Randomly initialize K cluster centers\n2. Assign each data point to the nearest cluster center\n3. Update the cluster centers to be the mean of all points in that cluster\n4. Repeat steps 2-3 until convergence"],
+                    ["Controls", "Use the controls to adjust the number of points and clusters, then click 'Step' to see each iteration of the algorithm."]
+                ]);
+            } else {
+                setDescription([
+                    ["Agglomerative Clustering", "Agglomerative clustering is a hierarchical clustering algorithm that builds clusters by merging similar data points."],
+                    ["Algorithm", "1. Start with each point as its own cluster\n2. Find the two closest clusters\n3. Merge them into a new cluster\n4. Repeat steps 2-3 until only one cluster remains"],
+                    ["Controls", "Use the controls to adjust the number of points, then click 'Step' to see each merging step."]
+                ]);
+            }
+        } else {
+            // Load description from API
+            fetch(window.location.origin + '/api/tasks/?task_id=' + clusteringId)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle both array response and direct object response
+                    const taskData = Array.isArray(data) ? (data.length > 0 ? data[0] : null) : data;
+
+                    if (taskData) {
+                        if (taskData.description) {
+                            if (taskData.description[0] === '[') {
+                                setDescription(JSON.parse(taskData.description));
+                            } else {
+                                createDescriptionList(taskData.description);
+                            }
+                        } else {
+                            console.log('No description found in API response');
+                        }
+                    } else {
+                        console.log('No data found for clusteringId:', clusteringId);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading description:', error);
+                    setDescription([["Error Loading Description", "There was an error loading the task description. You should be able to continue, but notify us if this issue persists."]]);
+                });
+        }
+
         if (!svgRef.current) {
+            const size = window.innerWidth * 0.32;
             // Initialize SVG and groups if not already initialized
             const svg = d3.select("#kmeans").append("svg")
-                .attr('width', width)
-                .attr('height', height)
+                .attr('width', size)
+                .attr('height', size)
                 .style('padding', '10px')
-                .style('background', '#223344')
+                .style('background', '#223244')
                 .style('cursor', 'pointer')
                 .style('user-select', 'none')
                 .on('click', function(event) {
@@ -115,7 +186,32 @@ function ClusteringVisualization({clusteringId}) {
             }
         };
     }, []); // this runs only once on mount
-    
+
+    const createDescriptionList = (jsonText) => {
+        try {
+            const sanitizedJson = jsonText.replace(/<\/?[^>]+(>|$)/g, "")
+                .replace(/&/g, "&amp;")
+                .replace(/%/g, "&#37;")
+                .replace(/#/g, "&#35;")
+                .replace(/!/g, "&#32;")
+                .replace(/\?/g, "&#63;")
+                .replace(/'/g, "&#39;")
+                .replace(/"/g, "&quot;");
+            const splitText = sanitizedJson.split('\n ');
+            const descriptionList = splitText.map(subText => {
+                const [subtitle, ...paragraphs] = subText.split('\n');
+                const formattedParagraphs = paragraphs.map(paragraph =>
+                    paragraph.replace(/\*([^*]+)\*/g, '<b>$1</b>')  // bold
+                    .replace(/_([^_]+)_/g, '<i>$1</i>') // italic
+                );
+                return [subtitle, ...formattedParagraphs];
+            });
+            setDescription(descriptionList);
+        } catch (error) {
+            console.error('Error parsing JSON or formatting description:', error);
+        }
+    };
+
     const handleReset = () => {
         setIsStepDisabled(false);
         setIsRestartDisabled(false);
@@ -143,7 +239,7 @@ function ClusteringVisualization({clusteringId}) {
             stepAgglo(setIsStepDisabled, draw, linegRef, dotgRef, centergRef, groups, setGroups, dots, setDots);
         }
     };
-    
+
     const handleRestart = () => {
         setIsRestartDisabled(true);
         setIsStepDisabled(false);
@@ -161,7 +257,7 @@ function ClusteringVisualization({clusteringId}) {
 
     const SSE = groups.reduce((acc, group) => {
         const groupWCSS = group.dots.reduce((groupAcc, dot) => {
-          const distanceSquared = (Math.pow(dot.x - group.center.x, 2) + Math.pow(dot.y - group.center.y, 2))/2500; // divided by 50 squared to change svg size from 500x500 to 10x10
+          const distanceSquared = (Math.pow(dot.x - group.center.x, 2) + Math.pow(dot.y - group.center.y, 2))/2700; // divided by 50 squared to change svg size from 500x500 to 10x10
           return groupAcc + distanceSquared;
         }, 0);
         return acc + groupWCSS;
@@ -171,62 +267,116 @@ function ClusteringVisualization({clusteringId}) {
         <Flex direction="column" gap="1" style={{ width: '100%', height: '100%' }}>
             <Header showHomeButton={true} />
 
-            <Box style={{ padding: '10px', position: 'relative', width: '100%', height: window.innerHeight - 54, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ padding: '2vh', position: 'relative', width: '100%', height: 'calc(100vh - 54px)' }}>
 
-                <Card style={{ padding: '10px', maxWidth: '300px', position: 'absolute', top: '15px', left: '17px' }}>
+                {/* Controls section */}
+                <Card style={{
+                    padding: '2vh',
+                    width: '27vw',
+                    position: 'absolute',
+                    top: '3vh',
+                    right: '2vw'
+                }}>
                     <Flex direction="column" gap="3">
-
                         <Flex gap="2" style={{ alignItems: 'center' }}>
-                            <label style={{ verticalAlign: 'middle', fontSize: "var(--font-size-2)" }}>
+                            <label style={{
+                                verticalAlign: 'middle',
+                                width: '60%',
+                            fontSize: '0.9rem'
+                            }}>
                                 Number of points:
                             </label>
-                            
-                            <Box maxWidth="15vw">
-                                <TextField size="2" type="number" value={numPoints} onChange={(e) => setNumPoints(Number(e.target.value))} />
+
+                            <Box style={{ width: '40%' }}>
+                                <TextField.Root size="2" type="number" value={numPoints} onChange={(e) => setNumPoints(Number(e.target.value))} />
                             </Box>
                         </Flex>
 
                         {clusteringMethod === 'kmeans' && (
                             <Flex gap="2" style={{ alignItems: 'center' }}>
-                                <label style={{ verticalAlign: 'middle', fontSize: "var(--font-size-2)" }}>
+                                <label style={{
+                                    verticalAlign: 'middle',
+                                    width: '60%',
+                                    fontSize: '0.9rem'
+                                }}>
                                     Number of clusters:
                                 </label>
 
-                                <Box maxWidth="15vw">
-                                    <TextField size="2" type="number" value={numClusters} onChange={(e) => setNumClusters(Number(e.target.value))} />
+                                <Box style={{ width: '40%' }}>
+                                    <TextField.Root size="2" type="number" value={numClusters} onChange={(e) => setNumClusters(Number(e.target.value))} />
                                 </Box>
                             </Flex>
                         )}
 
                         <Flex gap="2">
-                            <Button id="run" onClick={handleReset}>
-                                Generate new points
+                            <Button size="2" id="run" onClick={handleReset} style={{ flex: 1, fontSize: '0.9rem' }}>
+                                New points
                             </Button>
-                            <Button id="restart" onClick={handleRestart} disabled={isRestartDisabled}>
+                            <Button size="2" id="restart" onClick={handleRestart} disabled={isRestartDisabled} style={{ flex: 1, padding: '10px 20px', fontSize: '0.9rem' }}>
                                 Restart
                             </Button>
                         </Flex>
-
                     </Flex>
                 </Card>
 
-                <Flex gap="3" direction="column" style={{ padding: '5px', justifyContent: 'center', alignItems: 'center' }}>
-                   
-                    <div id="kmeans"/>
-                    
-                    <Button id="step" onClick={handleStep} disabled={isStepDisabled} size="3" style={{ width: `${width}px` }}>
+                {/* Main visualization section */}
+                <Flex
+                    gap="2vh"
+                    direction="column"
+                    style={{
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        marginTop: '1vh'
+                    }}
+                >
+                    <div id="kmeans" style={{
+                        width: '32vw',
+                        height: '32vw'
+                    }}/>
+
+                    <Button
+                        id="step"
+                        onClick={handleStep}
+                        disabled={isStepDisabled}
+                        size="3"
+                        style={{
+                            width: '32vw'
+                        }}
+                    >
                         {clusteringMethod === 'agglo' ? 'Merge clusters' : flag === true ? 'Update centers' : 'Assign to clusters'}
                     </Button>
 
-                    <Card style={{ padding: '10px', width: '100%', maxWidth: `${width}px`, fontSize: 'var(--font-size-2)' }}>
+                    <Card style={{
+                        padding: '1.5vh',
+                        width: '32vw'
+                    }}>
                         <Flex direction="column" gap="2" align="center">
-                            <Text size="2" style={{ fontWeight: 'bold' }}>Steps: {nOfSteps}</Text>
-                            <Text size="2" style={{ fontWeight: 'bold' }}>SSE (WCSS): {SSE.toFixed(3)}</Text>
+                            <Text size="2" style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Steps: {nOfSteps}</Text>
+                            <Text size="2" style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>SSE (WCSS): {SSE.toFixed(3)}</Text>
                         </Flex>
                     </Card>
-
                 </Flex>
 
+                {/* Description section - Now with full description format */}
+                <Card style={{
+                    padding: '2vh',
+                    width: '27vw',
+                    position: 'absolute',
+                    top: '3vh',
+                    left: '2vw',
+                    maxHeight: '80vh',
+                    overflowY: 'auto'
+                }}>
+                    <Flex direction="column" gap="2" style={{ fontSize: '0.9rem' }}>
+                        {Array.isArray(description) && description.map(([subtitle, text], index) => (
+                            <div key={index}>
+                                <Heading as='h2' size='4' style={{ color: 'var(--slate-12)', marginBottom: 7 }}>&gt;_{subtitle} </Heading>
+                                <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{text}</ReactMarkdown>
+                            </div>
+                        ))}
+                    </Flex>
+                </Card>
             </Box>
         </Flex>
     );

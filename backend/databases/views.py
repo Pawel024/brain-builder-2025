@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from urllib.parse import urlparse
 
-import asyncio
+from asgiref.sync import sync_to_async
 
 import os
 import requests
@@ -61,11 +61,11 @@ def serve_lottie_file(request, filename):
 
 @csrf_protect
 @api_view(['GET', 'POST'])
-def query_list(request):
+async def query_list(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id')
         task_id = request.GET.get('task_id')
-        data = Row.objects.filter(user_id=user_id, task_id=task_id).order_by('-id')[:1]
+        data = await sync_to_async(lambda: list(Row.objects.filter(user_id=user_id, task_id=task_id).order_by('-id')[:1]))()
         serializer = RowSerializer(data, context={'request': request}, many=True)
         return Response(serializer.data)
 
@@ -76,15 +76,13 @@ def query_list(request):
         parsed_uri = urlparse(absolute_uri)
         root_url = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        processed_data = loop.run_until_complete(process(request.data))
+        processed_data = await process(request.data)
 
         processed_data['user_id'] = user_id
         processed_data['task_id'] = task_id
         serializer = RowSerializer(data=processed_data)
         if serializer.is_valid():
-            serializer.save()
+            await sync_to_async(serializer.save)()
             return Response(status=status.HTTP_201_CREATED)
             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -92,9 +90,9 @@ def query_list(request):
 
 @csrf_protect
 @api_view(['PUT', 'DELETE'])
-def query_detail(request, pk):
+async def query_detail(request, pk):
     try:
-        query = Row.objects.get(pk=pk)
+        query = await sync_to_async(Row.objects.get)(pk=pk)
     except Row.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -105,20 +103,18 @@ def query_detail(request, pk):
         parsed_uri = urlparse(absolute_uri)
         root_url = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        processed_data = loop.run_until_complete(process(request.data))
+        processed_data = await process(request.data)
 
         processed_data['user_id'] = user_id
         processed_data['task_id'] = task_id
         serializer = RowSerializer(query, data=processed_data,context={'request': request})
         if serializer.is_valid():
-            serializer.save()
+            await sync_to_async(serializer.save)()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        query.delete()
+        await sync_to_async(query.delete)()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 

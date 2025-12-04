@@ -491,7 +491,7 @@ class Model extends React.Component {
                                 </IconButton>
                                 {this.useCodePreview && 
                                 <IconButton onClick={this.handleCodeClick} variant="outline" color="cyan" style={{ borderRadius: 'var(--radius-3)', width: Math.round(0.12 * (window.innerWidth * 0.97)), height: 36, fontSize: 'var(--font-size-2)', fontWeight: "500" }}
-                                disabled = { this.props.isTraining < 0 || this.props.isTraining == 1 || this.valuesUndefined() } >
+                                disabled = { this.props.isTraining < 0 || this.props.isTraining === 1 || this.valuesUndefined() } >
                                     <Flex direction="horizontal" gap="2" style={{alignItems: "center", fontFamily:'monospace' }}>
                                         {<><CodeIcon width="18" height="18" />Preview in code</>}
                                     </Flex>

@@ -4,8 +4,6 @@ import * as Form from '@radix-ui/react-form';
 import '@radix-ui/themes/styles.css';
 
 function FormatOutput(val) {
-    console.log("Output check: val =", val, "typeof val = ", typeof val)
-    return val
     if (typeof val === 'number') {
         // val is a number
         return val.toFixed(3)

@@ -26,7 +26,6 @@ import {
 import { Model } from './common/viewTemplate';
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
-import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
 import ReactMarkdown from 'react-markdown';
 

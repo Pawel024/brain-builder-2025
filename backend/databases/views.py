@@ -81,7 +81,7 @@ async def query_list(request):
         processed_data['user_id'] = user_id
         processed_data['task_id'] = task_id
         serializer = RowSerializer(data=processed_data)
-        if await sync_to_async(serializer.is_valid)():
+        if serializer.is_valid():
             await sync_to_async(serializer.save)()
             return Response(status=status.HTTP_201_CREATED)
             
@@ -108,7 +108,7 @@ async def query_detail(request, pk):
         processed_data['user_id'] = user_id
         processed_data['task_id'] = task_id
         serializer = RowSerializer(query, data=processed_data, context={'request': request})
-        if await sync_to_async(serializer.is_valid)():
+        if serializer.is_valid():
             await sync_to_async(serializer.save)()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

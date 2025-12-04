@@ -440,28 +440,125 @@ button {
 }
 
 .feedback-button {
-  width: 60px;
-  transition: width 0.3s ease-in-out;
-  overflow: hidden;
-  padding: 15px;
+  display: inline-block;
+  width: auto; /* Let the inner button dictate the width */
+  /* Apply animations only when NOT hovered */
+  /* Only animate if user has not requested reduced motion */
+  transition: transform 0.3s ease-in-out; /* Smooth transform for bounce */
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .feedback-button {
+    animation: slideIn 0.6s ease-out both 0s;
+  }
+
+  .feedback-button:not(:hover) {
+    /* Apply pulse and bounce only when not hovered */
+    animation: slideIn 0.6s ease-out both 0s, 
+               feedbackBounce 5s ease-in-out infinite 1.5s;
+  }
+
+  /* Apply pulse animation directly to the button when container is not hovered */
+  .feedback-button:not(:hover) .rt-IconButton {
+    animation: feedbackPulse 2.5s ease-in-out infinite 1s;
+  }
+}
+
+/* For users who prefer reduced motion, set final state styles directly */
+@media (prefers-reduced-motion: reduce) {
+  .feedback-button {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    /* Remove animation */
+    animation: none !important;
+  }
+  .feedback-button:not(:hover) {
+    animation: none !important;
+  }
+  .feedback-button:not(:hover) .rt-IconButton {
+    animation: none !important;
+    box-shadow: none !important;
+  }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100px) scale(0.8); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes feedbackPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    /* Pulse with a cyan shadow matching the button */
+    box-shadow: 0 0 0 8px var(--cyan-a6); /* Radix cyan alpha color */
+  }
+}
+
+@keyframes feedbackBounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+  60% { transform: translateY(-3px); }
+}
+
+/* Style the actual Radix IconButton inside the container */
+.feedback-button .rt-IconButton {
+  width: 60px; /* Initial compact width */
+  height: 60px; /* Make it square-ish */
+  padding: 0; /* Remove default padding */
+  border-radius: 50%; /* Make it circular */
+  display: flex; /* Use flexbox for centering */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  background: var(--cyan-9); /* Use a slightly less intense cyan */
+  color: white;
+  overflow: hidden; /* Keep content contained */
+  white-space: nowrap; /* Prevent text wrapping */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Add subtle shadow */
+  /* Add animation property to allow pulse animation */
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              background 0.2s ease-out, 
+              box-shadow 0.3s ease-out; /* Add transition for shadow */
+}
+
+/* Styles for the button when hovered */
+.feedback-button:hover .rt-IconButton {
+  width: 290px; /* Expanded width */
+  border-radius: var(--radius-4); /* Change to rounded rectangle on hover */
+  background: var(--cyan-10); /* Darker cyan on hover */
+  justify-content: flex-start; /* Align content to start when expanded */
+  padding-left: 17px; /* Add padding for icon */
+  /* Explicitly remove pulse animation on hover */
+  animation: none;
+  /* Ensure shadow returns to normal or desired hover state */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25); /* Example hover shadow */
+}
+
+/* Style the text span */
 .feedback-text {
   max-width: 0;
   opacity: 0;
-  white-space: nowrap;
   margin-left: 0;
-  transition: all 0.3s ease-in-out;
+  display: inline-block; /* Needed for transition */
+  vertical-align: middle; /* Align with icon */
+  transition: max-width 0.3s ease-in-out 0.05s, /* Delay text appearance slightly */
+              opacity 0.2s ease-in 0.05s, 
+              margin-left 0.3s ease-in-out 0.05s;
 }
 
-.feedback-button:hover {
-  width: 280px;
-}
-
+/* Styles for the text when the button is hovered */
 .feedback-button:hover .feedback-text {
-  max-width: 250px;
+  max-width: 220px; /* Max width for the text */
   opacity: 1;
-  margin-left: 12px;
+  margin-left: 12px; /* Space between icon and text */
+}
+
+/* Ensure icon stays centered initially and aligns left on hover */
+.feedback-button .rt-IconButton svg {
+  transition: transform 0.3s ease-in-out;
+  min-width: 27px; /* Prevent icon squishing */
 }
 
 * {

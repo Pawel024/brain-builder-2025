@@ -65,7 +65,7 @@ async def query_list(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id')
         task_id = request.GET.get('task_id')
-        data = await sync_to_async(lambda: list(Row.objects.filter(user_id=user_id, task_id=task_id).order_by('-id')[:1]))()
+        data = await sync_to_async(list)(Row.objects.filter(user_id=user_id, task_id=task_id).order_by('-id')[:1])
         serializer = RowSerializer(data, context={'request': request}, many=True)
         return Response(serializer.data)
 
@@ -81,7 +81,7 @@ async def query_list(request):
         processed_data['user_id'] = user_id
         processed_data['task_id'] = task_id
         serializer = RowSerializer(data=processed_data)
-        if serializer.is_valid():
+        if await sync_to_async(serializer.is_valid)():
             await sync_to_async(serializer.save)()
             return Response(status=status.HTTP_201_CREATED)
             
@@ -107,8 +107,8 @@ async def query_detail(request, pk):
 
         processed_data['user_id'] = user_id
         processed_data['task_id'] = task_id
-        serializer = RowSerializer(query, data=processed_data,context={'request': request})
-        if serializer.is_valid():
+        serializer = RowSerializer(query, data=processed_data, context={'request': request})
+        if await sync_to_async(serializer.is_valid)():
             await sync_to_async(serializer.save)()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

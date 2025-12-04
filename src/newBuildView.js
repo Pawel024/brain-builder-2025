@@ -74,7 +74,7 @@ class Building extends Model {
           showCode: false,
           code: '',
           description: '',
-          sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': this.props.taskId === 31 ? 0.001 : 0.1}, // TODO: avoid hardcoding
+          sliderValues: {'EpochSlider': this.props.maxEpochs ? this.props.maxEpochs/2 : 50, 'LRSlider': this.props.sliderVisibilities['LRSlider'] ? 0.01 : 0.0005},  // results in nice smooth curve for 3.1
           dropdownValues: {'AFDropdown': this.props.taskId<40 ? 'Sigmoid' : 'ReLU', 'OptimizerDropdown': 'SGD'},
           checkboxValues: {'NormCheckbox': this.props.normalization, 'AFCheckbox': true, 'ColorCheckbox': true, 'HeightCheckbox': true, 'ResizeCheckbox': true},
           runTutorial: false,
@@ -275,6 +275,7 @@ class Building extends Model {
     handleStartClick = (() => {
     let inThrottle;
     return (event) => {
+        this.setState({ showCode: false })  // maybe this will bring the db plot back? 
         if (!inThrottle && this.props.taskId !== 0) { 
         if (this.props.isTraining === 1) {
             this.props.cancelRequestRef.current(this.props.taskId, this.props.index)

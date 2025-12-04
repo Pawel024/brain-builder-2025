@@ -7,7 +7,7 @@ function FormatOutput(val) {
     if (typeof val === 'number') {
         // val is a number
         return val.toFixed(3)
-    } else if (val.length && val.length === 1) {
+    } else if (val?.length && val?.length === 1) {
         // val is a list with single numbers
         return Number(val[0]).toFixed(3);
     } else if (Array.isArray(val)) {

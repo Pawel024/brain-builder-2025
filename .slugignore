@@ -6,14 +6,20 @@ README.md
 get-pip.py
 
 # Static files - collected by Django during build
-staticfiles/
+# staticfiles/ is ESSENTIAL for Whitenoise
 
-# Source maps - not needed in production
+# Source maps
 *.map
 build/**/*.map
+staticfiles/**/*.map
 
 # Unused source code
-src/unused/
+src/
+# public/ is needed because views.py reads files from it directly
+# backend/datasets/ is needed because data_functions.py reads them
+
+# Vite Build Output - collected into staticfiles
+build/
 
 # Test files
 *.test.js
@@ -25,6 +31,7 @@ src/unused/
 .npmrc
 package-lock.json
 yarn.lock
+vite.config.js
 
 # Python cache
 __pycache__/

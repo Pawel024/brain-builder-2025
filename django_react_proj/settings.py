@@ -117,7 +117,7 @@ ROOT_URLCONF = 'django_react_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'public')],
+        'DIRS': [os.path.join(BASE_DIR, 'build')], # Look for index.html in build folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -207,7 +207,8 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:5173', # Vite default
 ]
 
 WEBPACK_LOADER = {
@@ -225,7 +226,7 @@ django_heroku.settings(locals())
 STATIC_URL = '/static/'
 
 # Place static in the same location as webpack build files
-STATIC_ROOT = os.path.join(BASE_DIR, 'build')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'build') # Removed, let django_heroku handle it (defaults to staticfiles)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'build', 'static'),]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

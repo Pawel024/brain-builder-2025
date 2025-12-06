@@ -64,9 +64,14 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest",
-      "plugin:react-compiler/recommended"
-    ]
+      "react-app/jest"
+    ],
+    "plugins": [
+      "react-compiler"
+    ],
+    "rules": {
+      "react-compiler/react-compiler": "error"
+    }
   },
   "browserslist": {
     "production": [

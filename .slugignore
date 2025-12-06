@@ -15,12 +15,6 @@ build/**/*.map
 # Unused source code
 src/unused/
 
-# Documentation and markdown files
-*.md
-public/*.md
-public/Links.md
-public/Welcome.md
-
 # Test files
 *.test.js
 *.test.jsx

@@ -8,13 +8,25 @@ export default defineConfig({
     react(),
     svgr(),
   ],
+  esbuild: {
+    loader: "jsx",
+    include: /src\/.*\.jsx?$/,
+    exclude: [],
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        '.js': 'jsx',
+      },
+    },
+  },
   build: {
-    outDir: 'build', // Maintain compatibility with Django serving 'build'
-    assetsDir: 'static', // Put assets in static folder
-    manifest: true, // Generate manifest for Django integration
+    outDir: 'build',
+    assetsDir: 'static',
+    manifest: true,
     rollupOptions: {
       output: {
-        // Ensure assets have predictable names if needed, but hash is better for caching
+        // Ensure assets have predictable names if needed
       },
     },
   },

@@ -20,16 +20,16 @@ export default defineConfig({
       },
     },
   },
-  base: '/static/', // Serve assets from /static/ in production (Django)
+  base: '/static/',
   build: {
     outDir: 'build',
-    assetsDir: 'assets', // Put assets in 'assets' subdir of outDir
+    assetsDir: 'assets',
     manifest: true,
     rollupOptions: {
       output: {
-        entryFileNames: 'assets/[name].js',
-        chunkFileNames: 'assets/[name].js',
-        assetFileNames: 'assets/[name].[ext]',
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
   },

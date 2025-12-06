@@ -14,7 +14,7 @@ build/**/*.map
 staticfiles/**/*.map
 
 # Unused source code
-src/
+# src/  <-- COMMENTED OUT to be safe, in case Heroku does something weird
 # public/ is needed because views.py reads files from it directly
 # backend/datasets/ is needed because data_functions.py reads them
 

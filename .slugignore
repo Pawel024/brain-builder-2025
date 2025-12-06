@@ -4,3 +4,36 @@ captain-definition
 README.md
 .gitignore
 get-pip.py
+
+# Static files - collected by Django during build
+staticfiles/
+
+# Source maps - not needed in production
+*.map
+build/**/*.map
+
+# Unused source code
+src/unused/
+
+# Documentation and markdown files
+*.md
+public/*.md
+public/Links.md
+public/Welcome.md
+
+# Test files
+*.test.js
+*.test.jsx
+**/__tests__/
+
+# Development files
+.eslintrc.js
+.npmrc
+package-lock.json
+yarn.lock
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

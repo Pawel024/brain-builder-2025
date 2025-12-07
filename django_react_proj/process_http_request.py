@@ -26,8 +26,8 @@ from base64 import b64encode, b64decode
 from django_react_proj.consumers import Transceiver
 
 from django.core.cache import cache
-import time
-#from asgiref.sync import sync_to_async
+import asyncio
+from asgiref.sync import sync_to_async
 
 async def process(req):
 
@@ -56,10 +56,17 @@ async def process(req):
             normalization = bool(inputs['normalization'])
             print(f"Normalization: {normalization}")
             
-            data = df.get_data(dataset=dataset, normalization=normalization, typ=gd.loc[task_id, 'type'])
+            # FIXED: Offload blocking data loading to thread
+            data = await sync_to_async(df.get_data, thread_sensitive=False)(
+                dataset=dataset, 
+                normalization=normalization, 
+                typ=gd.loc[task_id, 'type']
+            )
             print(f"Data loaded: {data}")
             
-            cache.set(f'{user_id}_data', pickle.dumps(data), 10*60)  # cache the data for 10 minutes
+            # FIXED: Use async cache set if available, or wrap sync cache.set
+            # cache.set is usually fast enough, but for strict async:
+            await sync_to_async(cache.set)(f'{user_id}_data', pickle.dumps(data), 10*60)
             print("Data loaded and stored in cache")
 
             d['header'] = 'data'
@@ -70,9 +77,14 @@ async def process(req):
             tc = Transceiver.connections.get((str(user_id)))
             t = 0
             while tc is None and t < 10:
-                time.sleep(0.1)
+                # FIXED: Use asyncio.sleep instead of time.sleep
+                await asyncio.sleep(0.1)
                 print("Waiting for switchboard")
                 t += 0.1
+            
+            # Refetch connection in case it appeared
+            tc = Transceiver.connections.get((str(user_id)))
+            
             if tc is not None:
                 print('Sending data to switchboard')
                 await tc.send_data(d)
@@ -84,8 +96,8 @@ async def process(req):
 
     elif req['action'] == 2:  # classify a given input
         # check if a cached version of the network and data exist and load them if they do
-        nn = cache.get(f'{user_id}_nn')
-        data = cache.get(f'{user_id}_data')
+        nn = await sync_to_async(cache.get)(f'{user_id}_nn')
+        data = await sync_to_async(cache.get)(f'{user_id}_data')
 
         if nn is not None and data is not None:
             nn = pickle.loads(nn)
@@ -98,7 +110,10 @@ async def process(req):
             else:
                 typ = data.data_type
                 normalization = data.normalization
-                output_value = building.predict(input_vector, nn, typ, data, normalization=normalization, name=True)
+                # FIXED: Offload prediction calculation
+                output_value = await sync_to_async(building.predict, thread_sensitive=False)(
+                    input_vector, nn, typ, data, normalization=normalization, name=True
+                )
         else:
             # TODO: what to do in this case? 
             print("No Network (or no data)")

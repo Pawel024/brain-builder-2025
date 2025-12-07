@@ -11,7 +11,7 @@ build/**/*.map
 staticfiles/**/*.map
 
 # Unused source code
-src/
+src/unused/
 
 # Test files
 *.test.js

@@ -64,7 +64,7 @@ async def process(req):
             print(f"Data loaded: {data}")
             
             pickled_data = await sync_to_async(pickle.dumps, thread_sensitive=False)(data)
-            await sync_to_async(cache.set)(f'{user_id}_data', pickled_data, 10*60)
+            await sync_to_async(cache.set, thread_sensitive=False)(f'{user_id}_data', pickled_data, 10*60)
             print("Data loaded and stored in cache")
 
             d['header'] = 'data'
@@ -93,8 +93,8 @@ async def process(req):
 
     elif req['action'] == 2:  # classify a given input
         # check if a cached version of the network and data exist and load them if they do
-        nn = await sync_to_async(cache.get)(f'{user_id}_nn')
-        data = await sync_to_async(cache.get)(f'{user_id}_data')
+        nn = await sync_to_async(cache.get, thread_sensitive=False)(f'{user_id}_nn')
+        data = await sync_to_async(cache.get, thread_sensitive=False)(f'{user_id}_data')
 
         if nn is not None and data is not None:
             nn = await sync_to_async(pickle.loads, thread_sensitive=False)(nn)

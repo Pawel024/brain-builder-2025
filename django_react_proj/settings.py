@@ -117,10 +117,9 @@ ROOT_URLCONF = 'django_react_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Look for index.html in staticfiles (where collectstatic puts it)
         'DIRS': [
-            os.path.join(BASE_DIR, 'staticfiles'), 
-            os.path.join(BASE_DIR, 'build'), # Fallback
+            os.path.join(BASE_DIR, 'staticfiles'), # Look here first (Heroku)
+            os.path.join(BASE_DIR, 'build'),       # Look here second (Local)
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -229,10 +228,15 @@ django_heroku.settings(locals())
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = '/static/'
 
-# Ensure index.html and other root assets are collected into staticfiles
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'build', 'static'),
-    os.path.join(BASE_DIR, 'build'),  # Include root build dir to pick up index.html
-]
+# Define where static files live during development / before collection
+STATICFILES_DIRS = []
+
+# Only add build directories if they actually exist to avoid startup warnings
+# and to prevent confusion about where files are coming from
+if os.path.exists(os.path.join(BASE_DIR, 'build', 'static')):
+    STATICFILES_DIRS.append(os.path.join(BASE_DIR, 'build', 'static'))
+
+if os.path.exists(os.path.join(BASE_DIR, 'build')):
+    STATICFILES_DIRS.append(os.path.join(BASE_DIR, 'build'))
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

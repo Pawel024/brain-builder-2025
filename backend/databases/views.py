@@ -65,6 +65,14 @@ def query_list(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id')
         task_id = request.GET.get('task_id')
+        
+        # If task_id is provided but not an integer, return 400
+        if task_id is not None:
+            try:
+                task_id = int(task_id)
+            except ValueError:
+                return Response({'error': 'Invalid task_id'}, status=status.HTTP_400_BAD_REQUEST)
+
         data = list(Row.objects.filter(user_id=user_id, task_id=task_id).order_by('-id')[:1])
         serializer = RowSerializer(data, context={'request': request}, many=True)
         return Response(serializer.data)

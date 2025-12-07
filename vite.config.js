@@ -20,7 +20,6 @@ export default defineConfig({
       },
     },
   },
-  base: '/static/',
   build: {
     outDir: 'build',
     assetsDir: 'static', // MATCHES DJANGO SETTINGS

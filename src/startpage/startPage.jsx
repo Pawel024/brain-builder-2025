@@ -95,7 +95,7 @@ class StartPage extends React.Component {
                     </Flex>
                 </div>
 
-                <Box style={{ position: 'absolute', bottom: `${gap}px`, right: `${gap}px` }}>
+                <Box style={{ position: 'absolute', bottom: `${1.5*gap}px`, right: `${1.5*gap}px` }}>
                     <FeedbackButton/>
                 </Box>
             </div>

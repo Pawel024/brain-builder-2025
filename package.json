@@ -57,6 +57,7 @@
   "scripts": {
     "start": "vite",
     "build": "vite build --base=/static/",
+    "build:preview": "vite build",
     "preview": "vite preview"
   },
   "browserslist": {

@@ -119,7 +119,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'staticfiles'), # Look here first (Heroku)
-            os.path.join(BASE_DIR, 'build'),       # Look here second (Local)
+            # We'll add the build dir dynamically below
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -228,33 +228,51 @@ django_heroku.settings(locals())
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = '/static/'
 
-# Define where static files live during development / before collection
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'build', 'static'),
-    os.path.join(BASE_DIR, 'build'),  # Include root build dir to pick up index.html
-]
+STATICFILES_DIRS = []
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Smart detection of build output
+# If Vite ignored output dir and used dist/assets, we need to map dist/assets -> /static/assets
+# So we add 'dist' to STATICFILES_DIRS
+# TODO: Simplify this once we find a working configuration
+
+BUILD_DIR_NAME = 'build'
+if os.path.exists(os.path.join(BASE_DIR, 'dist')):
+    print("DEBUG: Found 'dist' directory, using it as build source.")
+    BUILD_DIR_NAME = 'dist'
+elif os.path.exists(os.path.join(BASE_DIR, 'build')):
+    print("DEBUG: Found 'build' directory, using it as build source.")
+    BUILD_DIR_NAME = 'build'
+else:
+    print("DEBUG: Neither 'build' nor 'dist' found. This is bad.")
+
+BUILD_DIR = os.path.join(BASE_DIR, BUILD_DIR_NAME)
+
+# Add the build dir root (for index.html) to TEMPLATES
+TEMPLATES[0]['DIRS'].append(BUILD_DIR)
+
+# Add to STATICFILES_DIRS for serving assets
+if os.path.exists(os.path.join(BUILD_DIR, 'assets')):
+    # If structure is build/assets/foo.js and we want /static/assets/foo.js
+    # We must add BUILD_DIR to STATICFILES_DIRS so that 'assets' is preserved in the URL
+    STATICFILES_DIRS.append(BUILD_DIR)
+elif os.path.exists(os.path.join(BUILD_DIR, 'static')):
+    # If structure is build/static/foo.js and we want /static/foo.js
+    # We add BUILD_DIR/static to STATICFILES_DIRS
+    STATICFILES_DIRS.append(os.path.join(BUILD_DIR, 'static'))
 
 # DEBUGGING: Print filesystem state to logs
 try:
     print("--- DEBUG: FILESYSTEM CHECK ---")
     print(f"CWD: {os.getcwd()}")
     print(f"BASE_DIR: {BASE_DIR}")
+    print(f"Using BUILD_DIR: {BUILD_DIR}")
     
-    print("Root listing:")
-    print(os.listdir(os.getcwd()))
-    
-    build_path = os.path.join(BASE_DIR, 'build')
-    if os.path.exists(build_path):
-        print(f"Build dir exists at {build_path}")
-        print("Build listing:", os.listdir(build_path))
+    if os.path.exists(BUILD_DIR):
+        print(f"Build listing ({BUILD_DIR}):", os.listdir(BUILD_DIR))
     else:
-        print(f"Build dir MISSING at {build_path}")
-        
-    static_build_path = os.path.join(build_path, 'static')
-    if os.path.exists(static_build_path):
-        print("Build/static listing:", os.listdir(static_build_path))
+        print(f"Build dir MISSING at {BUILD_DIR}")
         
     staticfiles_path = os.path.join(BASE_DIR, 'staticfiles')
     if os.path.exists(staticfiles_path):

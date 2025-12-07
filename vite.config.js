@@ -23,17 +23,14 @@ export default defineConfig({
   base: '/static/',
   build: {
     outDir: 'build',
-    assetsDir: 'assets',
+    assetsDir: 'static', // MATCHES DJANGO SETTINGS
     manifest: true,
     rollupOptions: {
       output: {
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]',
+        entryFileNames: 'static/[name]-[hash].js',
+        chunkFileNames: 'static/[name]-[hash].js',
+        assetFileNames: 'static/[name]-[hash].[ext]',
       },
-    },
-    commonjsOptions: {
-      transformMixedEsModules: true,
     },
   },
   server: {

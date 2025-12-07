@@ -117,10 +117,10 @@ ROOT_URLCONF = 'django_react_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Look for index.html in build folder, but ALSO in staticfiles as a fallback
+        # Look for index.html in staticfiles (where collectstatic puts it)
         'DIRS': [
-            os.path.join(BASE_DIR, 'build'),
             os.path.join(BASE_DIR, 'staticfiles'), 
+            os.path.join(BASE_DIR, 'build'), # Fallback
         ],
         'APP_DIRS': True,
         'OPTIONS': {

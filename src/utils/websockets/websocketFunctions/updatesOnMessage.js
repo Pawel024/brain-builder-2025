@@ -138,19 +138,31 @@ function updateBiasesIfNeeded(data, params) {
  */
 function updateImagesIfNeeded(data, params) {
     if (data?.plot) {
-        params.setImgs(prevImgs => {
-          const newImgs = [...prevImgs];
-          const binaryString = atob(data.plot);  // decode from base64 to binary string
-          const bytes = new Uint8Array(binaryString.length);  // convert from binary string to byte array
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);  // now bytes contains the binary image data
-          }
-          const blob = new Blob([bytes.buffer], { type: 'image/jpeg' });
-          const url = URL.createObjectURL(blob);
-          // now images can be accessed with <img src={url} />
-          newImgs[params.globalIndex] = url
-          return newImgs;
-        });
+        // Decompress and parse the images in 'plot'
+        // Offload decoding to avoid freezing the main thread (as much as possible in sync context)
+        try {
+            const binaryString = atob(data.plot);
+            
+            // Pre-allocate buffer for better performance
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            
+            const blob = new Blob([bytes], { type: 'image/jpeg' });
+            const url = URL.createObjectURL(blob);
+
+            params.setImgs(prevImgs => {
+                const newImgs = [...prevImgs];
+                if (newImgs[params.globalIndex]) {
+                    URL.revokeObjectURL(newImgs[params.globalIndex]);
+                }
+                newImgs[params.globalIndex] = url;
+                return newImgs;
+            });
+        } catch (error) {
+            console.error("Error decoding image:", error);
+        }
     }
 }
 

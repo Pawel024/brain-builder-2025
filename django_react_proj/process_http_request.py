@@ -56,7 +56,6 @@ async def process(req):
             normalization = bool(inputs['normalization'])
             print(f"Normalization: {normalization}")
             
-            # FIXED: Offload blocking data loading to thread
             data = await sync_to_async(df.get_data, thread_sensitive=False)(
                 dataset=dataset, 
                 normalization=normalization, 
@@ -64,9 +63,8 @@ async def process(req):
             )
             print(f"Data loaded: {data}")
             
-            # FIXED: Use async cache set if available, or wrap sync cache.set
-            # cache.set is usually fast enough, but for strict async:
-            await sync_to_async(cache.set)(f'{user_id}_data', pickle.dumps(data), 10*60)
+            pickled_data = await sync_to_async(pickle.dumps, thread_sensitive=False)(data)
+            await sync_to_async(cache.set)(f'{user_id}_data', pickled_data, 10*60)
             print("Data loaded and stored in cache")
 
             d['header'] = 'data'
@@ -77,7 +75,6 @@ async def process(req):
             tc = Transceiver.connections.get((str(user_id)))
             t = 0
             while tc is None and t < 10:
-                # FIXED: Use asyncio.sleep instead of time.sleep
                 await asyncio.sleep(0.1)
                 print("Waiting for switchboard")
                 t += 0.1
@@ -100,8 +97,8 @@ async def process(req):
         data = await sync_to_async(cache.get)(f'{user_id}_data')
 
         if nn is not None and data is not None:
-            nn = pickle.loads(nn)
-            data = pickle.loads(data)
+            nn = await sync_to_async(pickle.loads, thread_sensitive=False)(nn)
+            data = await sync_to_async(pickle.loads, thread_sensitive=False)(data)
 
             input_vector = json.loads(inputs['model_input'])
             if len(input_vector) != data.n_features:
@@ -110,7 +107,6 @@ async def process(req):
             else:
                 typ = data.data_type
                 normalization = data.normalization
-                # FIXED: Offload prediction calculation
                 output_value = await sync_to_async(building.predict, thread_sensitive=False)(
                     input_vector, nn, typ, data, normalization=normalization, name=True
                 )

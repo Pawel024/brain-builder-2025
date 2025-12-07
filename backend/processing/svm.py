@@ -39,6 +39,9 @@ def main(kernel, c, gamma, dataset, normalization, user_id, task_id):
     """
     Main function for the SVM tasks. 
     """
+    c = float(c)
+    gamma = float(gamma)
+
     batch_size = 1
     test_size = 0.1
 

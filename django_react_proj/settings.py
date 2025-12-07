@@ -117,7 +117,11 @@ ROOT_URLCONF = 'django_react_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'build')], # Look for index.html in build folder
+        # Look for index.html in build folder, but ALSO in staticfiles as a fallback
+        'DIRS': [
+            os.path.join(BASE_DIR, 'build'),
+            os.path.join(BASE_DIR, 'staticfiles'), 
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -225,8 +229,10 @@ django_heroku.settings(locals())
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = '/static/'
 
-# Place static in the same location as webpack build files
-# STATIC_ROOT = os.path.join(BASE_DIR, 'build') # Removed, let django_heroku handle it (defaults to staticfiles)
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'build', 'static'),]
+# Ensure index.html and other root assets are collected into staticfiles
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'build', 'static'),
+    os.path.join(BASE_DIR, 'build'),  # Include root build dir to pick up index.html
+]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

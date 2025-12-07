@@ -254,13 +254,9 @@ TEMPLATES[0]['DIRS'].append(BUILD_DIR)
 
 # Add to STATICFILES_DIRS for serving assets
 if os.path.exists(os.path.join(BUILD_DIR, 'assets')):
-    # If structure is build/assets/foo.js and we want /static/assets/foo.js
-    # We must add BUILD_DIR to STATICFILES_DIRS so that 'assets' is preserved in the URL
-    STATICFILES_DIRS.append(BUILD_DIR)
+    STATICFILES_DIRS.append(BUILD_DIR) # Maps dist/assets -> /static/assets
 elif os.path.exists(os.path.join(BUILD_DIR, 'static')):
-    # If structure is build/static/foo.js and we want /static/foo.js
-    # We add BUILD_DIR/static to STATICFILES_DIRS
-    STATICFILES_DIRS.append(os.path.join(BUILD_DIR, 'static'))
+    STATICFILES_DIRS.append(os.path.join(BUILD_DIR, 'static')) # Maps dist/static -> /static/ (flattens)
 
 # DEBUGGING: Print filesystem state to logs
 try:

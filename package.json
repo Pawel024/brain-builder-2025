@@ -56,7 +56,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build --base=/static/",
+    "build": "cross-env VITE_BASE=/static/ vite build",
     "preview": "vite preview"
   },
   "browserslist": {

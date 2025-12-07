@@ -18,9 +18,6 @@ staticfiles/**/*.map
 # public/ is needed because views.py reads files from it directly
 # backend/datasets/ is needed because data_functions.py reads them
 
-# Vite Build Output - collected into staticfiles
-build/
-
 # Test files
 *.test.js
 *.test.jsx

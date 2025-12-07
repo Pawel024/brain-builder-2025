@@ -229,14 +229,9 @@ django_heroku.settings(locals())
 STATIC_URL = '/static/'
 
 # Define where static files live during development / before collection
-STATICFILES_DIRS = []
-
-# Only add build directories if they actually exist to avoid startup warnings
-# and to prevent confusion about where files are coming from
-if os.path.exists(os.path.join(BASE_DIR, 'build', 'static')):
-    STATICFILES_DIRS.append(os.path.join(BASE_DIR, 'build', 'static'))
-
-if os.path.exists(os.path.join(BASE_DIR, 'build')):
-    STATICFILES_DIRS.append(os.path.join(BASE_DIR, 'build'))
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'build', 'static'),
+    os.path.join(BASE_DIR, 'build'),  # Include root build dir to pick up index.html
+]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

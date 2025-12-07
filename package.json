@@ -57,8 +57,7 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "heroku-postbuild": "npm run build && python manage.py collectstatic --noinput"
+    "preview": "vite preview"
   },
   "browserslist": {
     "production": [

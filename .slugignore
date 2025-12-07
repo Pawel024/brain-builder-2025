@@ -11,7 +11,7 @@ build/**/*.map
 staticfiles/**/*.map
 
 # Unused source code
-# src/  <-- COMMENTED OUT to be safe, in case Heroku does something weird
+src/
 
 # Test files
 *.test.js

@@ -9,14 +9,15 @@ export default defineConfig({
     svgr(),
   ],
   esbuild: {
+    // This is the magic setting that allows JSX in .js files
     loader: "jsx",
-    include: /src\/.*\.jsx?$/,
+    include: /src\/.*\.js$/, 
     exclude: [],
   },
   optimizeDeps: {
     esbuildOptions: {
       loader: {
-        '.js': 'jsx',
+        '.js': 'jsx', // Treat all JS files as JSX during dependency optimization
       },
     },
   },

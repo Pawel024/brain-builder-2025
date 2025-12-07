@@ -63,7 +63,7 @@ async def process(req):
             )
             print(f"Data loaded: {data}")
             
-            pickled_data = await sync_to_async(pickle.dumps, thread_sensitive=False)(data)
+            pickled_data = pickle.dumps(data)
             await sync_to_async(cache.set, thread_sensitive=False)(f'{user_id}_data', pickled_data, 10*60)
             print("Data loaded and stored in cache")
 
@@ -97,8 +97,8 @@ async def process(req):
         data = await sync_to_async(cache.get, thread_sensitive=False)(f'{user_id}_data')
 
         if nn is not None and data is not None:
-            nn = await sync_to_async(pickle.loads, thread_sensitive=False)(nn)
-            data = await sync_to_async(pickle.loads, thread_sensitive=False)(data)
+            nn = pickle.loads(nn)
+            data = pickle.loads(data)
 
             input_vector = json.loads(inputs['model_input'])
             if len(input_vector) != data.n_features:

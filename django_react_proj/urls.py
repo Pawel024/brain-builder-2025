@@ -50,8 +50,10 @@ urlpatterns = [
     re_path(r'^(?P<filename>.+\.lottie)$', views.serve_lottie_file),
 
     # Specific static pages
-    path('readme', views.serve_readme),
-    #path('links', views.serve_links),
+    re_path(r'^readme$', views.serve_readme),
+    re_path(r'^readme/$', views.serve_readme),
+    #re_path(r'^links$', views.serve_links),
+    #re_path(r'^links/$', views.serve_links),
     
     # Root path - serve index
     path('', views.index),

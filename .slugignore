@@ -5,9 +5,6 @@ README.md
 .gitignore
 get-pip.py
 
-# Static files - collected by Django during build
-# staticfiles/ is ESSENTIAL for Whitenoise
-
 # Source maps
 *.map
 build/**/*.map
@@ -15,8 +12,6 @@ staticfiles/**/*.map
 
 # Unused source code
 # src/  <-- COMMENTED OUT to be safe, in case Heroku does something weird
-# public/ is needed because views.py reads files from it directly
-# backend/datasets/ is needed because data_functions.py reads them
 
 # Test files
 *.test.js

@@ -235,3 +235,31 @@ STATICFILES_DIRS = [
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# DEBUGGING: Print filesystem state to logs
+try:
+    print("--- DEBUG: FILESYSTEM CHECK ---")
+    print(f"CWD: {os.getcwd()}")
+    print(f"BASE_DIR: {BASE_DIR}")
+    
+    print("Root listing:")
+    print(os.listdir(os.getcwd()))
+    
+    build_path = os.path.join(BASE_DIR, 'build')
+    if os.path.exists(build_path):
+        print(f"Build dir exists at {build_path}")
+        print("Build listing:", os.listdir(build_path))
+    else:
+        print(f"Build dir MISSING at {build_path}")
+        
+    static_build_path = os.path.join(build_path, 'static')
+    if os.path.exists(static_build_path):
+        print("Build/static listing:", os.listdir(static_build_path))
+        
+    staticfiles_path = os.path.join(BASE_DIR, 'staticfiles')
+    if os.path.exists(staticfiles_path):
+        print("Staticfiles listing:", os.listdir(staticfiles_path))
+    
+    print("--- END DEBUG ---")
+except Exception as e:
+    print(f"Debug print failed: {e}")

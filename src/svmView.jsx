@@ -68,7 +68,11 @@ class SvmView extends Model {
     // CUSTOMIZABLE FUNCTIONS
 
     continueComponentDidMount = () => {
-        this.props.loadData(this.props.taskId, this.props.index)  // let the backend load the data  // TODO
+        if (this.props.taskId !== undefined && this.props.index !== undefined) {
+            this.props.loadData(this.props.taskId, this.props.index)  // let the backend load the data  // TODO
+        } else {
+            console.warn("TaskId or Index not provided to SvmView, skipping data load");
+        }
         this.setState({ loading: false })
         this.setState( prev => {
             const newSliderVisibilities = {...prev.sliderVisibilities}; 

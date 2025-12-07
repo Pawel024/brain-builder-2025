@@ -7,7 +7,7 @@ function Readme({ file }) {
   const [readme, setReadme] = useState('');
 
   useEffect(() => {
-    const filePath = process.env.PUBLIC_URL + `/${file}`;
+    const filePath = `/${file}`;
     safeGet(filePath)
       .then(response => {
         setReadme(response.data);

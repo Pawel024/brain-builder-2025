@@ -4,3 +4,29 @@ captain-definition
 README.md
 .gitignore
 get-pip.py
+
+# Source maps
+*.map
+build/**/*.map
+staticfiles/**/*.map
+
+# Unused source code
+# src/  <-- COMMENTED OUT to be safe, in case Heroku does something weird
+
+# Test files
+*.test.js
+*.test.jsx
+**/__tests__/
+
+# Development files
+.eslintrc.js
+.npmrc
+package-lock.json
+yarn.lock
+vite.config.js
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

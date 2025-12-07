@@ -117,7 +117,10 @@ ROOT_URLCONF = 'django_react_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'public')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'staticfiles'), # Look here first (Heroku)
+            # We'll add the build dir dynamically below
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -207,7 +210,8 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:5173', # Vite default
 ]
 
 WEBPACK_LOADER = {
@@ -224,8 +228,52 @@ django_heroku.settings(locals())
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = '/static/'
 
-# Place static in the same location as webpack build files
-STATIC_ROOT = os.path.join(BASE_DIR, 'build')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'build', 'static'),]
+STATICFILES_DIRS = []
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Smart detection of build output
+# If Vite ignored output dir and used dist/assets, we need to map dist/assets -> /static/assets
+# So we add 'dist' to STATICFILES_DIRS
+# TODO: Simplify this once we find a working configuration
+
+BUILD_DIR_NAME = 'build'
+if os.path.exists(os.path.join(BASE_DIR, 'dist')):
+    print("DEBUG: Found 'dist' directory, using it as build source.")
+    BUILD_DIR_NAME = 'dist'
+elif os.path.exists(os.path.join(BASE_DIR, 'build')):
+    print("DEBUG: Found 'build' directory, using it as build source.")
+    BUILD_DIR_NAME = 'build'
+else:
+    print("DEBUG: Neither 'build' nor 'dist' found. This is bad.")
+
+BUILD_DIR = os.path.join(BASE_DIR, BUILD_DIR_NAME)
+
+# Add the build dir root (for index.html) to TEMPLATES
+TEMPLATES[0]['DIRS'].append(BUILD_DIR)
+
+# Add to STATICFILES_DIRS for serving assets
+if os.path.exists(os.path.join(BUILD_DIR, 'assets')):
+    STATICFILES_DIRS.append(BUILD_DIR) # Maps dist/assets -> /static/assets
+elif os.path.exists(os.path.join(BUILD_DIR, 'static')):
+    STATICFILES_DIRS.append(os.path.join(BUILD_DIR, 'static')) # Maps dist/static -> /static/ (flattens)
+
+# DEBUGGING: Print filesystem state to logs
+try:
+    print("--- DEBUG: FILESYSTEM CHECK ---")
+    print(f"CWD: {os.getcwd()}")
+    print(f"BASE_DIR: {BASE_DIR}")
+    print(f"Using BUILD_DIR: {BUILD_DIR}")
+    
+    if os.path.exists(BUILD_DIR):
+        print(f"Build listing ({BUILD_DIR}):", os.listdir(BUILD_DIR))
+    else:
+        print(f"Build dir MISSING at {BUILD_DIR}")
+        
+    staticfiles_path = os.path.join(BASE_DIR, 'staticfiles')
+    if os.path.exists(staticfiles_path):
+        print("Staticfiles listing:", os.listdir(staticfiles_path))
+    
+    print("--- END DEBUG ---")
+except Exception as e:
+    print(f"Debug print failed: {e}")

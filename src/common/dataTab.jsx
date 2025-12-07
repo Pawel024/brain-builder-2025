@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
-import horizontalCss from '../css/horizontalSlides.css';
+import horizontalCss from '../css/horizontalSlides.module.css';
 
 const DataTab = ({ description, currentSlide, setCurrentSlide, initPlot }) => {
     return (

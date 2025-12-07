@@ -19,10 +19,8 @@ from backend.databases import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
-    path('readme', views.serve_readme),
-    #path('links', views.serve_links),
-    #re_path('api/notebooks/(?P<notebook_path>.+)/?$', views.get_notebook),
+    
+    # Specific API routes
     re_path(r'^api/backend$', views.query_list),
     re_path(r'^api/backend/$', views.query_list),
     re_path(r'^api/backend/(?P<pk>[0-9]+)$', views.query_detail),
@@ -51,6 +49,15 @@ urlpatterns = [
     # serve .lottie files directly
     re_path(r'^(?P<filename>.+\.lottie)$', views.serve_lottie_file),
 
+    # Specific static pages
+    re_path(r'^readme$', views.serve_readme),
+    re_path(r'^readme/$', views.serve_readme),
+    #re_path(r'^links$', views.serve_links),
+    #re_path(r'^links/$', views.serve_links),
+    
+    # Root path - serve index
+    path('', views.index),
+    
     # catch-all pattern
-    re_path(r'^.*$', views.index),
+    re_path(r'^.*$', views.index),  # Important: This must be the last pattern
 ]

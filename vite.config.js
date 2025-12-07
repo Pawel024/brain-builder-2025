@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   esbuild: {
     loader: "jsx",
-    include: /src\/.*\.[jt]sx?$/, // Handle .js, .jsx, .ts, .tsx
+    include: /src\/.*\.[jt]sx?$/,
     exclude: [],
   },
   optimizeDeps: {
@@ -31,6 +31,9 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
       },
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
   },
   server: {

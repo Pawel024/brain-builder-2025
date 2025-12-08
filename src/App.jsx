@@ -215,16 +215,23 @@ function AppContent() {
               return newNObjects;
             });
     
-            // Decode and parse the base64 encoded image in 'plot'
-            const binaryString = atob(data.plot);
-            
-            // Efficiently convert binary string to Uint8Array for Blob creation
-            const byteArray = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                byteArray[i] = binaryString.charCodeAt(i);
+            let url = null;
+            try {
+              // Decode and parse the base64 encoded image in 'plot'
+              const binaryString = atob(data.plot);
+              
+              // Efficiently convert binary string to Uint8Array for Blob creation
+              const byteArray = new Uint8Array(binaryString.length);
+              for (let i = 0; i < binaryString.length; i++) {
+                  byteArray[i] = binaryString.charCodeAt(i);
+              }
+              const blob = new Blob([byteArray], { type: 'image/jpeg' });
+              url = URL.createObjectURL(blob);
+            } catch (error) {
+              console.error("Error decoding initial plot:", error);
+              // Optionally, set url to a fallback image or null
+              url = null;
             }
-            const blob = new Blob([byteArray], { type: 'image/jpeg' });
-            const url = URL.createObjectURL(blob);
 
             setInitPlots(prevInitPlots => {
               const newInitPlots = [...prevInitPlots];

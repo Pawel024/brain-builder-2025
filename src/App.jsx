@@ -215,22 +215,31 @@ function AppContent() {
               return newNObjects;
             });
     
-            // decompress and parse the images in 'plot'
+            let url = null;
+            try {
+              // Decode and parse the base64 encoded image in 'plot'
+              const binaryString = atob(data.plot);
+              
+              // Efficiently convert binary string to Uint8Array for Blob creation
+              const byteArray = new Uint8Array(binaryString.length);
+              for (let i = 0; i < binaryString.length; i++) {
+                  byteArray[i] = binaryString.charCodeAt(i);
+              }
+              const blob = new Blob([byteArray], { type: 'image/jpeg' });
+              url = URL.createObjectURL(blob);
+            } catch (error) {
+              console.error("Error decoding initial plot:", error);
+              // Optionally, set url to a fallback image or null
+              url = null;
+            }
+
             setInitPlots(prevInitPlots => {
               const newInitPlots = [...prevInitPlots];
-              if (newInitPlots[index]) {URL.revokeObjectURL(newInitPlots[index])};  // revoke the old URL
-    
-              const binaryString = atob(data.plot);  // decode from base64 to binary string
-              const bytes = new Uint8Array(binaryString.length);  // convert from binary string to byte array
-              for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);  // now bytes contains the binary image data
-              }
-              const blob = new Blob([bytes.buffer], { type: 'image/jpeg' });
-              const url = URL.createObjectURL(blob);
-              // now images can be accessed with <img src={url} />
+              if (newInitPlots[index]) {URL.revokeObjectURL(newInitPlots[index])};
               newInitPlots[index] = url;
               return newInitPlots;
             });
+            
             console.log(`Data for exercise ${taskId/10} loaded`)
             ws.close();
             clearTimeout(timeoutId);

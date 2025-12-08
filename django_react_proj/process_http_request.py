@@ -84,7 +84,10 @@ async def process(req):
             
             if tc is not None:
                 print('Sending data to switchboard')
-                await tc.send_data(d)
+                # Use async_send (threadsafe) instead of await send_data directly.
+                # Since we are running in async_to_sync wrapper (worker thread), we must
+                # dispatch the send operation back to the main event loop where the WebSocket lives.
+                tc.async_send(d)
         except KeyError as e:
             print(f"KeyError: {e}")
         except Exception as e:

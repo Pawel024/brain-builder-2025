@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from urllib.parse import urlparse
 
-from asgiref.sync import sync_to_async, async_to_sync
+from asgiref.sync import async_to_sync
 
 import os
 import requests

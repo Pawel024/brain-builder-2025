@@ -138,8 +138,7 @@ function updateBiasesIfNeeded(data, params) {
  */
 function updateImagesIfNeeded(data, params) {
     if (data?.plot) {
-        // Decompress and parse the images in 'plot'
-        // Offload decoding to avoid freezing the main thread (as much as possible in sync context)
+        // Decode and parse the base64 encoded image in 'plot'
         try {
             const binaryString = atob(data.plot);
             

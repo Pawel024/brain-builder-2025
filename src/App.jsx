@@ -215,8 +215,7 @@ function AppContent() {
               return newNObjects;
             });
     
-            // decompress and parse the images in 'plot'
-            // Offload decoding to avoid freezing the main thread
+            // Decode and parse the base64 encoded image in 'plot'
             const binaryString = atob(data.plot);
             
             // Use Blob directly from binary string (more efficient)

@@ -217,9 +217,10 @@ function AppContent() {
     
             setInitPlots(prevInitPlots => {
               const newInitPlots = [...prevInitPlots];
-              if (newInitPlots[index]) {URL.revokeObjectURL(newInitPlots[index])};
+              const existingUrl = newInitPlots[index];
               
-              let url = null;
+              // Default to existing URL; only replace it on successful decode
+              let url = existingUrl;
               try {
                 // Decode and parse the base64 encoded image in 'plot'
                 const binaryString = atob(data.plot);
@@ -230,10 +231,16 @@ function AppContent() {
                     byteArray[i] = binaryString.charCodeAt(i);
                 }
                 const blob = new Blob([byteArray], { type: 'image/jpeg' });
-                url = URL.createObjectURL(blob);
+                const newUrl = URL.createObjectURL(blob);
+                
+                // Only revoke the old URL after successfully creating a new one
+                if (existingUrl) {
+                    URL.revokeObjectURL(existingUrl);
+                }
+                url = newUrl;
               } catch (error) {
                 console.error("Error decoding initial plot:", error);
-                // url remains null on error
+                // Keep existing URL on error to avoid setting a null/broken image
               }
               
               newInitPlots[index] = url;

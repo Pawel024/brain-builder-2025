@@ -141,25 +141,30 @@ function updateImagesIfNeeded(data, params) {
         // Decode and parse the base64 encoded image in 'plot'
         params.setImgs(prevImgs => {
             const newImgs = [...prevImgs];
-            if (newImgs[params.globalIndex]) {
-                URL.revokeObjectURL(newImgs[params.globalIndex]);
-            }
+            const existingUrl = newImgs[params.globalIndex];
             
-            let url = null;
+            // Default to existing URL; only replace it on successful decode
+            let url = existingUrl;
             try {
                 const binaryString = atob(data.plot);
                 
-                // Pre-allocate buffer for better performance
+                // Allocate a typed array buffer for the decoded bytes
                 const bytes = new Uint8Array(binaryString.length);
                 for (let i = 0; i < binaryString.length; i++) {
                     bytes[i] = binaryString.charCodeAt(i);
                 }
                 
                 const blob = new Blob([bytes], { type: 'image/jpeg' });
-                url = URL.createObjectURL(blob);
+                const newUrl = URL.createObjectURL(blob);
+                
+                // Only revoke the old URL after successfully creating a new one
+                if (existingUrl) {
+                    URL.revokeObjectURL(existingUrl);
+                }
+                url = newUrl;
             } catch (error) {
                 console.error("Error decoding image:", error);
-                // url remains null on error
+                // Keep existing URL on error to avoid setting a null/broken image
             }
             
             newImgs[params.globalIndex] = url;

@@ -138,18 +138,37 @@ function updateBiasesIfNeeded(data, params) {
  */
 function updateImagesIfNeeded(data, params) {
     if (data?.plot) {
+        // Decode and parse the base64 encoded image in 'plot'
         params.setImgs(prevImgs => {
-          const newImgs = [...prevImgs];
-          const binaryString = atob(data.plot);  // decode from base64 to binary string
-          const bytes = new Uint8Array(binaryString.length);  // convert from binary string to byte array
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);  // now bytes contains the binary image data
-          }
-          const blob = new Blob([bytes.buffer], { type: 'image/jpeg' });
-          const url = URL.createObjectURL(blob);
-          // now images can be accessed with <img src={url} />
-          newImgs[params.globalIndex] = url
-          return newImgs;
+            const newImgs = [...prevImgs];
+            const existingUrl = newImgs[params.globalIndex];
+            
+            // Default to existing URL; only replace it on successful decode
+            let url = existingUrl;
+            try {
+                const binaryString = atob(data.plot);
+                
+                // Allocate a typed array buffer for the decoded bytes
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                const blob = new Blob([bytes], { type: 'image/jpeg' });
+                const newUrl = URL.createObjectURL(blob);
+                
+                // Only revoke the old URL after successfully creating a new one
+                if (existingUrl) {
+                    URL.revokeObjectURL(existingUrl);
+                }
+                url = newUrl;
+            } catch (error) {
+                console.error("Error decoding image:", error);
+                // Keep existing URL on error to avoid setting a null/broken image
+            }
+            
+            newImgs[params.globalIndex] = url;
+            return newImgs;
         });
     }
 }

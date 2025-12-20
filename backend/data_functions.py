@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.figure as mf
 from matplotlib.lines import Line2D
 from matplotlib.cm import ScalarMappable

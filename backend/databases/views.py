@@ -80,6 +80,14 @@ def query_list(request):
     elif request.method == 'POST':
         user_id = request.data.get('user_id')
         task_id = request.data.get('task_id')
+        
+        # If task_id is provided but not an integer, return 400
+        if task_id is not None:
+            try:
+                task_id = int(task_id)
+            except ValueError:
+                return Response({'error': 'Invalid task_id'}, status=status.HTTP_400_BAD_REQUEST)
+        
         absolute_uri = request.build_absolute_uri('/')
         parsed_uri = urlparse(absolute_uri)
         root_url = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)

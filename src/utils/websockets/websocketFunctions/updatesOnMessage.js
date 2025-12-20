@@ -139,29 +139,32 @@ function updateBiasesIfNeeded(data, params) {
 function updateImagesIfNeeded(data, params) {
     if (data?.plot) {
         // Decode and parse the base64 encoded image in 'plot'
-        try {
-            const binaryString = atob(data.plot);
-            
-            // Pre-allocate buffer for better performance
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
+        params.setImgs(prevImgs => {
+            const newImgs = [...prevImgs];
+            if (newImgs[params.globalIndex]) {
+                URL.revokeObjectURL(newImgs[params.globalIndex]);
             }
             
-            const blob = new Blob([bytes], { type: 'image/jpeg' });
-            const url = URL.createObjectURL(blob);
-
-            params.setImgs(prevImgs => {
-                const newImgs = [...prevImgs];
-                if (newImgs[params.globalIndex]) {
-                    URL.revokeObjectURL(newImgs[params.globalIndex]);
+            let url = null;
+            try {
+                const binaryString = atob(data.plot);
+                
+                // Pre-allocate buffer for better performance
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
                 }
-                newImgs[params.globalIndex] = url;
-                return newImgs;
-            });
-        } catch (error) {
-            console.error("Error decoding image:", error);
-        }
+                
+                const blob = new Blob([bytes], { type: 'image/jpeg' });
+                url = URL.createObjectURL(blob);
+            } catch (error) {
+                console.error("Error decoding image:", error);
+                // url remains null on error
+            }
+            
+            newImgs[params.globalIndex] = url;
+            return newImgs;
+        });
     }
 }
 

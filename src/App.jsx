@@ -215,27 +215,27 @@ function AppContent() {
               return newNObjects;
             });
     
-            let url = null;
-            try {
-              // Decode and parse the base64 encoded image in 'plot'
-              const binaryString = atob(data.plot);
-              
-              // Efficiently convert binary string to Uint8Array for Blob creation
-              const byteArray = new Uint8Array(binaryString.length);
-              for (let i = 0; i < binaryString.length; i++) {
-                  byteArray[i] = binaryString.charCodeAt(i);
-              }
-              const blob = new Blob([byteArray], { type: 'image/jpeg' });
-              url = URL.createObjectURL(blob);
-            } catch (error) {
-              console.error("Error decoding initial plot:", error);
-              // Optionally, set url to a fallback image or null
-              url = null;
-            }
-
             setInitPlots(prevInitPlots => {
               const newInitPlots = [...prevInitPlots];
               if (newInitPlots[index]) {URL.revokeObjectURL(newInitPlots[index])};
+              
+              let url = null;
+              try {
+                // Decode and parse the base64 encoded image in 'plot'
+                const binaryString = atob(data.plot);
+                
+                // Efficiently convert binary string to Uint8Array for Blob creation
+                const byteArray = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    byteArray[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                url = URL.createObjectURL(blob);
+              } catch (error) {
+                console.error("Error decoding initial plot:", error);
+                // url remains null on error
+              }
+              
               newInitPlots[index] = url;
               return newInitPlots;
             });

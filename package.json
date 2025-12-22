@@ -46,7 +46,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^5.1.2",
     "vite": "^5.2.0",
     "vite-plugin-svgr": "^4.2.0",
     "eslint": "^8.57.0",
